@@ -1,6 +1,17 @@
 selective_model_inference <- function(y, fit_method, test_func, num_samp, sample_method,
                                       param = list(), cores = NA, verbose = T){
 
+  #fit the model
+
+  #create the polyhedra
+
+  #run the test function on the observed model
+
+  #pass to sampler
+
+  #for each sample, run the test function
+
+  #compute the quantile
 }
 
 #' Compute the matrix of segments
