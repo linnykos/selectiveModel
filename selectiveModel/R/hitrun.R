@@ -1,3 +1,16 @@
+#' Hit and run sampler
+#'
+#' @param y data
+#' @param seg_mean vector of segment means
+#' @param segments matrix created by \code{.segments}
+#' @param polyhedra \code{polyhedra} object
+#' @param num_samp number of desired samples from null distribution
+#' @param cores umber of cores
+#' @param burn_in positive integer, where we sample \code{num_samp*burn_in}
+#' samples from the null distribution and return every \code{burn_in}th sample
+#' @param verbose boolean
+#'
+#' @return matrix with \code{num_samp} columns and \code{length(y)} rows
 .sampler_hit_run <- function(y, seg_mean, segments, polyhedra, num_samp,
                              cores = NA, burn_in = 3, verbose = F){
 
@@ -19,7 +32,7 @@
 #' Output the next point for hit-and-run sampler
 #'
 #' @param seg_mean vector of segment means
-#' @param segments 2-row matrix created by \code{.segments}
+#' @param segments matrix created by \code{.segments}
 #' @param initial initial data vector
 #'
 #' @return vector
