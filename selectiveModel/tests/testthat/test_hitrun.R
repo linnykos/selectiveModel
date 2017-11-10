@@ -169,5 +169,9 @@ test_that(".sampler_hit_run works", {
   poly <- binSegInf::polyhedra(obj)
   segments <- .segments(length(y), jump_vec = binSegInf::jumps(obj))
 
-  res <- .sampler_hit_run(y, segments, poly)
+  res <- .sampler_hit_run(y, segments, poly, num_samp = 100)
+
+  expect_true(is.numeric(res))
+  expect_true(is.matrix(res))
+  expect_true(all(dim(res) == c(length(y), 100)))
 })
