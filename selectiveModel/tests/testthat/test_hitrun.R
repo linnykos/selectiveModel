@@ -90,3 +90,38 @@ test_that(".projection_matrix removes parallel vectors", {
 
   expect_true(sum(abs(res)) < 1e-6)
 })
+
+#########################
+
+## .sample_nullspace is correct
+
+test_that(".sample_nullspace works", {
+  set.seed(10)
+  mat <- .segments(10, c(3, 7))
+  res <- .sample_nullspace(mat, 2)
+
+  expect_true(is.numeric(res))
+  expect_true(is.matrix(res))
+  expect_true(all(dim(res) == c(10,2)))
+})
+
+test_that(".sample_nullspace gives vectors that are orthogonal to mat", {
+  set.seed(10)
+  mat <- .segments(10, c(3, 7))
+  res <- .sample_nullspace(mat, 3)
+
+  for(i in 1:3){
+    for(j in 1:3){
+      expect_true(abs(res[,i]%*%mat[j,]) < 1e-6)
+    }
+  }
+})
+
+test_that(".sample_nullspace gives vectors that are orthogonal", {
+  set.seed(10)
+  mat <- .segments(10, c(3, 7))
+  vec_mat <- .sample_nullspace(mat, 3)
+  res <- t(vec_mat)%*%vec_mat
+
+  expect_true(sum(abs(res - diag(3))) < 1e-6)
+})
