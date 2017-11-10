@@ -1,7 +1,6 @@
 #' Hit and run sampler
 #'
 #' @param y data
-#' @param seg_mean vector of segment means
 #' @param segments matrix created by \code{.segments}
 #' @param polyhedra \code{polyhedra} object
 #' @param num_samp number of desired samples from null distribution
@@ -9,24 +8,38 @@
 #' @param burn_in positive integer, where we sample \code{num_samp*burn_in}
 #' samples from the null distribution and return every \code{burn_in}th sample
 #' @param verbose boolean
+#' @param tol small positive number
+#' @param max_iter maximum number of iterations
 #'
 #' @return matrix with \code{num_samp} columns and \code{length(y)} rows
-.sampler_hit_run <- function(y, seg_mean, segments, polyhedra, num_samp,
-                             cores = NA, burn_in = 3, verbose = F){
+.sampler_hit_run <- function(y, segments, polyhedra, num_samp,
+                             cores = 1, burn_in = 3, tol = 1e-2, max_iter = 10){
+  doMC::registerDoMC(cores = cores)
+  n <- length(y)
+  num_col <- ceiling(num_samp*burn_in/cores)
 
-  #define a function that we'll be looping
+  func <- function(i){
+    mat <- matrix(0, ncol = num_col, nrow = n)
+    prev_y <- y
 
-  #initialize y
+    for(j in 1:num_col){
+      if(verbose & i == 1 & j %% floor(num_col/10) == 0) cat('*')
+      mat[,j] <- .hit_run_next_point(prev_y, segments, polyhedra, tol, max_iter)
+      prev_y <- mat[,j]
+    }
 
-  #compute v and w
+    mat
+  }
 
-  #compute radius function
+  i <- 0 #debugging reasons
+  y_new_mat <- do.call(cbind, foreach::"%dopar%"(foreach::foreach(i = 1:cores),
+                     func(i)))
 
-  #find range of radius function
+  seq_vec <- seq(burn_in, ncol(y_new_mat), by = burn_in)
+  stopifnot(length(seq_vec) < num_samp)
+  if(length(seq_vec) > num_samp) seq_vec <- seq_vec[1:num_samp]
 
-  #sample next y
-
-  #account for burn-in
+  y_new_mat[,seq_vec]
 }
 
 #' Output the next point for hit-and-run sampler

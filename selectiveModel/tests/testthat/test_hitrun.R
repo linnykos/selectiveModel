@@ -157,3 +157,9 @@ test_that(".hit_run_next_point gives a sample with the correct properties", {
                         .segment_means(res, segments))) < 1e-6)
   expect_true(abs(.l2norm(y) - .l2norm(res)) < 1e-6)
 })
+
+###########################
+
+## .sampler_hit_run is correct
+
+
