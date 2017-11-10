@@ -218,3 +218,52 @@ test_that(".theta_seq forms the correct filtration-like sequence", {
 
 ## .binary_search is correct
 
+test_that(".binary_search works", {
+  set.seed(10)
+  y <- rnorm(10)
+  obj <- binSegInf::binSeg_fixedSteps(y, 2)
+  poly <- binSegInf::polyhedra(obj)
+
+  v <- rnorm(10); w <- rnorm(10)
+  v <- v/.l2norm(v)
+  w <- .projection(w, v); w <- w/.l2norm(w)
+  theta <- .initial_theta(y, v, w)
+
+  res <- .binary_search(theta, theta+pi/2, y, v, w, poly)
+
+  expect_true(is.numeric(res))
+  expect_true(!is.matrix(res))
+  expect_true(length(res) == 1)
+})
+
+test_that(".binary_search returns a data vector in polyhedra", {
+  set.seed(10)
+  y <- rnorm(10)
+  obj <- binSegInf::binSeg_fixedSteps(y, 2)
+  poly <- binSegInf::polyhedra(obj)
+
+  v <- rnorm(10); w <- rnorm(10)
+  v <- v/.l2norm(v)
+  w <- .projection(w, v); w <- w/.l2norm(w)
+  theta <- .initial_theta(y, v, w)
+
+  res <- .binary_search(theta, theta+pi/2, y, v, w, poly)
+
+  expect_true(.try_polyhedra(.radians_to_data(res, y, v, w), poly))
+})
+
+test_that(".binary_search returns a radian on the boundary of the segment", {
+  set.seed(10)
+  y <- rnorm(10)
+  obj <- binSegInf::binSeg_fixedSteps(y, 2)
+  poly <- binSegInf::polyhedra(obj)
+
+  v <- rnorm(10); w <- rnorm(10)
+  v <- v/.l2norm(v)
+  w <- .projection(w, v); w <- w/.l2norm(w)
+  theta <- .initial_theta(y, v, w)
+
+  res <- .binary_search(theta, theta+pi/2, y, v, w, poly)
+
+  expect_true(!.try_polyhedra(.radians_to_data(res+pi/100, y, v, w), poly))
+})
