@@ -189,85 +189,6 @@ test_that(".try_polyhedra can FALSE when fixing l2 norm", {
   expect_true(!res)
 })
 
-##########################
-
-## .theta_seq is correct
-
-test_that(".theta_seq works", {
-  res <- .theta_seq(0, 3)
-  expect_true(is.numeric(res))
-  expect_true(!is.matrix(res))
-  expect_true(length(res) == 2^3)
-})
-
-test_that(".theta_seq forms the correct filtration-like sequence", {
-  res1 <- .theta_seq(0, 1)
-  res2 <- .theta_seq(0, 2)
-  res3 <- .theta_seq(0, 3)
-
-  expect_true(length(res1) + length(res2) + length(res3) ==
-                length(unique(c(res1, res2, res3))))
-
-  target <- seq(-pi/2, pi/2, length.out = 2^4+1)
-  target <- target[-c(1, length(target))]
-  target <- target[-which(target == 0)]
-  expect_true(sum(abs(sort(c(res1, res2, res3)) - target)) < 1e-6)
-})
-
-##########################
-
-## .binary_search is correct
-
-test_that(".binary_search works", {
-  set.seed(10)
-  y <- rnorm(10)
-  obj <- binSegInf::binSeg_fixedSteps(y, 2)
-  poly <- binSegInf::polyhedra(obj)
-
-  v <- rnorm(10); w <- rnorm(10)
-  v <- v/.l2norm(v)
-  w <- .projection(w, v); w <- w/.l2norm(w)
-  theta <- .initial_theta(y, v, w)
-
-  res <- .binary_search(theta, theta+pi/2, y, v, w, poly)
-
-  expect_true(is.numeric(res))
-  expect_true(!is.matrix(res))
-  expect_true(length(res) == 1)
-})
-
-test_that(".binary_search returns a data vector in polyhedra", {
-  set.seed(10)
-  y <- rnorm(10)
-  obj <- binSegInf::binSeg_fixedSteps(y, 2)
-  poly <- binSegInf::polyhedra(obj)
-
-  v <- rnorm(10); w <- rnorm(10)
-  v <- v/.l2norm(v)
-  w <- .projection(w, v); w <- w/.l2norm(w)
-  theta <- .initial_theta(y, v, w)
-
-  res <- .binary_search(theta, theta+pi/2, y, v, w, poly)
-
-  expect_true(.try_polyhedra(.radians_to_data(res, y, v, w), poly))
-})
-
-test_that(".binary_search returns a radian on the boundary of the segment", {
-  set.seed(10)
-  y <- rnorm(10)
-  obj <- binSegInf::binSeg_fixedSteps(y, 2)
-  poly <- binSegInf::polyhedra(obj)
-
-  v <- rnorm(10); w <- rnorm(10)
-  v <- v/.l2norm(v)
-  w <- .projection(w, v); w <- w/.l2norm(w)
-  theta <- .initial_theta(y, v, w)
-
-  res <- .binary_search(theta, theta+pi/2, y, v, w, poly)
-
-  expect_true(!.try_polyhedra(.radians_to_data(res+pi/100, y, v, w), poly))
-})
-
 ########################
 
 ## .range_theta_polyhedra is correct
@@ -286,12 +207,10 @@ test_that(".range_theta_polyhedra works", {
 
   expect_true(is.numeric(res))
   expect_true(!is.matrix(res))
-  expect_true(length(res) == 2)
-  expect_true(res[1] < res[2])
 })
 
-test_that(".range_theta_polyhedra can find the entire interval", {
-  set.seed(5)
+test_that(".range_theta_polyhedra returns correct theta's", {
+  set.seed(10)
   y <- rnorm(10)
   obj <- binSegInf::binSeg_fixedSteps(y, 2)
   poly <- binSegInf::polyhedra(obj)
@@ -302,87 +221,9 @@ test_that(".range_theta_polyhedra can find the entire interval", {
 
   res <- .range_theta_polyhedra(y, v, w, poly)
 
-  expect_true(sum(abs(res - c(-pi/2, pi/2))) < 1e-6)
-})
-
-test_that(".range_theta_polyhedra returns an interval with theta_init inside", {
-  trials <- 20
-  bool_vec <- sapply(1:trials, function(x){
-    set.seed(x)
-    y <- rnorm(10)
-    obj <- binSegInf::binSeg_fixedSteps(y, 2)
-    poly <- binSegInf::polyhedra(obj)
-
-    v <- rnorm(10); w <- rnorm(10)
-    v <- v/.l2norm(v)
-    w <- .projection(w, v); w <- w/.l2norm(w)
-
-    interval <- .range_theta_polyhedra(y, v, w, poly)
-    theta_init <- .initial_theta(y, v, w)
-
-    all(interval[1] <= theta_init & theta_init <= interval[2])
+  bool_vec <- sapply(res, function(x){
+    .try_polyhedra(.radians_to_data(x, y, v, w), poly)
   })
 
   expect_true(all(bool_vec))
 })
-
-test_that(".range_theta_polyhedra returns an interval with width less than pi", {
-  trials <- 20
-  bool_vec <- sapply(1:trials, function(x){
-    set.seed(x)
-    y <- rnorm(10)
-    obj <- binSegInf::binSeg_fixedSteps(y, 2)
-    poly <- binSegInf::polyhedra(obj)
-
-    v <- rnorm(10); w <- rnorm(10)
-    v <- v/.l2norm(v)
-    w <- .projection(w, v); w <- w/.l2norm(w)
-
-    interval <- .range_theta_polyhedra(y, v, w, poly)
-
-    (interval[2] - interval[1]) <= pi
-  })
-
-  expect_true(all(bool_vec))
-})
-
-test_that(".range_theta_polyhedra finds an appropriate interval", {
-  set.seed(15)
-  y <- rnorm(10)
-  obj <- binSegInf::binSeg_fixedSteps(y, 2)
-  poly <- binSegInf::polyhedra(obj)
-
-  v <- rnorm(10); w <- rnorm(10)
-  v <- v/.l2norm(v)
-  w <- .projection(w, v); w <- w/.l2norm(w)
-
-  res <- .range_theta_polyhedra(y, v, w, poly)
-
-  theta_init <- .initial_theta(y, v, w)
-  seq_vec <- seq(theta_init-pi/2, theta_init+pi/2, length.out = 20)
-
-  bool_vec <- sapply(1:length(seq_vec), function(i) {
-    bool1 <- all(res[1] <= seq_vec[i] & seq_vec[i] <= res[2])
-    bool2 <- .try_polyhedra(.radians_to_data(seq_vec[i], y, v, w), poly)
-    bool1 == bool2
-  })
-
-  expect_true(all(bool_vec))
-})
-
-test_that(".range_theta_polyhedra loads a problematic setting", {
-  load("../range_theta_polyhedra_case1.RData")
-  res <- .range_theta_polyhedra(y, v, w, poly)
-
-  theta_init <- .initial_theta(y, v, w)
-  seq_vec <- seq(theta_init-pi/2, theta_init+pi/2, length.out = 20)
-
-  bool_vec <- sapply(1:length(seq_vec), function(i) {
-    bool1 <- all(res[1] <= seq_vec[i] & seq_vec[i] <= res[2])
-    bool2 <- .try_polyhedra(.radians_to_data(seq_vec[i], y, v, w), poly)
-    bool1 == bool2
-  })
-
-  expect_true(all(bool_vec))
-})
-
