@@ -125,3 +125,35 @@ test_that(".sample_nullspace gives vectors that are orthogonal", {
 
   expect_true(sum(abs(res - diag(3))) < 1e-6)
 })
+
+##############################
+
+## .hit_run_next_point is correct
+
+test_that(".hit_run_next_point works", {
+  set.seed(15)
+  y <- rnorm(10)
+  obj <- binSegInf::binSeg_fixedSteps(y, 2)
+  poly <- binSegInf::polyhedra(obj)
+  segments <- .segments(length(y), jump_vec = binSegInf::jumps(obj))
+
+  res <- .hit_run_next_point(y, segments, poly)
+
+  expect_true(is.numeric(res))
+  expect_true(!is.matrix(res))
+  expect_true(length(res) == length(y))
+})
+
+test_that(".hit_run_next_point gives a sample with the correct properties", {
+  set.seed(10)
+  y <- rnorm(10)
+  obj <- binSegInf::binSeg_fixedSteps(y, 2)
+  poly <- binSegInf::polyhedra(obj)
+  segments <- .segments(length(y), jump_vec = binSegInf::jumps(obj))
+
+  res <- .hit_run_next_point(y, segments, poly)
+
+  expect_true(sum(abs(.segment_means(y, segments) -
+                        .segment_means(res, segments))) < 1e-6)
+  expect_true(abs(.l2norm(y) - .l2norm(res)) < 1e-6)
+})

@@ -31,13 +31,21 @@
 
 #' Output the next point for hit-and-run sampler
 #'
-#' @param seg_mean vector of segment means
+#' @param y data
 #' @param segments matrix created by \code{.segments}
-#' @param initial initial data vector
+#' @param polyhedra \code{polyhedra} object
+#' @param tol small positive number
+#' @param max_iter maximum number of iterations
 #'
 #' @return vector
-.hit_run_next_point <- function(seg_mean, segments, initial){
+.hit_run_next_point <- function(y, segments, polyhedra, tol = 1e-2, max_iter = 10){
+  stopifnot(ncol(segments) == length(y))
 
+  tmp <- .sample_nullspace(segments, 2)
+  v <- tmp[,1]; w <- tmp[,2]
+  interval <- .range_theta_polyhedra(y, v, w, polyhedra, tol, max_iter)
+  theta <- runif(1, interval[1], interval[2])
+  .radians_to_data(theta, y, v, w)
 }
 
 #' Projection of vector onto another vector
