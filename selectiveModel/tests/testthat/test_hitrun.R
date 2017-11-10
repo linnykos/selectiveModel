@@ -162,4 +162,12 @@ test_that(".hit_run_next_point gives a sample with the correct properties", {
 
 ## .sampler_hit_run is correct
 
+test_that(".sampler_hit_run works", {
+  set.seed(50)
+  y <- rnorm(10)
+  obj <- binSegInf::binSeg_fixedSteps(y, 2)
+  poly <- binSegInf::polyhedra(obj)
+  segments <- .segments(length(y), jump_vec = binSegInf::jumps(obj))
 
+  res <- .sampler_hit_run(y, segments, poly)
+})

@@ -370,3 +370,19 @@ test_that(".range_theta_polyhedra finds an appropriate interval", {
   expect_true(all(bool_vec))
 })
 
+test_that(".range_theta_polyhedra loads a problematic setting", {
+  load("../range_theta_polyhedra_case1.RData")
+  res <- .range_theta_polyhedra(y, v, w, poly)
+
+  theta_init <- .initial_theta(y, v, w)
+  seq_vec <- seq(theta_init-pi/2, theta_init+pi/2, length.out = 20)
+
+  bool_vec <- sapply(1:length(seq_vec), function(i) {
+    bool1 <- all(res[1] <= seq_vec[i] & seq_vec[i] <= res[2])
+    bool2 <- .try_polyhedra(.radians_to_data(seq_vec[i], y, v, w), poly)
+    bool1 == bool2
+  })
+
+  expect_true(all(bool_vec))
+})
+

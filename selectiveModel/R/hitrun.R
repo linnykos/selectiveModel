@@ -7,13 +7,15 @@
 #' @param cores umber of cores
 #' @param burn_in positive integer, where we sample \code{num_samp*burn_in}
 #' samples from the null distribution and return every \code{burn_in}th sample
-#' @param verbose boolean
 #' @param tol small positive number
 #' @param max_iter maximum number of iterations
+#' @param seed numeric to adjust the seed of each core
+#' @param verbose boolean
 #'
 #' @return matrix with \code{num_samp} columns and \code{length(y)} rows
-.sampler_hit_run <- function(y, segments, polyhedra, num_samp,
-                             cores = 1, burn_in = 3, tol = 1e-2, max_iter = 10){
+.sampler_hit_run <- function(y, segments, polyhedra, num_samp = 100,
+                             cores = 1, burn_in = 2, tol = 1e-2, max_iter = 10,
+                             seed = 1, verbose = F){
   doMC::registerDoMC(cores = cores)
   n <- length(y)
   num_col <- ceiling(num_samp*burn_in/cores)
@@ -23,6 +25,7 @@
     prev_y <- y
 
     for(j in 1:num_col){
+      set.seed((j^i)*seed)
       if(verbose & i == 1 & j %% floor(num_col/10) == 0) cat('*')
       mat[,j] <- .hit_run_next_point(prev_y, segments, polyhedra, tol, max_iter)
       prev_y <- mat[,j]
@@ -32,14 +35,16 @@
   }
 
   i <- 0 #debugging reasons
-  y_new_mat <- do.call(cbind, foreach::"%dopar%"(foreach::foreach(i = 1:cores),
+  y_mat <- do.call(cbind, foreach::"%dopar%"(foreach::foreach(i = 1:cores),
                      func(i)))
 
-  seq_vec <- seq(burn_in, ncol(y_new_mat), by = burn_in)
+  seq_vec <- seq(burn_in, ncol(y_mat), by = burn_in)
   stopifnot(length(seq_vec) < num_samp)
   if(length(seq_vec) > num_samp) seq_vec <- seq_vec[1:num_samp]
 
-  y_new_mat[,seq_vec]
+  y_mat <- y_mat[,seq_vec]
+  stopifnot(all(.try_polyhedra(y_mat, polyhedra)))
+  y_mat
 }
 
 #' Output the next point for hit-and-run sampler
@@ -58,7 +63,11 @@
   v <- tmp[,1]; w <- tmp[,2]
   interval <- .range_theta_polyhedra(y, v, w, polyhedra, tol, max_iter)
   theta <- runif(1, interval[1], interval[2])
-  .radians_to_data(theta, y, v, w)
+  y_new <- .radians_to_data(theta, y, v, w)
+
+  stopifnot(.try_polyhedra(y_new, polyhedra))
+
+  y_new
 }
 
 #' Projection of vector onto another vector
