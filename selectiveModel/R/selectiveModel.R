@@ -52,12 +52,12 @@ selected_model_inference <- function(y, fit_method, test_func, num_samp, sample_
 #' @return s-row matrix, where s is equal to \code{length(jump_vec+1)}
 .segments <- function(n, jump_vec){
   stopifnot(all(jump_vec >= 1), all(jump_vec <= n), all(jump_vec %% 1 == 0))
-  jump_vec <- unique(sort(c(jump_vec, n)))
+  jump_vec <- unique(sort(c(0,jump_vec, n)))
 
   len <- length(jump_vec)
   mat <- sapply(1:(len-1), function(x){
     vec <- rep(0, n)
-    vec[jump_vec[x]:jump_vec[(x+1)]] <- 1/(jump_vec[x+1]-jump_vec[x])
+    vec[(jump_vec[x]+1):jump_vec[(x+1)]] <- 1/(jump_vec[x+1]-jump_vec[x])
     vec
   })
 
