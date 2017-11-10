@@ -49,7 +49,10 @@
 #'
 #' @return vector
 .projection <- function(vec1, vec2){
-
+  stopifnot(length(vec1) == length(vec2))
+  d <- length(vec1)
+  vec2 <- vec2/.l2norm(vec2)
+  as.numeric((diag(d) - vec2%*%t(vec2))%*%vec1)
 }
 
 #' Projection of vector onto rows of a matrix

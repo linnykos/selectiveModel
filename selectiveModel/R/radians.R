@@ -25,7 +25,7 @@
 #'
 #' @return numeric
 .radius <- function(theta, y, v, w){
-  -2*t(y)*(v*sin(theta)+w*cos(theta))
+  -2*as.numeric(t(y)*(v*sin(theta)+w*cos(theta)))
 }
 
 #' Compute the arctan to find the initial theta
