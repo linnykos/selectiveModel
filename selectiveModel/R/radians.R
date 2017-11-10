@@ -10,10 +10,45 @@
 #' @param w unit vector orthogonal to \code{v}
 #' @param polyhedra \code{polyhedra} object
 #' @param tol small positive number
+#' @param max_iter maximum number of iterations
 #'
 #' @return vector of 2 radians, the first being smaller than the other
-.range_theta_polyhedra <- function(y, v, w, polyhedra, tol = 1e-2){
+.range_theta_polyhedra <- function(y, v, w, polyhedra, tol = 1e-2, max_iter = 10){
+  stopifnot(.try_polyhedra(y, polyhedra))
+  stopifnot(abs(.l2norm(v) - 1) < 1e-4,  abs(.l2norm(w) - 1) < 1e-4, abs(v%*%w) < 1e-4)
 
+  #find initial theta and try theta+pi/2
+  theta <- .initial_theta(y, v, w)
+  bool <- .try_polyhedra(.radians_to_data(theta+pi/2, y, v, w), polyhedra)
+
+  #if theta+pi/2 is TRUE, repeatly refining grid until we find a FALSE theta
+  if(bool){
+    iter <- 1
+    while(TRUE){
+      theta_vec <- .theta_seq(theta, iter)
+      y_mat <- sapply(theta_vec, .radians_to_data, y, v, w)
+      bool_vec <- .try_polyhedra(y_mat, polyhedra)
+
+      if(any(!bool_vec)){
+        theta_end <- theta_vec[which(!bool_vec)]
+        theta_start1 <- theta_end - pi/(iter+1); theta_start2 <- theta_end + pi/(iter+1)
+        break()
+      } else {
+        if(pi/(iter+1) < tol | iter > max_iter) return(c(-pi/2, pi/2))
+      }
+      iter <- iter+1
+    }
+  } else {
+    theta_end <- theta-pi/2; theta_start1 <- theta-pi; theta_start2 <- theta
+  }
+
+  #perform two binary searchs
+  endpoint1 <- .binary_search(theta_start1, theta_end, y, v, w, polyhedra,
+                              tol, max_iter)
+  endpoint2 <- .binary_search(theta_start2, theta_end, y, v, w, polyhedra,
+                              tol, max_iter)
+
+  c(endpoint2, endpoint1+pi)
 }
 
 #' Radius function
