@@ -90,12 +90,22 @@
 #' Construct the interval of radians
 #'
 #' Output is always a vector of length four. We are representing the
-#' interval as two distinct intervals. The first two numbers represent
-#' the interval as a subset of \code{c(-pi/2,0)}. The last two numbers
+#' interval as two distinct intervals. The first four numbers represent
+#' the interval as a subset of \code{c(-pi/2,0)}. The last four numbers
 #' represent the interval as a subset of \code{c(0, pi/2)}.
-#' In each pair, the first number is always smaller than the second.
 #'
-#' If an interval does not intersect with (say)  \code{c(-pi/2,0)}, two \code{NA}s
+#' Each of the four numbers are two pairs, and all four numbers are
+#' in increasing order. For example, if the interval \code{c(-pi/2, -pi/3)}
+#' and \code{c(-pi/4, 0)} were to be expressed, the four numbers would be
+#' \code{c(-pi/2, -pi/3, -pi/4, 0)}. If the interval \code{c(-pi/2, -pi/3)}
+#' were to be expressed, the four numbers would be \code{c(-pi/2, -pi/3, NA, NA)}.
+#' If the interval \code{c(-pi/2, 0)} were to be expressed, the interval would be
+#' \code{c(-pi/2, -pi/4, -pi/4, 0)} by default.
+#'
+#' In short, for every four numbers, the first is always -pi/2, 0, or \code{NA},
+#' while the last is always 0, pi/2, or \code{NA}.
+#'
+#' If an interval does not intersect with (say)  \code{c(-pi/2,0)}, four \code{NA}s
 #' are placed there instead.
 #'
 #' \code{theta} is a radian that is guaranteed to be "in" the interval.
@@ -103,21 +113,21 @@
 #' @param endpoints vector of length 2
 #' @param theta numeric
 #'
-#' @return vector of length 4
+#' @return vector of length 8
 .construct_interval <- function(endpoints, theta){
 
 }
 
 #' Intersect intervals
 #'
-#' \code{mat} is a 4-column matrix formed by concatenating
+#' \code{mat} is a 8-column matrix formed by concatenating
 #' \code{.construct_interval} row-wise.
 #'
 #' Returns a matrix with 2 columns, where each row represents a
 #' closed, connected interval of radians. The union of the rows represents
 #' the intersection of all the intervals.
 #'
-#' @param mat matrix with 4 columns
+#' @param mat matrix with 8 columns
 #'
 #' @return matrix
 .intersect_intervals <- function(mat){
