@@ -119,3 +119,43 @@ test_that(".radians_to_data preserves the l2 norm", {
 
   expect_true(all(bool_vec))
 })
+
+##########################
+
+## .try_polyhedra is correct
+
+test_that(".try_polyhedra works", {
+  set.seed(10)
+  y <- rnorm(10)
+  obj <- binSegInf::binSeg_fixedSteps(y, 2)
+  poly <- binSegInf::polyhedra(obj)
+
+  y_mat <- matrix(rnorm(50), ncol = 5)
+  res <- .try_polyhedra(y_mat, poly)
+
+  expect_true(is.logical(res))
+  expect_true(length(res) == ncol(y_mat))
+})
+
+test_that(".try_polyhedra corrects assess if y is in the polyhedra", {
+  set.seed(10)
+  y <- rnorm(5)
+  obj <- binSegInf::binSeg_fixedSteps(y, 1)
+  poly <- binSegInf::polyhedra(obj)
+
+  y_mat <- matrix(rnorm(500), ncol = 100)
+  res <- .try_polyhedra(y_mat, poly)
+
+  bool_vec <- sapply(1:100, function(x){
+    all(poly$gamma %*% y_mat[,x] >= poly$u)
+  })
+
+  bool_vec2 <- sapply(1:100, function(x){
+    obj2 <- binSegInf::binSeg_fixedSteps(y_mat[,x], 1)
+    all(all(binSegInf::jumps(obj) == binSegInf::jumps(obj2)),
+        all(sign(binSegInf::jump_cusum(obj)) == sign(binSegInf::jump_cusum(obj2))))
+  })
+
+  expect_true(all(res == bool_vec))
+  expect_true(all(res == bool_vec2))
+})

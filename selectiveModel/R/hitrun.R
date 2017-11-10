@@ -90,7 +90,7 @@
 
   n <- ncol(mat)
   vec_mat <- sapply(1:num_vec, function(x){
-    vec <- rnorm(n)
+    vec <- stat::rnorm(n)
     .projection_matrix(vec, mat)
   })
 

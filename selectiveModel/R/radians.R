@@ -53,12 +53,25 @@
 
 #' Determine if each y is in polyhedra
 #'
-#' @param y_mat matrix where each column represents a different sample
+#' @param y_mat matrix where each column represents a different sample, or
+#' a vector
 #' @param polyhedra \code{polyhedra} object
 #'
-#' @return vector of booleans, one for each column of \code{y_mat}
+#' @return vector of booleans, one for each column of \code{y_mat} (or just one)
 .try_polyhedra <- function(y_mat, polyhedra){
+  if(is.matrix(y_mat)){
+    stopifnot(ncol(polyhedra$gamma) == nrow(y_mat))
+  } else {
+    stopifnot(ncol(polyhedra$gamma) == length(y_mat))
+  }
 
+  res <- polyhedra$gamma %*% y_mat
+
+  if(is.matrix(y_mat)){
+    sapply(1:ncol(res), function(x){all(res[,x] >= polyhedra$u)})
+  } else {
+    all(res >= polyhedra$u)
+  }
 }
 
 #' Perform binary search to determine cutoff point
