@@ -87,4 +87,10 @@
   }
 }
 
+intersect_intervals <- function(mat){
 
+}
+
+.euclidean_to_radian <- function(x, y){
+
+}
