@@ -25,7 +25,7 @@
 #'
 #' @return numeric
 .radius <- function(theta, y, v, w){
-
+  -2*t(y)*(v*sin(theta)+w*cos(theta))
 }
 
 #' Compute the arctan to find the initial theta
@@ -36,7 +36,7 @@
 #'
 #' @return radians between -pi/2 and pi/2.
 .initial_theta <- function(y, v, w){
-
+  atan(-(t(y)%*%v)/(t(y)%*%w))
 }
 
 #' Convert radians into a sample
@@ -48,7 +48,7 @@
 #'
 #' @return vector with length of \code{length(y)}
 .radians_to_data <- function(theta, y, v, w){
-
+  y + .radius(theta, y, v, w)*(sin(theta)*v + cos(theta)*w)
 }
 
 #' Determine if each y is in polyhedra
