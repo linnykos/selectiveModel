@@ -46,15 +46,23 @@
 
 #' Quadratic formula
 #'
-#' The function always return a vector of length two. If no roots
-#' are found, both values are \code{NA}. If only one root is found, the value
-#' is repeated twice.
+#' The function returns a vector of length two if there are two roots,
+#' the first smaller than the second. If there is only one root, then only
+#' one numeric is returned. If no roots are found, then \code{NA} is returned.
 #'
 #' @param a numeric
 #' @param b numeric
 #' @param c numeric
+#' @param tol small positive number
 #'
 #' @return vector of length 2
-.quadratic <- function(a, b, c){
+.quadratic <- function(a, b, c, tol = 1e-4){
+  stopifnot(is.numeric(a), is.numeric(b), is.numeric(c))
+  stopifnot(length(c(a,b,c)) == 3)
 
+ term <- b^2 - 4*a*c
+ if(term < 0) return(NA)
+ if(abs(term) < tol) return(-b/(2*a))
+
+ sort(c((-b-term)/(2*a), (-b+term)/(2*a)))
 }
