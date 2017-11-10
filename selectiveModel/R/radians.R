@@ -12,7 +12,7 @@
 #' @param tol small positive number
 #'
 #' @return vector of 2 radians, the first being smaller than the other
-.range_theta_polyhedra <- function(y, v, w, polyhedra, tol = 1e-4){
+.range_theta_polyhedra <- function(y, v, w, polyhedra, tol = 1e-2){
 
 }
 
@@ -90,22 +90,23 @@
 #' @param tol small positive number
 #'
 #' @return radians
-.binary_search <- function(theta_start, theta_end, y, v, w, polyhedra, tol = 1e-4){
+.binary_search <- function(theta_start, theta_end, y, v, w, polyhedra, tol = 1e-2){
 
 }
 
 #' Creates a vector of theta's
 #'
-#' Creates a vector of thetas to try starting at \code{theta_start}
-#' (includsive) to \code{theta_end} (exclusive) based on \code{generation}.
+#' Creates a vector of thetas to try starting at \code{theta-pi/2}
+#' (includsive) to \code{theta+pi/2} (exclusive) based on \code{generation}.
 #'
-#' @param theta_start radians
-#' @param theta_end radians
+#' @param theta radians
 #' @param generation positive integer
 #'
 #' @return vector of radians
-.theta_seq <- function(theta_start, theta_end, generation){
-
+.theta_seq <- function(theta = 0, generation = 1){
+  vec <- seq(theta-pi/2, theta+pi/2, length.out = 2^(generation+1)+1)
+  n <- length(vec)
+  vec[seq(2, n, by = 2)]
 }
 
 
