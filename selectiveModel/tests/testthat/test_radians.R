@@ -80,3 +80,42 @@ test_that(".initial_theta gives the proper theta", {
 
   expect_true(sum(abs(y - res)) < 1e-6)
 })
+
+###########################
+
+## .radians_to_data is correct
+
+test_that(".radians_to_data works", {
+  set.seed(5)
+  y <- rnorm(10)
+  v <- rnorm(10); w <- rnorm(10)
+  v <- v/.l2norm(v)
+  w <- .projection(w, v); w <- w/.l2norm(w)
+
+  res <- .radians_to_data(0, y, v, w)
+
+  expect_true(is.numeric(res))
+  expect_true(!is.matrix(res))
+  expect_true(length(res) == 10)
+})
+
+test_that(".radians_to_data preserves the l2 norm", {
+  trials <- 100
+  set.seed(5)
+  y <- rnorm(10)
+  target <- .l2norm(y)
+
+  bool_vec <- sapply(1:trials, function(x){
+    set.seed(x)
+    v <- rnorm(10); w <- rnorm(10)
+    v <- v/.l2norm(v)
+    w <- .projection(w, v); w <- w/.l2norm(w)
+    theta <- runif(1, -pi/2, pi/2)
+    ynew <- .radians_to_data(theta, y, v, w)
+
+    res <- .l2norm(ynew)
+    ifelse(abs(target - res) < 1e-6, TRUE, FALSE)
+  })
+
+  expect_true(all(bool_vec))
+})
