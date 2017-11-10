@@ -160,6 +160,35 @@ test_that(".try_polyhedra corrects assess if y is in the polyhedra", {
   expect_true(all(res == bool_vec2))
 })
 
+test_that(".try_polyhedra works for a single vector", {
+  set.seed(10)
+  y <- rnorm(5)
+  obj <- binSegInf::binSeg_fixedSteps(y, 1)
+  poly <- binSegInf::polyhedra(obj)
+  y_new <- rnorm(5)
+
+  res <- .try_polyhedra(y_new, poly)
+  expect_true(is.logical(res))
+  expect_true(length(res) == 1)
+})
+
+test_that(".try_polyhedra can FALSE when fixing l2 norm", {
+  set.seed(10)
+  y <- rnorm(10)
+  obj <- binSegInf::binSeg_fixedSteps(y, 2)
+  poly <- binSegInf::polyhedra(obj)
+
+  v <- rnorm(10); w <- rnorm(10)
+  v <- v/.l2norm(v)
+  w <- .projection(w, v); w <- w/.l2norm(w)
+  theta <- .initial_theta(y, v, w)
+
+  y_new <- .radians_to_data(theta + pi/2, y, v, w)
+
+  res <- .try_polyhedra(y_new, poly)
+  expect_true(!res)
+})
+
 ##########################
 
 ## .theta_seq is correct
@@ -184,3 +213,8 @@ test_that(".theta_seq forms the correct filtration-like sequence", {
   target <- target[-which(target == 0)]
   expect_true(sum(abs(sort(c(res1, res2, res3)) - target)) < 1e-6)
 })
+
+##########################
+
+## .binary_search is correct
+

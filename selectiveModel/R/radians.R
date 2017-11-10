@@ -88,10 +88,29 @@
 #' @param w unit vector orthogonal to \code{v}
 #' @param polyhedra \code{polyhedra} object
 #' @param tol small positive number
+#' @param max_iter maximum number of iterations
 #'
 #' @return radians
-.binary_search <- function(theta_start, theta_end, y, v, w, polyhedra, tol = 1e-2){
+.binary_search <- function(theta_start, theta_end, y, v, w, polyhedra,
+                           tol = 1e-2, max_iter = 10){
+  mat <- cbind(.radians_to_data(theta_start, y, v, w),
+               .radians_to_data(theta_end, y, v, w))
+  stopifnot(all(.try_polyhedra(mat, polyhedra) == c(TRUE, FALSE)))
 
+  iter <- 1
+  while(TRUE){
+    if(iter > max_iter) break()
+
+    mid <- (theta_start + theta_end)/2
+    bool <- .try_polyhedra(.radians_to_data(mid, y, v, w), polyhedra)
+
+    if(bool) theta_start <- mid else theta_end <- mid
+
+    if(abs(theta_start - theta_end) < tol) break()
+    iter <- iter + 1
+  }
+
+  theta_start
 }
 
 #' Creates a vector of theta's
