@@ -60,7 +60,7 @@
   tmp <- .sample_nullspace(segments, 2)
   v <- tmp[,1]; w <- tmp[,2]
   theta_vec <- .range_theta_polyhedra(y, v, w, polyhedra, attempts)
-  theta <- sample(theta_vec, 1)
+  theta <- ifelse(length(theta_vec) > 1, sample(theta_vec, 1), theta_vec)
   y_new <- .radians_to_data(theta, y, v, w)
 
   stopifnot(.try_polyhedra(y_new, polyhedra))

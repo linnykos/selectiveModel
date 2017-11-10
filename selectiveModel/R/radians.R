@@ -16,17 +16,17 @@
 
   #create possible theta's
   theta <- .initial_theta(y, v, w)
-  seq_vec <- seq(theta-pi/2, theta+pi/2, length.out = attempts + 1)
-  seq_vec <- sort(unique(c(seq_vec[-length(seq_vec)], theta)))
+  theta_vec <- seq(theta-pi/2, theta+pi/2, length.out = attempts + 1)
+  theta_vec <- sort(unique(c(theta_vec[-length(theta_vec)], theta)))
 
   #try each theta
-  y_mat <- sapply(seq_vec, function(x){
+  y_mat <- sapply(theta_vec, function(x){
     .radians_to_data(x, y, v, w)
   })
   bool_vec <- .try_polyhedra(y_mat, polyhedra)
 
   stopifnot(sum(bool_vec) >= 1)
-  seq_vec[which(bool_vec)]
+  theta_vec[which(bool_vec)]
 }
 
 #' Radius function
