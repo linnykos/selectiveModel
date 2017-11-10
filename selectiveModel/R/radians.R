@@ -25,7 +25,7 @@
 #'
 #' @return numeric
 .radius <- function(theta, y, v, w){
-  -2*as.numeric(t(y)*(v*sin(theta)+w*cos(theta)))
+  -2*as.numeric(t(y)%*%(v*sin(theta)+w*cos(theta)))
 }
 
 #' Compute the arctan to find the initial theta
@@ -36,7 +36,7 @@
 #'
 #' @return radians between -pi/2 and pi/2.
 .initial_theta <- function(y, v, w){
-  atan(-(t(y)%*%v)/(t(y)%*%w))
+  atan(-as.numeric(t(y)%*%w)/as.numeric(t(y)%*%v))
 }
 
 #' Convert radians into a sample
