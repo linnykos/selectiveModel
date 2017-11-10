@@ -46,10 +46,12 @@
 #'
 #' @param vec1 vector
 #' @param vec2 vector
+#' @param tol small positive number
 #'
 #' @return vector
-.projection <- function(vec1, vec2){
+.projection <- function(vec1, vec2, tol = 1e-6){
   stopifnot(length(vec1) == length(vec2))
+
   d <- length(vec1)
   vec2 <- vec2/.l2norm(vec2)
   as.numeric((diag(d) - vec2%*%t(vec2))%*%vec1)
@@ -65,13 +67,11 @@
 #'
 #' @return vector
 .projection_matrix <- function(vec, mat){
-  stopifnot(length(vec) == ncol(mat))
+  stopifnot(length(vec) == ncol(mat), ncol(mat) >= nrow(mat))
+  d <- length(vec)
+  proj_mat <- diag(d) - t(mat) %*% solve(mat %*% t(mat)) %*% mat
 
-  for(i in 1:nrow(mat)){
-    vec <- .projection(vec, mat[i,])
-  }
-
-  vec
+  as.numeric(proj_mat %*% vec)
 }
 
 #' Sample vectors from the null space of a matrix
