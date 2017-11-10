@@ -65,7 +65,13 @@
 #'
 #' @return vector
 .projection_matrix <- function(vec, mat){
+  stopifnot(length(vec) == ncol(mat))
 
+  for(i in 1:nrow(mat)){
+    vec <- .projection(vec, mat[i,])
+  }
+
+  vec
 }
 
 #' Sample vectors from the null space of a matrix
