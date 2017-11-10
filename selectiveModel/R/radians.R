@@ -87,10 +87,50 @@
   }
 }
 
-intersect_intervals <- function(mat){
+#' Construct the interval of radians
+#'
+#' Output is always a vector of length four. We are representing the
+#' interval as two distinct intervals. The first two numbers represent
+#' the interval as a subset of \code{c(-pi/2,0)}. The last two numbers
+#' represent the interval as a subset of \code{c(0, pi/2)}.
+#' In each pair, the first number is always smaller than the second.
+#'
+#' If an interval does not intersect with (say)  \code{c(-pi/2,0)}, two \code{NA}s
+#' are placed there instead.
+#'
+#' \code{theta} is a radian that is guaranteed to be "in" the interval.
+#'
+#' @param endpoints vector of length 2
+#' @param theta numeric
+#'
+#' @return vector of length 4
+.construct_interval <- function(endpoints, theta){
 
 }
 
+#' Intersect intervals
+#'
+#' \code{mat} is a 4-column matrix formed by concatenating
+#' \code{.construct_interval} row-wise.
+#'
+#' Returns a matrix with 2 columns, where each row represents a
+#' closed, connected interval of radians. The union of the rows represents
+#' the intersection of all the intervals.
+#'
+#' @param mat matrix with 4 columns
+#'
+#' @return matrix
+.intersect_intervals <- function(mat){
+
+}
+
+#' Convert euclidean into radians
+#'
+#' @param x numeric
+#' @param y numeric
+#'
+#' @return radian
+#' @export
 .euclidean_to_radian <- function(x, y){
 
 }
