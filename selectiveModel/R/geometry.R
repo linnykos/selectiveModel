@@ -25,20 +25,11 @@
 .point_on_plane <- function(plane){
   d <- length(plane$a)
   vec <- rep(0, d)
-  idx <- which(plane$a == 0)
-  if(length(idx) > 0) {
-    vec[idx] <- 0
-    idx <- c(1:d)[-idx]
-  } else {
-    idx <- 1:d
-  }
-
-  #set all coordinates to 1 except last
-  len <- length(idx)
-  vec[idx[1:(len-1)]] <- 1
-
-  #solve for last coordinate
-  vec[idx[len]] <- as.numeric(plane$b - plane$a[-idx[len]]%*%vec[-idx[len]])/plane$a[idx[len]]
+  idx <- which(plane$a != 0)
+  stopifnot(length(idx) >= 1)
+  idx <- idx[1]
+  vec[-idx] <- 1
+  vec[idx] <- as.numeric(plane$b - plane$a[-idx]%*%vec[-idx])/plane$a[idx]
 
   vec
 }
