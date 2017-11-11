@@ -6,28 +6,54 @@
 #' @return a \code{circle} object
 .circle <- function(center, radius){
 
+  structure(list(center = center, radius = radius), class = "circle")
 }
 
-#' Construct a 2-d line class
+#' Construct a plane
 #'
-#' Line is of form \code{t(a)%*%x = b}.
+#' Plane is of form \code{t(a)%*%x = b}.
 #'
-#' @param a vector of length 2
-#' @param b vector of length 2
+#' @param a vector
+#' @param b vector
 #'
 #' @return a \code{line} object
-.line <- function(a, b){
-
+.plane <- function(a, b = 0){
+  stopifnot(length(b) == 1)
+  structure(list(a = a, b = b), class = "plane")
 }
 
-#' Compute euclidean distance from point to line
+.point_on_plane <- function(plane){
+  d <- length(plane$a)
+  vec <- rep(0, d)
+  idx <- which(plane$a == 0)
+  if(length(idx) > 0) {
+    vec[idx] <- 0
+    idx <- c(1:d)[-idx]
+  } else {
+    idx <- 1:d
+  }
+
+  #set all coordinates to 1 except last
+  len <- length(idx)
+  vec[idx[1:(len-1)]] <- 1
+
+  #solve for last coordinate
+  vec[idx[len]] <- as.numeric(plane$b - plane$a[-idx[len]]%*%vec[-idx[len]])/plane$a[idx[len]]
+
+  vec
+}
+
+#' Compute euclidean distance from point to plane
 #'
-#' @param line \code{line} object
-#' @param point vector of length 2
+#' @param point vector
+#' @param plane \code{plane} object
+#'
 #'
 #' @return numeric
-.distance_point_to_line <- function(line, point){
-
+#' @source \url{https://en.wikipedia.org/wiki/Distance_from_a_point_to_a_plane}
+.distance_point_to_plane <- function(point, plane){
+  x <- .point_on_plane(plane)
+  .l2norm((point - x)%*%plane$a)/.l2norm(plane$a)
 }
 
 #' Intersect circle with line

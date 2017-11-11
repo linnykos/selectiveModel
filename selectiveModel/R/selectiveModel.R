@@ -76,5 +76,5 @@ selected_model_inference <- function(y, fit_method, test_func, num_samp, sample_
 }
 
 .l2norm <- function(vec){
-  sqrt(sum(vec^2))
+  as.numeric(sqrt(sum(vec^2)))
 }
