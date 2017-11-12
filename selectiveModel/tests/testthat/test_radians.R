@@ -227,3 +227,33 @@ test_that(".range_theta_polyhedra returns correct theta's", {
 
   expect_true(all(bool_vec))
 })
+
+##########################
+
+## .euclidean_to_radian is correct
+
+test_that(".euclidean_to_radian works", {
+  circle <- .circle(center = c(1,1), radius = sqrt(2))
+  point <- c(1,1+sqrt(2))
+  res <- .euclidean_to_radian(circle, point)
+
+  expect_true(is.numeric(res))
+  expect_true(!is.matrix(res))
+  expect_true(length(res) == 1)
+  expect_true(res <= pi/2)
+  expect_true(res >= -pi/2)
+})
+
+test_that(".euclidean_to_radian works with the origin", {
+  circle <- .circle(center = c(1,1), radius = sqrt(2))
+  point <- c(0,0)
+  res <- .euclidean_to_radian(circle, point)
+
+  expect_true(abs(2*(sin(res)*1+ cos(res)*1)) < 1e-6)
+})
+
+test_that(".euclidean_to_radian can return a rad where the radius is negative", {
+  circle <- .circle(center = c(1,1), radius = sqrt(2))
+  point <- c(1-sqrt(2), 1)
+  res <- .euclidean_to_radian(circle, point)
+})

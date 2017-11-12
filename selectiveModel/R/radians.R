@@ -134,13 +134,37 @@
 
 }
 
-#' Convert euclidean into radians
+#' Convert euclidean points on circle into radians
 #'
-#' @param x numeric
-#' @param y numeric
+#' Only works if the circle is of the form: (x-a)^2 + (y-b)^2 = a^2+b^2.
+#'
+#' @param circle \code{circle} object
+#' @param point point on circle, as a vector of length 2
 #'
 #' @return radian
-#' @export
-.euclidean_to_radian <- function(x, y){
+.euclidean_to_radian <- function(circle, point, tol = 1e-6){
+  stopifnot(length(point) == 2, length(circle$center) == 2)
+  stopifnot(abs(circle$radius^2 - sum(circle$center^2)) < tol)
+  stopifnot(abs(sum((point-circle$center)^2) - circle$radius^2) < tol)
 
+  if(point[2] != 0){
+    theta <- atan(point[1]/point[2])
+  } else {
+    theta <- atan(-circle$center[2]/circle$center[1])
+  }
+
+  #check to see which period theta should be in
+  theta_vec <- c(theta, ifelse(theta > 0, theta-pi/2, theta+pi/2))
+  rad_vec <- 2*(sin(theta_vec)*circle$center[1] + cos(theta_vec)*circle$center[2])
+  mat <- sapply(1:length(rad_vec), function(x){
+    rad_vec[x]*c(sin(theta_vec[x]), cos(theta_vec[x]))
+  })
+  dist_vec <- apply(mat, 2, function(x){
+    .l2norm(x - point)
+  })
+
+  stopifnot(min(dist_vec) < tol)
+  idx <- which.min(dist_vec)
+
+  theta_vec[idx]
 }
