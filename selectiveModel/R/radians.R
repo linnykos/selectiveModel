@@ -49,6 +49,7 @@
 #'
 #' @return radians between -pi/2 and pi/2.
 .initial_theta <- function(y, v, w){
+  stopifnot(as.numeric(t(y)%*%v) != 0)
   atan(-as.numeric(t(y)%*%w)/as.numeric(t(y)%*%v))
 }
 
@@ -114,8 +115,53 @@
 #' @param theta numeric
 #'
 #' @return vector of length 8
-.construct_interval <- function(endpoints, theta){
+.interval <- function(endpoints, theta){
+  stopifnot(all(c(endpoints, theta) <= pi/2), all(c(endpoints, theta) >= -pi/2))
 
+  interval <- .basic_interval(endpoints, theta)
+  interval <- .partition_interval(interval)
+}
+
+.basic_interval <- function(endpoints, theta){
+  endpoints <- sort(endpoints)
+  if(endpoints[1] <= theta & theta <= endpoints[2]){
+    endpoints
+  } else {
+    c(endpoints[2], endpoints[1]+pi)
+  }
+}
+
+#' Title
+#'
+#' This function depends heavily on the representation used in
+#' \code{.basic_interval}.
+#'
+#' @param interval
+#'
+#' @return 2-column matrix
+.partition_interval <- function(interval){
+  stopifnot(interval[1] < interval[2])
+  a <- interval[1]; b <- interval[b]
+  case <- abs(floor(a/(pi/2)) - floor(b/(pi/2)))
+  if(case == 0) {
+    mat <- matrix(c(a,b), ncol = 2)
+  } else if (case == 1){
+    if(a < 0) {
+      mat <- rbind(c(a, 0), c(0, b))
+    } else {
+      mat <- rbind(c(-pi/2, b-pi), c(a, pi/2))
+    }
+  } else {
+    stopifnot(b-a >= pi/2)
+    if(a < 0){
+      mat <- rbind(c(-pi/2, a), c(0, pi/2), c(b-pi, a))
+    } else {
+      mat <- rbind(c(-pi/2, 0), c(0, a), c(b-pi, pi/2))
+    }
+  }
+
+  stopifnot(all(as.numeric(t(mat)) == sort(as.numeric(t(mat)))))
+  mat
 }
 
 #' Intersect intervals

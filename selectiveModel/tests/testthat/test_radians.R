@@ -268,3 +268,20 @@ test_that(".euclidean_to_radian returns the correct theta", {
 
   expect_true(all(bool_vec))
 })
+
+test_that(".euclidean_to_radian works with .intersect_circle_line", {
+  set.seed(10)
+  plane <- .plane(rnorm(2), b = 0)
+  center <- rnorm(2)
+  circle <- .circle(center = center, radius = sqrt(sum(center^2)))
+  points <- .intersect_circle_line(plane, circle)
+
+  theta <- apply(points, 1, function(x){
+    .euclidean_to_radian(circle, x)
+  })
+
+  expect_true(all(theta <= pi/2))
+  expect_true(all(theta >= -pi/2))
+  expect_true(is.numeric(theta))
+  expect_true(length(theta) == 2)
+})
