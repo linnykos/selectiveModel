@@ -257,12 +257,13 @@ test_that(".euclidean_to_radian returns the correct theta", {
   bool_vec <- sapply(1:trials, function(x){
     center <- rnorm(2)
     circle <- .circle(center = center, radius = sqrt(sum(center^2)))
-    rad <- runif(1,-pi/2, pi/2)
+    rad <- runif(1, -2*pi, 2*pi)
     point <- 2*(sin(rad)*center[1] + cos(rad)*center[2])*c(sin(rad), cos(rad))
 
     res <- .euclidean_to_radian(circle, point)
+    point2 <- 2*(sin(res)*center[1] + cos(res)*center[2])*c(sin(res), cos(res))
 
-    ifelse(abs(res - rad) < 1e-6, TRUE, FALSE)
+    ifelse(.l2norm(point - point2) < 1e-6, TRUE, FALSE)
   })
 
   expect_true(all(bool_vec))
