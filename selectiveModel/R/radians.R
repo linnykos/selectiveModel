@@ -148,23 +148,8 @@
   stopifnot(abs(sum((point-circle$center)^2) - circle$radius^2) < tol)
 
   if(point[2] != 0){
-    theta <- atan(point[1]/point[2])
+    atan(point[1]/point[2])
   } else {
-    theta <- atan(-circle$center[2]/circle$center[1])
+    atan(-circle$center[2]/circle$center[1])
   }
-
-  #check to see which period theta should be in
-  theta_vec <- c(theta, ifelse(theta > 0, theta-pi/2, theta+pi/2))
-  rad_vec <- 2*(sin(theta_vec)*circle$center[1] + cos(theta_vec)*circle$center[2])
-  mat <- sapply(1:length(rad_vec), function(x){
-    rad_vec[x]*c(sin(theta_vec[x]), cos(theta_vec[x]))
-  })
-  dist_vec <- apply(mat, 2, function(x){
-    .l2norm(x - point)
-  })
-
-  stopifnot(min(dist_vec) < tol)
-  idx <- which.min(dist_vec)
-
-  theta_vec[idx]
 }

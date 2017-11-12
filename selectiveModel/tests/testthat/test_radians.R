@@ -252,8 +252,18 @@ test_that(".euclidean_to_radian works with the origin", {
   expect_true(abs(2*(sin(res)*1+ cos(res)*1)) < 1e-6)
 })
 
-test_that(".euclidean_to_radian can return a rad where the radius is negative", {
-  circle <- .circle(center = c(1,1), radius = sqrt(2))
-  point <- c(1-sqrt(2), 1)
-  res <- .euclidean_to_radian(circle, point)
+test_that(".euclidean_to_radian returns the correct theta", {
+  trials <- 100
+  bool_vec <- sapply(1:trials, function(x){
+    center <- rnorm(2)
+    circle <- .circle(center = center, radius = sqrt(sum(center^2)))
+    rad <- runif(1,-pi/2, pi/2)
+    point <- 2*(sin(rad)*center[1] + cos(rad)*center[2])*c(sin(rad), cos(rad))
+
+    res <- .euclidean_to_radian(circle, point)
+
+    ifelse(abs(res - rad) < 1e-6, TRUE, FALSE)
+  })
+
+  expect_true(all(bool_vec))
 })
