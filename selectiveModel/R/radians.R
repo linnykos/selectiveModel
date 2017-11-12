@@ -131,17 +131,18 @@
   }
 }
 
-#' Title
+#' Partition an interval of radians
 #'
 #' This function depends heavily on the representation used in
-#' \code{.basic_interval}.
+#' \code{.basic_interval}. Given an interval, this outputs all the
+#' segments that are equivalent partitioned between -pi/2, 0, and pi/2.
 #'
-#' @param interval
+#' @param interval vector of length 2
 #'
 #' @return 2-column matrix
 .partition_interval <- function(interval){
   stopifnot(interval[1] < interval[2])
-  a <- interval[1]; b <- interval[b]
+  a <- interval[1]; b <- interval[2]
   case <- abs(floor(a/(pi/2)) - floor(b/(pi/2)))
   if(case == 0) {
     mat <- matrix(c(a,b), ncol = 2)

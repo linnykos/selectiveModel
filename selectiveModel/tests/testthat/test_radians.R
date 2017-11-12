@@ -285,3 +285,15 @@ test_that(".euclidean_to_radian works with .intersect_circle_line", {
   expect_true(is.numeric(theta))
   expect_true(length(theta) == 2)
 })
+
+#######################
+
+## .partition_interval is correct
+
+test_that(".partition_interval works", {
+  res <- .partition_interval(c(pi/4, pi/3))
+
+  expect_true(is.matrix(res))
+  expect_true(is.numeric(res))
+  expect_true(ncol(res) == 2)
+})
