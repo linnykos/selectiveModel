@@ -9,19 +9,31 @@
   structure(list(center = center, radius = radius), class = "circle")
 }
 
-#' Construct a plane
+#' Construct a hyperplane
 #'
-#' Plane is of form \code{t(a)%*%x = b}.
+#' Hyperplane is of form \code{t(a)%*%x = b}.
 #'
 #' @param a vector
 #' @param b vector
 #'
-#' @return a \code{line} object
+#' @return a \code{plane} object
 .plane <- function(a, b = 0){
   stopifnot(length(b) == 1)
+  stopifnot(length(which(a != 0)) > 0)
+
+  b <- b/.l2norm(a)
+  a <- a/.l2norm(a)
+
   structure(list(a = a, b = b), class = "plane")
 }
 
+#' Returns a point on the plane
+#'
+#' Uses a deterministic method to find a point that lines along a hyperplane
+#'
+#' @param plane \code{plane} object
+#'
+#' @return a vector
 .point_on_plane <- function(plane){
   d <- length(plane$a)
   vec <- rep(0, d)
@@ -39,26 +51,61 @@
 #' @param point vector
 #' @param plane \code{plane} object
 #'
-#'
 #' @return numeric
 #' @source \url{https://en.wikipedia.org/wiki/Distance_from_a_point_to_a_plane}
 .distance_point_to_plane <- function(point, plane){
+  stopifnot(length(point) == length(plane$a))
+
   x <- .point_on_plane(plane)
   .l2norm((point - x)%*%plane$a)/.l2norm(plane$a)
 }
 
-#' Intersect circle with line
+#' Intersect circle with plane
+#'
+#' The \code{plane} object must be in 2-dimensions
 #'
 #' The output is a 2x2 matrix, where the first row represents the first
 #' point and the second row represents the second point.
+#'
+#' If there is only one point, then the output is a 2x1 matrix.
 #' If no points are found, return \code{NA}.
 #'
-#' @param line \code{line} object
+#' @param plane \code{plane} object
 #' @param circle \code{circle} object
+#' @param tol small positive number
 #'
 #' @return matrix of size 2x2 or \code{NA}
-.intersect_circle_line <- function(line, circle){
+.intersect_circle_line <- function(plane, circle, tol = 1e-6){
+  stopifnot(length(plane$a) == 2, length(which(plane$a != 0)) > 0)
 
+  dis <- .distance_point_to_plane(circle$center, plane)
+  if(dis > circle$radius + tol) return(NA)
+
+  if(abs(plane$a[1]) > tol){
+    a1 <- plane$a[1]; a2 <- plane$a[2]
+  } else {
+    a1 <- plane$a[2]; a2 <- plane$a[1]
+  }
+
+  a <- 1 + (a2/a1)^2
+  b <- -2*(a2/a1)*(plane$b/a1 - circle$center[1]) -
+    2*circle$center[2]
+  c <- -circle$radius^2 + (plane$b/a1 - circle$center[1])^2 +
+    circle$center[2]^2
+
+  y <- .quadratic(a, b, c)
+  stopifnot(all(!is.na(y)))
+  x <- (plane$b -a2*y)/a1
+
+  if(length(y) == 1 || abs(y[1]-y[2]) < tol){
+    mat <- matrix(c(x[1], y[1]), ncol = 2)
+  } else {
+    mat <- cbind(x, y)
+  }
+  colnames(mat) <- NULL
+
+  if(abs(plane$a[1]) < tol) mat <- mat[,c(2,1)]
+  mat
 }
 
 #' Quadratic formula
@@ -81,5 +128,5 @@
  if(term < 0) return(NA)
  if(abs(term) < tol) return(-b/(2*a))
 
- sort(c((-b-term)/(2*a), (-b+term)/(2*a)))
+ sort(c((-b-sqrt(term))/(2*a), (-b+sqrt(term))/(2*a)))
 }
