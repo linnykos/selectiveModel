@@ -203,7 +203,11 @@
 
   idx_mat <- .consecutive_true(bool_vec)
 
-  matrix(vec[idx_mat], ncol = 2)
+  mat <- matrix(vec[idx_mat], ncol = 2)
+  mat <- mat[order(mat[,1]),,drop = F]
+
+  stopifnot(all(as.numeric(t(mat)) == sort(as.numeric(t(mat)))))
+  mat
 }
 
 #' Produce a vector with midpoints
@@ -237,7 +241,9 @@
 #' @return 2-column matrix
 .consecutive_true <- function(vec){
   idx <- which(vec)
+  if(length(idx) == 0) stop("No intersection")
   breakpoint <- which(sapply(2:length(idx), function(x){idx[x]-idx[x-1] != 1}))
+
   breakpoint <- c(0, breakpoint, length(idx))
   mat <- t(sapply(2:length(breakpoint), function(x){
     c(idx[breakpoint[x-1]+1], idx[breakpoint[x]])
@@ -245,6 +251,7 @@
 
   #remove singletons
   idx <- which(mat[,1] != mat[,2])
+  if(length(idx) == 0) stop("No intersection")
   mat[idx,]
 }
 
