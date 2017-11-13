@@ -327,6 +327,16 @@ test_that(".partition_interval works when endpoints are same signs, yes wrap-aro
   expect_true(sum(abs(res[1,] - c(-pi/2, -pi/3))) < 1e-6)
   expect_true(sum(abs(res[2,] - c(-pi/6, 0))) < 1e-6)
   expect_true(sum(abs(res[3,] - c(0, pi/2))) < 1e-6)
+
+  res <- .partition_interval(c(pi/3, 7*pi/6))
+  expect_true(all(dim(res) == c(3,2)))
+  expect_true(sum(abs(res[1,] - c(-pi/2, 0))) < 1e-6)
+  expect_true(sum(abs(res[2,] - c(0, pi/6))) < 1e-6)
+  expect_true(sum(abs(res[3,] - c(pi/3, pi/2))) < 1e-6)
 })
+
+#######################
+
+
 
 

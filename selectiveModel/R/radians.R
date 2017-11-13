@@ -119,10 +119,21 @@
   stopifnot(all(c(endpoints, theta) <= pi/2), all(c(endpoints, theta) >= -pi/2))
 
   interval <- .basic_interval(endpoints, theta)
-  interval <- .partition_interval(interval)
+  .partition_interval(interval)
 }
 
+#' Convert endpoints into an interval
+#'
+#' Interval is of length 2. \code{theta} dictates which side of the interval
+#' is included.
+#'
+#' @param endpoints vector of length 2
+#' @param theta initial theta
+#'
+#' @return vector of length 2
 .basic_interval <- function(endpoints, theta){
+  stopifnot(all(abs(endpoints) <= pi/2))
+
   endpoints <- sort(endpoints)
   if(endpoints[1] <= theta & theta <= endpoints[2]){
     endpoints
@@ -163,23 +174,62 @@
   }
 
   stopifnot(all(as.numeric(t(mat)) == sort(as.numeric(t(mat)))))
+  stopifnot(all(abs(mat) <= pi/2))
   mat
 }
 
 #' Intersect intervals
 #'
-#' \code{mat} is a 8-column matrix formed by concatenating
-#' \code{.construct_interval} row-wise.
+#' \code{lis} is a list of matrices created by \code{.interval}.
 #'
 #' Returns a matrix with 2 columns, where each row represents a
 #' closed, connected interval of radians. The union of the rows represents
 #' the intersection of all the intervals.
 #'
-#' @param mat matrix with 8 columns
+#' @param lis list of matrices
 #'
 #' @return matrix
-.intersect_intervals <- function(mat){
+.intersect_intervals <- function(lis){
 
+}
+
+.intersect_two_intervals <- function(mat1, mat2){
+  vec <- sort(unique(as.numeric(mat1), as.numeric(mat2)))
+
+  idx <- sapply(vec, function(x){
+    all(.theta_in_interval(x, mat1), .theta_in_interval(x, mat2))
+  })
+
+  lis <- list("vector", 1)
+  idx <- 1
+  while(TRUE) {
+
+  }
+}
+
+.theta_in_interval <- function(theta, mat){
+  stopifnot(abs(theta) <= pi/2)
+
+  vec <- any(apply(mat, 1, function(x){
+    x[1] <= theta & theta <= x[2]
+  }))
+}
+
+#' Finding consecutive sets of TRUE's in a vector
+#'
+#' Returns a 2-column matrix where each row represents a separate pair (start
+#' and end index) of consecutive TRUE's.
+#'
+#' @param vec vector
+#'
+#' @return 2-column matrix
+.consecutive_true <- function(vec){
+  idx <- which(vec)
+  breakpoint <- which(sapply(2:length(idx), function(x){idx[x]-idx[x-1] == 1}))
+  breakpoint <- c(idx[1]-1, breakpoint)
+  t(sapply(2:length(breakpoint), function(x){
+    c(idx[breakpoint[x-1]+1]:idx[breakpoint[x]])
+  }))
 }
 
 #' Convert euclidean points on circle into radians
