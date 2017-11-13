@@ -60,11 +60,11 @@
   interval <- .range_theta_polyhedra(y, v, w, polyhedra)
 
   if(nrow(interval) == 1) {
-    theta <- runif(1, interval[1], interval[2])
+    theta <- stats::runif(1, interval[1], interval[2])
   } else {
     len <- interval[,2] - interval[,1]
     row_idx <- sample(1:nrow(interval), 1, prob = len)
-    theta <- runif(1, interval[row_idx,1], interval[row_idx,2])
+    theta <- stats::runif(1, interval[row_idx,1], interval[row_idx,2])
   }
 
   y_new <- .radians_to_data(theta, y, v, w)
