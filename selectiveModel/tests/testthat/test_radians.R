@@ -337,6 +337,11 @@ test_that(".partition_interval works when endpoints are same signs, yes wrap-aro
 
 #######################
 
+## .consecutive_true is correct
 
+test_that(".consecutive_true works", {
+  vec <- c(TRUE, TRUE, TRUE, FALSE, FALSE, TRUE, TRUE, FALSE, TRUE, TRUE, FALSE, FALSE, FALSE)
+  res <- .consecutive_true(vec)
+})
 
 
