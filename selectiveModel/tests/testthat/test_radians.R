@@ -447,3 +447,34 @@ test_that(".intersect_two_intervals works for many test cases", {
 
   expect_true(all(bool_vec))
 })
+
+#########################
+
+## .intersect_intervals is correct
+
+test_that(".intersect_intervals works", {
+  mat1 <- .partition_interval(c(-7*pi/6, -pi/3))
+  mat2 <- .partition_interval(c(-pi/2, 0))
+  mat3 <- .partition_interval(c(-3*pi/4, -pi/4))
+
+  lis <- list(mat1, mat2, mat3)
+  res <- .intersect_intervals(lis)
+
+  expect_true(is.numeric(res))
+  expect_true(is.matrix(res))
+  expect_true(ncol(res) == 2)
+})
+
+test_that(".intersect_interval gives the correct output", {
+  mat1 <- .partition_interval(c(-7*pi/6, -pi/3))
+  mat2 <- .partition_interval(c(-pi/2, 0))
+  mat3 <- .partition_interval(c(-3*pi/4, -pi/4))
+
+  res <- .intersect_two_intervals(mat1, mat2)
+  res <- .intersect_two_intervals(res, mat3)
+
+  lis <- list(mat1, mat2, mat3)
+  res2 <- .intersect_intervals(lis)
+
+  expect_true(sum(abs(as.numeric(res) - as.numeric(res2))) < 1e-6)
+})

@@ -186,13 +186,28 @@
 #' closed, connected interval of radians. The union of the rows represents
 #' the intersection of all the intervals.
 #'
+#' This function errors if there is no intersection.
+#'
 #' @param lis list of matrices
 #'
 #' @return matrix
 .intersect_intervals <- function(lis){
-
+  Reduce(.intersect_two_intervals, lis)
 }
 
+#' Intersect two intervals
+#'
+#' Both \code{mat1} and \code{mat2} are outputs of \code{.interval}. This
+#' finds all the radian intervals that lie in their intersection, and returns
+#' it as another matrix that is similar in layout to those outputted by
+#' \code{.interval}.
+#'
+#' This function errors if there is no intersection.
+#'
+#' @param mat1 matrix
+#' @param mat2 matrix
+#'
+#' @return matrix
 .intersect_two_intervals <- function(mat1, mat2){
   vec <- sort(unique(c(as.numeric(mat1), as.numeric(mat2))))
   vec <- sort(c(vec, .interpolate(vec)))
@@ -222,6 +237,14 @@
   })
 }
 
+#' Is theta in an interval
+#'
+#' The \code{mat} is an output of \code{.interval}.
+#'
+#' @param theta radian
+#' @param mat matrix
+#'
+#' @return boolean
 .theta_in_interval <- function(theta, mat){
   stopifnot(abs(theta) <= pi/2)
 
