@@ -342,6 +342,26 @@ test_that(".partition_interval works when endpoints are same signs, yes wrap-aro
 test_that(".consecutive_true works", {
   vec <- c(TRUE, TRUE, TRUE, FALSE, FALSE, TRUE, TRUE, FALSE, TRUE, TRUE, FALSE, FALSE, FALSE)
   res <- .consecutive_true(vec)
+
+  expect_true(is.matrix(res))
+  expect_true(is.numeric(res))
+  expect_true(ncol(res) == 2)
+})
+
+test_that(".consecutive_true is correct", {
+  vec <- c(TRUE, TRUE, TRUE, FALSE, FALSE, TRUE, TRUE, FALSE, TRUE, TRUE, FALSE, FALSE, FALSE)
+  res <- .consecutive_true(vec)
+
+  expect_true(all(dim(res) == c(3,2)))
+  expect_true(all(t(res) == c(1,3,6,7,9,10)))
+})
+
+test_that(".consecutive_true also works when it does not start with TRUE", {
+  vec <- c(FALSE, TRUE, TRUE, FALSE, FALSE, TRUE, TRUE, FALSE, TRUE, TRUE, FALSE, FALSE, FALSE)
+  res <- .consecutive_true(vec)
+
+  expect_true(all(dim(res) == c(3,2)))
+  expect_true(all(t(res) == c(2,3,6,7,9,10)))
 })
 
 

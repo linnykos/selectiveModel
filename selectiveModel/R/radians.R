@@ -226,9 +226,9 @@
 .consecutive_true <- function(vec){
   idx <- which(vec)
   breakpoint <- which(sapply(2:length(idx), function(x){idx[x]-idx[x-1] != 1}))
-  breakpoint <- c(idx[1]-1, breakpoint, length(idx))
+  breakpoint <- c(0, breakpoint, length(idx))
   t(sapply(2:length(breakpoint), function(x){
-    c(idx[breakpoint[x-1]+1],idx[breakpoint[x]])
+    c(idx[breakpoint[x-1]+1], idx[breakpoint[x]])
   }))
 }
 
