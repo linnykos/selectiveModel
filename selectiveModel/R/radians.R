@@ -194,17 +194,28 @@
 }
 
 .intersect_two_intervals <- function(mat1, mat2){
-  vec <- sort(unique(as.numeric(mat1), as.numeric(mat2)))
+  vec <- sort(unique(c(as.numeric(mat1), as.numeric(mat2))))
+  vec <- sort(c(vec, .interpolate(vec)))
 
-  idx <- sapply(vec, function(x){
+  bool_vec <- sapply(vec, function(x){
     all(.theta_in_interval(x, mat1), .theta_in_interval(x, mat2))
   })
 
-  lis <- list("vector", 1)
-  idx <- 1
-  while(TRUE) {
+  idx_mat <- .consecutive_true(bool_vec)
 
-  }
+  matrix(vec[idx_mat], ncol = 2)
+}
+
+#' Produce a vector with midpoints
+#'
+#' @param vec vector
+#'
+#' @return
+.interpolate <- function(vec){
+  n <- length(vec)
+  sapply(2:n, function(x){
+    mean(vec[(x-1):x])
+  })
 }
 
 .theta_in_interval <- function(theta, mat){
@@ -218,7 +229,8 @@
 #' Finding consecutive sets of TRUE's in a vector
 #'
 #' Returns a 2-column matrix where each row represents a separate pair (start
-#' and end index) of consecutive TRUE's.
+#' and end index) of consecutive TRUE's. This function ignores indices
+#' for TRUE that are singleton.
 #'
 #' @param vec vector
 #'
@@ -227,9 +239,13 @@
   idx <- which(vec)
   breakpoint <- which(sapply(2:length(idx), function(x){idx[x]-idx[x-1] != 1}))
   breakpoint <- c(0, breakpoint, length(idx))
-  t(sapply(2:length(breakpoint), function(x){
+  mat <- t(sapply(2:length(breakpoint), function(x){
     c(idx[breakpoint[x-1]+1], idx[breakpoint[x]])
   }))
+
+  #remove singletons
+  idx <- which(mat[,1] != mat[,2])
+  mat[idx,]
 }
 
 #' Convert euclidean points on circle into radians

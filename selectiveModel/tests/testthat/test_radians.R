@@ -364,4 +364,26 @@ test_that(".consecutive_true also works when it does not start with TRUE", {
   expect_true(all(t(res) == c(2,3,6,7,9,10)))
 })
 
+###############################
 
+## .intersect_two_intervals is correct
+
+test_that(".intersect_two_intervals works", {
+  mat1 <- .partition_interval(c(-7*pi/6, -pi/3))
+  mat2 <- .partition_interval(c(-pi/3, pi/3))
+
+  res <- .intersect_two_intervals(mat1, mat2)
+
+  expect_true(is.matrix(res))
+  expect_true(is.numeric(res))
+  expect_true(ncol(res) == 2)
+})
+
+test_that(".intersect_two_intervals is correct", {
+  mat1 <- .partition_interval(c(-7*pi/6, -pi/3))
+  mat2 <- .partition_interval(c(-pi/3, pi/3))
+
+  res <- .intersect_two_intervals(mat1, mat2)
+
+  expect_true(sum(abs(as.numeric(res) - c(-pi/6, pi/3))) < 1e-6)
+})
