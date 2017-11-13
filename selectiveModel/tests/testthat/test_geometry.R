@@ -173,3 +173,46 @@ test_that(".intersect_circle_line can give one point", {
   expect_true(is.numeric(res))
   expect_true(all(dim(res) == c(1,2)))
 })
+
+######################################
+
+## .intersect_plane_basis is correct
+
+test_that(".intersect_plane_basis works", {
+  set.seed(10)
+  plane <- .plane(rnorm(10), rnorm(1))
+  y <- .point_on_plane(plane)
+  v <- rnorm(10); w <- rnorm(10)
+  v <- v/.l2norm(v)
+  w <- .projection(w, v); w <- w/.l2norm(w)
+
+  res <- .intersect_plane_basis(plane, y, v, w)
+  expect_true(class(res) == "plane")
+  expect_true(length(res$a) == 2)
+  expect_true(length(res$b) == 1)
+})
+
+test_that(".intersect_plane_basis has the correct properties", {
+  set.seed(5)
+  plane <- .plane(rnorm(10), -abs(rnorm(1)))
+  y <- rep(0, 10)
+  v <- rnorm(10); w <- rnorm(10)
+  v <- v/.l2norm(v)
+  w <- .projection(w, v); w <- w/.l2norm(w)
+
+  res <- .intersect_plane_basis(plane, y, v, w)
+
+  trials <- 100
+  bool_vec <- sapply(1:trials, function(x){
+    set.seed(x)
+    vec <- rnorm(2)
+    bool1 <- all(res$a %*% vec >= res$b)
+
+    y_new <- y + vec[1]*v + vec[2]*w
+    bool2 <- all(plane$a%*%y_new >= plane$b)
+
+    bool1 == bool2
+  })
+
+  expect_true(all(bool_vec))
+})

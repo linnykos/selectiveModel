@@ -206,26 +206,7 @@ test_that(".range_theta_polyhedra works", {
   res <- .range_theta_polyhedra(y, v, w, poly)
 
   expect_true(is.numeric(res))
-  expect_true(!is.matrix(res))
-})
-
-test_that(".range_theta_polyhedra returns correct theta's", {
-  set.seed(10)
-  y <- rnorm(10)
-  obj <- binSegInf::binSeg_fixedSteps(y, 2)
-  poly <- binSegInf::polyhedra(obj)
-
-  v <- rnorm(10); w <- rnorm(10)
-  v <- v/.l2norm(v)
-  w <- .projection(w, v); w <- w/.l2norm(w)
-
-  res <- .range_theta_polyhedra(y, v, w, poly)
-
-  bool_vec <- sapply(res, function(x){
-    .try_polyhedra(.radians_to_data(x, y, v, w), poly)
-  })
-
-  expect_true(all(bool_vec))
+  expect_true(is.matrix(res))
 })
 
 ##########################
@@ -418,6 +399,15 @@ test_that(".intersect_two_intervals errors when there is no intersection", {
   expect_error(.intersect_two_intervals(mat1, mat2))
 })
 
+test_that(".intersect_two_intervals can intersect the entire space", {
+  mat1 <- .partition_interval(c(-pi/4, 0))
+  mat2 <- .partition_interval(c(-pi/2, pi/2))
+
+  res <- .intersect_two_intervals(mat1, mat2)
+
+  expect_true(sum(abs(as.numeric(mat1) - as.numeric(res))) < 1e-6)
+})
+
 test_that(".intersect_two_intervals works for many test cases", {
   trials <- 100
   bool_vec <- sapply(1:trials, function(x){
@@ -465,7 +455,7 @@ test_that(".intersect_intervals works", {
   expect_true(ncol(res) == 2)
 })
 
-test_that(".intersect_interval gives the correct output", {
+test_that(".intersect_intervals gives the correct output", {
   mat1 <- .partition_interval(c(-7*pi/6, -pi/3))
   mat2 <- .partition_interval(c(-pi/2, 0))
   mat3 <- .partition_interval(c(-3*pi/4, -pi/4))

@@ -7,26 +7,35 @@
 #' @param v unit vector
 #' @param w unit vector orthogonal to \code{v}
 #' @param polyhedra \code{polyhedra} object
-#' @param attempts positive integer
 #'
 #' @return vector of possible theta's
-.range_theta_polyhedra <- function(y, v, w, polyhedra, attempts = 10){
+.range_theta_polyhedra <- function(y, v, w, polyhedra){
   stopifnot(.try_polyhedra(y, polyhedra))
   stopifnot(abs(.l2norm(v) - 1) < 1e-4,  abs(.l2norm(w) - 1) < 1e-4, abs(v%*%w) < 1e-4)
 
-  #create possible theta's
-  theta <- .initial_theta(y, v, w)
-  theta_vec <- seq(theta-pi/2, theta+pi/2, length.out = attempts + 1)
-  theta_vec <- sort(unique(c(theta_vec[-length(theta_vec)], theta)))
+  interval_list <- lapply(1:nrow(polyhedra$gamma), function(x){
+    plane <- .plane(polyhedra$gamma[x,], polyhedra$u[x])
+    plane <- .intersect_plane_basis(plane, y, v, w)
+    if(any(is.na(plane))) return(matrix(c(-pi/2, pi/2), ncol = 2))
+    center <- c(-y%*%v, -y%*%w)
+    radius <- sqrt(sum(center^2))
+    circle <- .circle(center, radius)
+    dis <- .distance_point_to_plane(center, plane)
 
-  #try each theta
-  y_mat <- sapply(theta_vec, function(x){
-    .radians_to_data(x, y, v, w)
+    if(dis >= radius){
+      matrix(c(-pi/2, pi/2), ncol = 2)
+    } else {
+      mat <- .intersect_circle_line(plane, circle)
+      vec <- apply(mat, 1, .euclidean_to_radian, circle = circle)
+      init_theta <- .initial_theta(y, v, w)
+      .interval(vec, init_theta)
+    }
   })
-  bool_vec <- .try_polyhedra(y_mat, polyhedra)
 
-  stopifnot(sum(bool_vec) >= 1)
-  theta_vec[which(bool_vec)]
+  interval <- .intersect_intervals(interval_list)
+  stopifnot(all(interval[,1] < interval[,2]))
+
+  interval
 }
 
 #' Radius function
@@ -149,9 +158,10 @@
 #' segments that are equivalent partitioned between -pi/2, 0, and pi/2.
 #'
 #' @param interval vector of length 2
+#' @param tol small positive number
 #'
 #' @return 2-column matrix
-.partition_interval <- function(interval){
+.partition_interval <- function(interval, tol = 1e-6){
   stopifnot(interval[1] < interval[2])
   a <- interval[1]; b <- interval[2]
 
@@ -172,6 +182,9 @@
     mat <- do.call(rbind, lis)
     mat <- mat[order(mat[,1]),]
   }
+
+  idx <- which(mat[,2]-mat[,1] > tol)
+  mat <- mat[idx,,drop = F]
 
   stopifnot(all(as.numeric(t(mat)) == sort(as.numeric(t(mat)))))
   stopifnot(all(abs(mat) <= pi/2))

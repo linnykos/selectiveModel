@@ -7,13 +7,12 @@
 #' @param cores umber of cores
 #' @param burn_in positive integer, where we sample \code{num_samp*burn_in}
 #' samples from the null distribution and return every \code{burn_in}th sample
-#' @param attempts positive integer
 #' @param seed numeric to adjust the seed of each core
 #' @param verbose boolean
 #'
 #' @return matrix with \code{num_samp} columns and \code{length(y)} rows
 .sampler_hit_run <- function(y, segments, polyhedra, num_samp = 100,
-                             cores = 1, burn_in = 2, attempts = 10,
+                             cores = 1, burn_in = 2,
                              seed = 1, verbose = F){
   doMC::registerDoMC(cores = cores)
   n <- length(y)
@@ -26,7 +25,7 @@
     for(j in 1:num_col){
       set.seed((j^i)*seed)
       if(verbose & i == 1 & j %% floor(num_col/10) == 0) cat('*')
-      mat[,j] <- .hit_run_next_point(prev_y, segments, polyhedra, attempts)
+      mat[,j] <- .hit_run_next_point(prev_y, segments, polyhedra)
       prev_y <- mat[,j]
     }
 
@@ -51,16 +50,23 @@
 #' @param y data
 #' @param segments matrix created by \code{.segments}
 #' @param polyhedra \code{polyhedra} object
-#' @param attempts positive integer
 #'
 #' @return vector
-.hit_run_next_point <- function(y, segments, polyhedra, attempts = 10){
+.hit_run_next_point <- function(y, segments, polyhedra){
   stopifnot(ncol(segments) == length(y))
 
   tmp <- .sample_nullspace(segments, 2)
   v <- tmp[,1]; w <- tmp[,2]
-  theta_vec <- .range_theta_polyhedra(y, v, w, polyhedra, attempts)
-  theta <- ifelse(length(theta_vec) > 1, sample(theta_vec, 1), theta_vec)
+  interval <- .range_theta_polyhedra(y, v, w, polyhedra)
+
+  if(nrow(interval) == 1) {
+    theta <- runif(1, interval[1], interval[2])
+  } else {
+    len <- interval[,2] - interval[,1]
+    row_idx <- sample(1:nrow(interval), 1, prob = len)
+    theta <- runif(1, interval[row_idx,1], interval[row_idx,2])
+  }
+
   y_new <- .radians_to_data(theta, y, v, w)
 
   stopifnot(.try_polyhedra(y_new, polyhedra))

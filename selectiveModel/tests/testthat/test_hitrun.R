@@ -169,11 +169,11 @@ test_that(".sampler_hit_run works", {
   poly <- binSegInf::polyhedra(obj)
   segments <- .segments(length(y), jump_vec = binSegInf::jumps(obj))
 
-  res <- .sampler_hit_run(y, segments, poly, num_samp = 100)
+  res <- .sampler_hit_run(y, segments, poly, num_samp = 25)
 
   expect_true(is.numeric(res))
   expect_true(is.matrix(res))
-  expect_true(all(dim(res) == c(length(y), 100)))
+  expect_true(all(dim(res) == c(length(y), 25)))
 })
 
 test_that(".sampler_hit_run preserves segment means", {
@@ -184,9 +184,9 @@ test_that(".sampler_hit_run preserves segment means", {
   segments <- .segments(length(y), jump_vec = binSegInf::jumps(obj))
   seg_mean <- .segment_means(y, segments)
 
-  res <- .sampler_hit_run(y, segments, poly, num_samp = 100)
+  res <- .sampler_hit_run(y, segments, poly, num_samp = 25)
 
-  bool_vec <- sapply(1:100, function(x){
+  bool_vec <- sapply(1:25, function(x){
     seg_mean2 <- .segment_means(res[,x], segments)
     sum(abs(seg_mean - seg_mean)) < 1e-6
   })
@@ -202,9 +202,9 @@ test_that(".sampler_hit_run preserves l2norm", {
   segments <- .segments(length(y), jump_vec = binSegInf::jumps(obj))
   norm1 <- .l2norm(y)
 
-  res <- .sampler_hit_run(y, segments, poly, num_samp = 100)
+  res <- .sampler_hit_run(y, segments, poly, num_samp = 25)
 
-  bool_vec <- sapply(1:100, function(x){
+  bool_vec <- sapply(1:25, function(x){
     norm2 <- .l2norm(res[,x])
     abs(norm1 - norm2) < 1e-6
   })

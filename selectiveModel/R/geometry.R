@@ -6,7 +6,7 @@
 #' @return a \code{circle} object
 .circle <- function(center, radius){
 
-  structure(list(center = center, radius = radius), class = "circle")
+  structure(list(center = as.numeric(center), radius = as.numeric(radius)), class = "circle")
 }
 
 #' Construct a hyperplane
@@ -21,10 +21,31 @@
   stopifnot(length(b) == 1)
   stopifnot(length(which(a != 0)) > 0)
 
-  b <- b/.l2norm(a)
-  a <- a/.l2norm(a)
+  b <- as.numeric(b/.l2norm(a))
+  a <- as.numeric(a/.l2norm(a))
 
   structure(list(a = a, b = b), class = "plane")
+}
+
+#' Convert a higher-dimensional plane into the two-dimensional coordinate system
+#'
+#' If the coordinate system set up by \code{v} and \code{w} is parallel to \code{plane},
+#' an \code{NA} is returned.
+#'
+#' @param plane \code{plane} object
+#' @param y vector
+#' @param v unit vector
+#' @param w unit vector orthogonal to \code{v}
+#' @param tol small positive number
+#'
+#' @return either a \code{plane} object or \code{NA}
+.intersect_plane_basis <- function(plane, y, v, w, tol = 1e-6){
+  a <- plane$a%*%cbind(v, w)
+  if(length(which(abs(a) > tol)) > 0){
+    .plane(a, plane$b - plane$a%*%y)
+  } else{
+    NA
+  }
 }
 
 #' Returns a point on the plane
