@@ -321,12 +321,12 @@ test_that(".partition_interval works when endpoints are different signs, yes wra
 })
 
 test_that(".partition_interval works when endpoints are same signs, yes wrap-around", {
-  res <- .partition_interval(c(-7*pi/6, -2*pi/3))
+  res <- .partition_interval(c(-7*pi/6, -pi/3))
 
   expect_true(all(dim(res) == c(3,2)))
-  expect_true(all(res[1,] == c(-pi/2, -pi/3)))
-  expect_true(all(res[2,] == c(-pi/6, 0)))
-  expect_true(all(res[2,] == c(0, pi/2)))
+  expect_true(sum(abs(res[1,] - c(-pi/2, -pi/3))) < 1e-6)
+  expect_true(sum(abs(res[2,] - c(-pi/6, 0))) < 1e-6)
+  expect_true(sum(abs(res[3,] - c(0, pi/2))) < 1e-6)
 })
 
 

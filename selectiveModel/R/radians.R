@@ -143,24 +143,23 @@
 .partition_interval <- function(interval){
   stopifnot(interval[1] < interval[2])
   a <- interval[1]; b <- interval[2]
-  case <- abs(floor(a/(pi/2)) - floor(b/(pi/2)))
-  if(case == 0) {
-    mat <- matrix(c(a,b), ncol = 2)
-  } else if (case == 1){
-    if(a < 0 & b > 0) {
-      mat <- rbind(c(a, 0), c(0, b))
-    } else if (a > 0 & b > 0) {
-      mat <- rbind(c(-pi/2, b-pi), c(a, pi/2))
-    } else {
-      mat <- rbind(c(-pi/2, b), c(a+pi, pi/2))
-    }
+
+  vec <- seq(-2*pi, 2*pi, by = pi/2)
+  vec <- c(a, vec[intersect(which(vec >= a), which(vec <= b))], b)
+  lis <- lapply(1:(length(vec)-1), function(x){c(vec[c(x,x+1)])})
+
+  idx <- sapply(lis, function(x){mid <- mean(x); sign(mid)*ceiling(abs(mid)/(pi/2))})
+
+  lis <- lapply(1:length(lis), function(x){
+    if(abs(idx[x]) <= 1) return(lis[[x]])
+    lis[[x]] - sign(idx[x])*pi
+  })
+
+  if(length(lis) == 1){
+    mat <- matrix(lis[[1]], ncol = 2)
   } else {
-    stopifnot(b-a >= pi/2)
-    if(a < 0){
-      mat <- rbind(c(-pi/2, a), c(0, pi/2), c(b-pi, a))
-    } else {
-      mat <- rbind(c(-pi/2, 0), c(0, a), c(b-pi, pi/2))
-    }
+    mat <- do.call(rbind, lis)
+    mat <- mat[order(mat[,1]),]
   }
 
   stopifnot(all(as.numeric(t(mat)) == sort(as.numeric(t(mat)))))
