@@ -297,3 +297,36 @@ test_that(".partition_interval works", {
   expect_true(is.numeric(res))
   expect_true(ncol(res) == 2)
 })
+
+test_that(".partition_interval works when endpoints are different signs, no wrap-around", {
+  res <- .partition_interval(c(-pi/3, pi/4))
+
+  expect_true(all(dim(res) == c(2,2)))
+  expect_true(all(res[1,] == c(-pi/3, 0)))
+  expect_true(all(res[2,] == c(0, pi/4)))
+})
+
+test_that(".partition_interval works when endpoints are different signs, yes wrap-around", {
+  res <- .partition_interval(c(pi/3, 3*pi/4))
+
+  expect_true(all(dim(res) == c(2,2)))
+  expect_true(all(res[1,] == c(-pi/2, -pi/4)))
+  expect_true(all(res[2,] == c(pi/3, pi/2)))
+
+  res <- .partition_interval(c(-3*pi/4, -pi/3))
+
+  expect_true(all(dim(res) == c(2,2)))
+  expect_true(all(res[1,] == c(-pi/2, -pi/3)))
+  expect_true(all(res[2,] == c(pi/4, pi/2)))
+})
+
+test_that(".partition_interval works when endpoints are same signs, yes wrap-around", {
+  res <- .partition_interval(c(-7*pi/6, -2*pi/3))
+
+  expect_true(all(dim(res) == c(3,2)))
+  expect_true(all(res[1,] == c(-pi/2, -pi/3)))
+  expect_true(all(res[2,] == c(-pi/6, 0)))
+  expect_true(all(res[2,] == c(0, pi/2)))
+})
+
+

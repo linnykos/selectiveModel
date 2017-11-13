@@ -147,10 +147,12 @@
   if(case == 0) {
     mat <- matrix(c(a,b), ncol = 2)
   } else if (case == 1){
-    if(a < 0) {
+    if(a < 0 & b > 0) {
       mat <- rbind(c(a, 0), c(0, b))
-    } else {
+    } else if (a > 0 & b > 0) {
       mat <- rbind(c(-pi/2, b-pi), c(a, pi/2))
+    } else {
+      mat <- rbind(c(-pi/2, b), c(a+pi, pi/2))
     }
   } else {
     stopifnot(b-a >= pi/2)
