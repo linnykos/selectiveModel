@@ -11,3 +11,7 @@ func <- function(i){
 
 doMC::registerDoMC(cores = 3)
 res <- foreach::"%dopar%"(foreach::foreach(trial = 1:trials), func(trial))
+res <- unlist(res)
+
+plot(sort(res), seq(0, 1, length.out = length(res)), asp = T, pch = 16)
+lines(c(0,1), c(0,1), col = "red", lwd = 1)
