@@ -125,3 +125,14 @@ test_that(".sample_nullspace gives vectors that are orthogonal", {
 
   expect_true(sum(abs(res - diag(3))) < 1e-6)
 })
+
+test_that(".sample_nullspace can determine num_vec automatically", {
+  set.seed(10)
+  mat <- .segments(10, c(3, 7))
+  vec_mat <- .sample_nullspace(mat)
+
+  expect_true(all(dim(vec_mat) == c(10,7)))
+
+  res <- t(vec_mat)%*%vec_mat
+  expect_true(sum(abs(res - diag(7))) < 1e-6)
+})

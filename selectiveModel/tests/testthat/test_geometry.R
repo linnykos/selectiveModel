@@ -75,6 +75,15 @@ test_that(".point_on_plane handles cases where parallel to only but one axes", {
   expect_true(abs(obj$a%*%res - obj$b) < 1e-6)
 })
 
+test_that(".point_on_plane can handle intersection of planes", {
+  mat <- .segments(10, c(3, 7))
+  plane <- .plane(mat, 1:3)
+
+  res <- .point_on_plane(plane)
+
+  expect_true(sum(abs(plane$a %*% res - plane$b)) < 1e-6)
+})
+
 ##########################
 
 ## .distance_point_to_plane is correct
@@ -215,4 +224,28 @@ test_that(".intersect_plane_basis has the correct properties", {
   })
 
   expect_true(all(bool_vec))
+})
+
+#################################
+
+## .closest_point_to_origin is correct
+
+test_that(".closest_point_to_origin works", {
+  mat <- .segments(10, c(3, 7))
+  plane <- .plane(mat, 1:3)
+
+  res <- .closest_point_to_origin(plane)
+
+  expect_true(is.numeric(res))
+  expect_true(!is.matrix(res))
+  expect_true(length(res) == 10)
+})
+
+test_that(".closest_point_to_origin returns a point on the plane", {
+  mat <- .segments(10, c(3, 7))
+  plane <- .plane(mat, 1:3)
+
+  res <- .closest_point_to_origin(plane)
+
+  expect_true(sum(abs(plane$a%*%res - plane$b)) < 1e-6)
 })

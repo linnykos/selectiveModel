@@ -12,15 +12,15 @@
 #' Construct a hyperplane
 #'
 #' Hyperplane is of form \code{a%*%x = b}.
+#' If \code{a} is a matrix, this object represents an intersection of hyperplanes.
 #'
 #' @param a matrix
 #' @param b vector
 #'
 #' @return a \code{plane} object
 .plane <- function(a, b = 0){
-  stopifnot(length(b) == 1)
-
   if(!is.matrix(a)){a <- matrix(a, nrow = 1)}
+  stopifnot(length(b) == nrow(a))
   stopifnot(length(which(a != 0)) > 0)
 
   l2_vec <- apply(a, 1, .l2norm)
@@ -57,21 +57,41 @@
 
 #' Returns a point on the plane
 #'
-#' Uses a deterministic method to find a point that lines along a hyperplane
+#' If \code{plane} is only one plane, this function uses a deterministic
+#' method to find a point that lines along a hyperplane.
+#'
+#' If \code{plane} is an intersection of many hyperplanes, this function
+#' uses a linear program to find a point on the plane. The linear program
+#' is minimize sum t_1,...t_n such that Ay = b, t_i >= y_i, t_i >= -y_i for all
+#' i in 1 to n.
 #'
 #' @param plane \code{plane} object
 #'
 #' @return a vector
 .point_on_plane <- function(plane){
-  d <- length(plane$a)
-  vec <- rep(0, d)
-  idx <- which(plane$a != 0)
-  stopifnot(length(idx) >= 1)
-  idx <- idx[1]
-  vec[-idx] <- 1
-  vec[idx] <- as.numeric(plane$b - plane$a[-idx]%*%vec[-idx])/plane$a[idx]
+  if(nrow(plane$a) == 1){
+    d <- length(plane$a)
+    vec <- rep(0, d)
+    idx <- which(plane$a != 0)
+    stopifnot(length(idx) >= 1)
+    idx <- idx[1]
+    vec[-idx] <- 1
+    vec[idx] <- as.numeric(plane$b - plane$a[-idx]%*%vec[-idx])/plane$a[idx]
 
-  vec
+    vec
+  } else {
+    k <- nrow(plane$a); n <- ncol(plane$a)
+    mat <- matrix(0, ncol = 2*n, nrow = k+2*n)
+    mat[1:k,1:n] <- plane$a
+    mat[(k+1):nrow(mat),(n+1):ncol(mat)] <- 1
+    mat[(k+1):(k+n),1:n] <- -1
+    mat[(k+1+n):nrow(mat),1:n] <- 1
+    vec <- c(plane$b, rep(0, 2*n))
+    res <- lpSolve::lp(objective.in = c(rep(0, n), rep(1, n)), const.mat = mat,
+                       const.dir = c(rep("=", k), rep(">=", 2*n)),
+                       const.rhs = vec)
+    res$solution[1:n]
+  }
 }
 
 #' Compute euclidean distance from point to plane
@@ -83,6 +103,7 @@
 #' @source \url{https://en.wikipedia.org/wiki/Distance_from_a_point_to_a_plane}
 .distance_point_to_plane <- function(point, plane){
   stopifnot(length(point) == length(plane$a))
+  stopifnot(nrow(plane$a) == 1)
 
   x <- .point_on_plane(plane)
   .l2norm(plane$a%*%(point - x))/.l2norm(plane$a)
@@ -105,6 +126,7 @@
 #' @return matrix of size 2x2 or \code{NA}
 .intersect_circle_line <- function(plane, circle, tol = 1e-6){
   stopifnot(length(plane$a) == 2, length(which(plane$a != 0)) > 0)
+  stopifnot(nrow(plane$a) == 1)
 
   dis <- .distance_point_to_plane(circle$center, plane)
   if(dis > circle$radius + tol) return(NA)
@@ -141,13 +163,20 @@
 #' @param plane \code{plane} object
 #'
 #' @return vector
-#' @source \url{https://en.wikipedia.org/wiki/Distance_from_a_point_to_a_plane}
+#' @source \url{https://math.stackexchange.com/questions/832279/closest-point-to-a-vector-in-a-subspace}
 .closest_point_to_origin <- function(plane){
+  rowspace <- .rowspace(plane$a)
+  point <- .point_on_plane(plane)
 
+  #project against each vector
+  mat <- sapply(1:ncol(rowspace), function(x){
+    rowspace[,x]%*%t(rowspace[,x])%*%point
+  })
 
-  #find any point on plane
-
+  rowSums(mat)
 }
+
+
 
 #' Sample from a n-1 dimensional unit sphere uniformally
 #'

@@ -36,14 +36,17 @@
 #'
 #' This function assumes the row space of \code{mat} is the number of
 #' rows in \code{mat}. If \code{num_vec} is \code{NA}, then the function
-#' construct a basis for the entire null space of \code{mat}.
+#' construct a basis for the entire null space of \code{mat}, which is
+#' assumed to have dimension equal to the rank of \code{mat}.
 #'
 #' @param mat matrix
-#' @param num_vec positive integer or \code{NA}.
+#' @param num_vec positive integer or \code{NA}
+#' @param tol small positive number
 #'
 #' @return a matrix of vectors, with number of rows equal to \code{ncol(mat)}
 #' and number of columns equal to \code{num_vec}
-.sample_nullspace <- function(mat, num_vec = NA){
+.sample_nullspace <- function(mat, num_vec = NA, tol = 1e-6){
+  if(is.na(num_vec)) num_vec <- ncol(mat) - Matrix::rankMatrix(mat)
   stopifnot(num_vec > 0, num_vec %% 1 == 0)
   stopifnot(nrow(mat) + num_vec <= ncol(mat))
 
@@ -56,6 +59,24 @@
   if(num_vec > 1){
     for(i in 2:num_vec){
       vec_mat[,i] <- .projection_matrix(vec_mat[,i], t(vec_mat[,1:(i-1),drop = F]))
+      stopifnot(any(abs(vec_mat[,i]) > tol))
+    }
+  }
+
+  sapply(1:ncol(vec_mat), function(x){vec_mat[,x]/.l2norm(vec_mat[,x])})
+}
+
+.rowspace <- function(mat, tol = 1e-6){
+  num_vec <- Matrix::rankMatrix(mat)
+  n <- ncol(mat); k <- nrow(mat)
+
+  weights <- matrix(stats::rnorm(k*num_vec), ncol = k)
+  vec_mat <- t(weights %*% mat)
+
+  if(num_vec > 1){
+    for(i in 2:num_vec){
+      vec_mat[,i] <- .projection_matrix(vec_mat[,i], t(vec_mat[,1:(i-1),drop = F]))
+      stopifnot(any(abs(vec_mat[,i]) > tol))
     }
   }
 
