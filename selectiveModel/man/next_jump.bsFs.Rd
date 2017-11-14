@@ -4,7 +4,7 @@
 \alias{next_jump.bsFs}
 \title{Compute the next jump for a \code{bsFs} object}
 \usage{
-next_jump.bsFs(obj, y, ...)
+\method{next_jump}{bsFs}(obj, y, ...)
 }
 \arguments{
 \item{obj}{\code{bsFs} object}

@@ -25,8 +25,8 @@ next_jump.bsFs <- function(obj, y, ...){
 #'
 #' @return positive numeric
 .jump_contrast <- function(y, jump_vec_before, jump_vec_after){
-  new_jump <- which(!jump_vec_after %in% jump_vec_before)
-  stopifnot(length(idx) == 1)
+  new_jump <- jump_vec_after[which(!jump_vec_after %in% jump_vec_before)]
+  stopifnot(length(new_jump) == 1)
 
   n <- length(y)
   jump_sorted <- c(0, sort(jump_vec_after), n)

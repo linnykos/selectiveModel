@@ -4,8 +4,9 @@
 \alias{selected_model_inference}
 \title{Selected model inference}
 \usage{
-selected_model_inference(y, fit_method, test_func, num_samp, sample_method,
-  param = list(), cores = NA, verbose = T)
+selected_model_inference(y, fit_method, test_func = .next_jump_statistic,
+  num_samp = 100, sample_method = "hitrun", param = list(burn_in = 2, seed
+  = 1), cores = 1, verbose = T, ...)
 }
 \arguments{
 \item{y}{data of length n}
@@ -23,6 +24,8 @@ selected_model_inference(y, fit_method, test_func, num_samp, sample_method,
 \item{cores}{number of cores}
 
 \item{verbose}{boolean}
+
+\item{...}{optional inputs for \code{test_func}}
 }
 \value{
 quantile
@@ -34,4 +37,11 @@ model needs to have a function defined via the generic function
 null distribution matching the estimated changepoint model
 where each sample is drawn from a Gaussian and matches
 in empirical means in each segment and in L2-norm (the sufficient statistics).
+}
+\details{
+Currently the test is a 2-sided test.
+
+The \code{test_func} should be a function that takes in \code{y} as the first
+input and the output of \code{fit_method} as the second input, and \code{...}
+as the third input.
 }
