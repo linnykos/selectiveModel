@@ -11,18 +11,25 @@
 
 #' Construct a hyperplane
 #'
-#' Hyperplane is of form \code{t(a)%*%x = b}.
+#' Hyperplane is of form \code{a%*%x = b}.
 #'
-#' @param a vector
+#' @param a matrix
 #' @param b vector
 #'
 #' @return a \code{plane} object
 .plane <- function(a, b = 0){
   stopifnot(length(b) == 1)
+
+  if(!is.matrix(a)){a <- matrix(a, nrow = 1)}
   stopifnot(length(which(a != 0)) > 0)
 
-  b <- as.numeric(b/.l2norm(a))
-  a <- as.numeric(a/.l2norm(a))
+  l2_vec <- apply(a, 1, .l2norm)
+  b <- as.numeric(b/l2_vec)
+  if(length(l2_vec) > 1){
+    a <- diag(1/l2_vec)%*%a
+  } else {
+    a <- a/l2_vec
+  }
 
   structure(list(a = a, b = b), class = "plane")
 }
@@ -78,7 +85,7 @@
   stopifnot(length(point) == length(plane$a))
 
   x <- .point_on_plane(plane)
-  .l2norm((point - x)%*%plane$a)/.l2norm(plane$a)
+  .l2norm(plane$a%*%(point - x))/.l2norm(plane$a)
 }
 
 #' Intersect circle with plane
@@ -131,10 +138,14 @@
 
 #' Determine a point on plane closest to origin
 #'
-#' @param plane
+#' @param plane \code{plane} object
 #'
-#' @return
+#' @return vector
+#' @source \url{https://en.wikipedia.org/wiki/Distance_from_a_point_to_a_plane}
 .closest_point_to_origin <- function(plane){
+
+
+  #find any point on plane
 
 }
 
@@ -144,7 +155,8 @@
 #'
 #' @return vector of length n
 .sample_sphere <- function(n){
-
+  vec <- stats::rnorm(n)
+  vec/.l2norm(vec)
 }
 
 #' Quadratic formula

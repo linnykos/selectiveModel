@@ -46,7 +46,7 @@ test_that(".point_on_plane returns a point on the plane", {
     obj <- .plane(rnorm(10), rnorm(1))
     res <- .point_on_plane(obj)
 
-    ifelse(abs(res%*%obj$a - obj$b) < 1e-6, TRUE, FALSE)
+    ifelse(abs(obj$a%*%res- obj$b) < 1e-6, TRUE, FALSE)
   })
 
   expect_true(all(bool_vec))
@@ -62,7 +62,7 @@ test_that(".point_on_plane handles cases parallel to axes", {
     obj <- .plane(vec, rnorm(1))
     res <- .point_on_plane(obj)
 
-    ifelse(abs(res%*%obj$a - obj$b) < 1e-6, TRUE, FALSE)
+    ifelse(abs(obj$a%*%res - obj$b) < 1e-6, TRUE, FALSE)
   })
 
   expect_true(all(bool_vec))
@@ -72,7 +72,7 @@ test_that(".point_on_plane handles cases where parallel to only but one axes", {
   obj <- .plane(c(0,0,1), 0)
   res <- .point_on_plane(obj)
 
-  expect_true(abs(res%*%obj$a - obj$b) < 1e-6)
+  expect_true(abs(obj$a%*%res - obj$b) < 1e-6)
 })
 
 ##########################
