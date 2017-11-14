@@ -18,8 +18,9 @@
 #'
 #' @return quantile
 #' @export
-selected_model_inference <- function(y, fit_method, test_func, num_samp, sample_method,
-                                      param = list(), cores = NA, verbose = T){
+selected_model_inference <- function(y, fit_method, test_func, num_samp,
+                                     sample_method = "hitrun", param = list(burn_in = 2),
+                                     cores = NA, verbose = T){
 
   #fit the model
 
