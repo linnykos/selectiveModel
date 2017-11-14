@@ -129,10 +129,20 @@
   mat
 }
 
+#' Determine a point on plane closest to origin
+#'
+#' @param plane
+#'
+#' @return
 .closest_point_to_origin <- function(plane){
 
 }
 
+#' Sample from a n-1 dimensional unit sphere uniformally
+#'
+#' @param n positive integer larger than 1
+#'
+#' @return vector of length n
 .sample_sphere <- function(n){
 
 }

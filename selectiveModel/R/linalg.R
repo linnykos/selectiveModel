@@ -62,10 +62,20 @@
   sapply(1:ncol(vec_mat), function(x){vec_mat[,x]/.l2norm(vec_mat[,x])})
 }
 
-.determine_rank <- function(mat, tol = 1e-6){
-
-}
-
+#' Change basis from lower dimension to higher dimension
+#'
+#' This function assumes \code{point} is in the coordinate basis in a lower
+#' dimensional space, and translates \code{point} into a higher-dimensional
+#' space parameterized by the basis matrix \code{basis_mat}, where each
+#' column represents a different basis vector. Each basis vector must have
+#' l2 norm of 1 and be orthogonal to one another. Additionally, we can shift this
+#' higher dimensional basis by \code{center}.
+#'
+#' @param point vector of length k
+#' @param center vector of length n
+#' @param basis_mat matrix of size nxk
+#'
+#' @return vector of length n
 .change_basis <- function(point, center, basis_mat){
 
 }
