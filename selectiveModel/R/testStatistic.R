@@ -42,9 +42,10 @@ next_jump.bsFs <- function(obj, y, ...){
 #'
 #' @param y data
 #' @param fit changepoint fitted model
+#' @param ... nothing
 #'
 #' @return numeric
-.next_jump_statistic <- function(y, fit){
+.next_jump_statistic <- function(y, fit, ...){
   next_fit <- next_jump(fit, y)
   .jump_contrast(y, binSegInf::jumps(fit), binSegInf::jumps(next_fit))
 }

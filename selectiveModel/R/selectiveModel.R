@@ -7,6 +7,12 @@
 #' where each sample is drawn from a Gaussian and matches
 #' in empirical means in each segment and in L2-norm (the sufficient statistics).
 #'
+#' Currently the test is a 2-sided test.
+#'
+#' The \code{test_func} should be a function that takes in \code{y} as the first
+#' input and the output of \code{fit_method} as the second input, and \code{...}
+#' as the third input.
+#'
 #' @param y data of length n
 #' @param fit_method function to fit changepoint model
 #' @param test_func function to apply to each \code{y} and fitted model
@@ -15,24 +21,41 @@
 #' @param param additional parameters for \code{sample_method} passed in as a list
 #' @param cores number of cores
 #' @param verbose boolean
+#' @param ... optional inputs for \code{test_func}
 #'
 #' @return quantile
 #' @export
-selected_model_inference <- function(y, fit_method, test_func, num_samp,
-                                     sample_method = "hitrun", param = list(burn_in = 2),
-                                     cores = NA, verbose = T){
+selected_model_inference <- function(y, fit_method,
+                                     test_func = .next_jump_statistic,
+                                     num_samp = 100,
+                                     sample_method = "hitrun",
+                                     param = list(burn_in = 2, seed = 1),
+                                     cores = 1, verbose = T, ...){
 
-  #fit the model
+  #fit the model, fit polyhedra, and compute test statistic on the observed model
+  n <- length(y)
+  fit <- fit_method(y)
+  polyhedra <- binSegInf::polyhedra(fit)
+  test_stat <- test_func(y, fit, ...)
 
-  #create the polyhedra
-
-  #run the test function on the observed model
+  #prepare sampler
+  segments <- .segments(n, binSegInf::jumps(fit))
 
   #pass to sampler
+  if(sample_method == "hitrun") {
+    stopifnot(c("burn_in", "seed") %in% names(param))
+    samples <- .sampler_hit_run(y, segments, polyhedra, num_samp = num_samp,
+                                cores = cores, burn_in = param$burn_in,
+                                seed = param$seed, verbose = verbose)
+  }
 
   #for each sample, run the test function
+  null_stat <- apply(samples, 2, function(x){
+    test_func(x, fit, ...)
+  })
 
   #compute the quantile
+  length(which(abs(null_stat) >= abs(test_stat)))/length(null_stat)
 }
 
 #' Compute the matrix of segments

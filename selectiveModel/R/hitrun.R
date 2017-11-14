@@ -14,7 +14,7 @@
 .sampler_hit_run <- function(y, segments, polyhedra, num_samp = 100,
                              cores = 1, burn_in = 2,
                              seed = 1, verbose = F){
-  doMC::registerDoMC(cores = cores)
+  if(!is.na(cores)) doMC::registerDoMC(cores = cores)
   n <- length(y)
   num_col <- ceiling(num_samp*burn_in/cores)
 
