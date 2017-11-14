@@ -68,7 +68,6 @@ test_that("selected_model_inference works", {
   expect_true(res <= 1)
 })
 
-
 test_that("selected_model_inference works reasonably relatively", {
   fit_method <- function(y){binSegInf::binSeg_fixedSteps(y, 1)}
 

@@ -14,9 +14,14 @@
 .sampler_hit_run <- function(y, segments, polyhedra, num_samp = 100,
                              cores = 1, burn_in = 2,
                              seed = 1, verbose = F){
-  if(!is.na(cores)) doMC::registerDoMC(cores = cores)
+  if(!is.na(cores)) {
+    doMC::registerDoMC(cores = cores)
+    num_col <- ceiling(num_samp*burn_in/cores)
+  } else {
+    num_col <- num_samp*burn_in
+  }
+
   n <- length(y)
-  num_col <- ceiling(num_samp*burn_in/cores)
 
   func <- function(i){
     mat <- matrix(0, ncol = num_col, nrow = n)
@@ -33,8 +38,12 @@
   }
 
   i <- 0 #debugging reasons
-  y_mat <- do.call(cbind, foreach::"%dopar%"(foreach::foreach(i = 1:cores),
+  if(!is.na(cores)) {
+    y_mat <- do.call(cbind, foreach::"%dopar%"(foreach::foreach(i = 1:cores),
                      func(i)))
+  } else {
+    y_mat <- func(1)
+  }
 
   seq_vec <- seq(burn_in, ncol(y_mat), by = burn_in)
   stopifnot(length(seq_vec) >= num_samp)
