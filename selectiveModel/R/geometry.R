@@ -129,6 +129,14 @@
   mat
 }
 
+.closest_point_to_origin <- function(plane){
+
+}
+
+.sample_sphere <- function(n){
+
+}
+
 #' Quadratic formula
 #'
 #' The function returns a vector of length two if there are two roots,

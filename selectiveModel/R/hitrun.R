@@ -81,9 +81,7 @@
   stopifnot(.try_polyhedra(y_new, polyhedra))
 
   y_new
-}
-
-#' Projection of vector onto another vector
+}#' Projection of vector onto another vector
 #'
 #' Returns the component of \code{vec1} that is orthogonal to \code{vec2}
 #'
