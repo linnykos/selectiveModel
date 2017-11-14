@@ -50,3 +50,35 @@ test_that(".segment_means returns the proper means", {
 
   expect_true(sum(abs(res - target)) < 1e-6)
 })
+
+############################
+
+## selected_model_inference is correct
+
+test_that("selected_model_inference works", {
+  set.seed(10)
+  y <- c(rep(0, 10), rep(1, 10)) + 0.01*rnorm(20)
+  fit_method <- function(y){binSegInf::binSeg_fixedSteps(y, 1)}
+  res <- selected_model_inference(y, fit_method, num_samp = 10, verbose = F)
+
+  expect_true(is.numeric(res))
+  expect_true(!is.matrix(res))
+  expect_true(length(res) == 1)
+  expect_true(res >= 0)
+  expect_true(res <= 1)
+})
+
+
+test_that("selected_model_inference works reasonably relatively", {
+  fit_method <- function(y){binSegInf::binSeg_fixedSteps(y, 1)}
+
+  set.seed(10)
+  y1 <- c(rep(0, 10), rep(5, 10)) + 0.01*rnorm(20)
+  res1 <- selected_model_inference(y1, fit_method, num_samp = 50, verbose = F)
+
+  set.seed(10)
+  y2 <- c(rep(0, 5), rep(1, 5), rep(5, 10)) + 0.01*rnorm(20)
+  res2 <- selected_model_inference(y2, fit_method, num_samp = 50, verbose = F)
+
+  expect_true(res1 > res2)
+})
