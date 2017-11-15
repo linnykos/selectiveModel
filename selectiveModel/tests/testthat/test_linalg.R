@@ -93,22 +93,22 @@ test_that(".projection_matrix removes parallel vectors", {
 
 #########################
 
-## .sample_nullspace is correct
+## .sample_matrix_space is correct
 
-test_that(".sample_nullspace works", {
+test_that(".sample_matrix_space works", {
   set.seed(10)
   mat <- .segments(10, c(3, 7))
-  res <- .sample_nullspace(mat, 2)
+  res <- .sample_matrix_space(mat, 2)
 
   expect_true(is.numeric(res))
   expect_true(is.matrix(res))
   expect_true(all(dim(res) == c(10,2)))
 })
 
-test_that(".sample_nullspace gives vectors that are orthogonal to mat", {
+test_that(".sample_matrix_space gives vectors that are orthogonal to mat", {
   set.seed(10)
   mat <- .segments(10, c(3, 7))
-  res <- .sample_nullspace(mat, 3)
+  res <- .sample_matrix_space(mat, 3)
 
   for(i in 1:3){
     for(j in 1:3){
@@ -117,22 +117,45 @@ test_that(".sample_nullspace gives vectors that are orthogonal to mat", {
   }
 })
 
-test_that(".sample_nullspace gives vectors that are orthogonal", {
+test_that(".sample_matrix_space gives vectors that are orthogonal", {
   set.seed(10)
   mat <- .segments(10, c(3, 7))
-  vec_mat <- .sample_nullspace(mat, 3)
+  vec_mat <- .sample_matrix_space(mat, 3)
   res <- t(vec_mat)%*%vec_mat
 
   expect_true(sum(abs(res - diag(3))) < 1e-6)
 })
 
-test_that(".sample_nullspace can determine num_vec automatically", {
+test_that(".sample_matrix_space can determine num_vec automatically", {
   set.seed(10)
   mat <- .segments(10, c(3, 7))
-  vec_mat <- .sample_nullspace(mat)
+  vec_mat <- .sample_matrix_space(mat)
 
   expect_true(all(dim(vec_mat) == c(10,7)))
 
   res <- t(vec_mat)%*%vec_mat
   expect_true(sum(abs(res - diag(7))) < 1e-6)
+})
+
+test_that(".sample_matrix_space samples from rowspace properly", {
+  set.seed(10)
+  mat <- .segments(10, c(4,8))
+  res <- .sample_matrix_space(mat, null = F)
+
+  #check to see if nothing remains when projecting against res
+  for(i in 1:3){
+    tmp <- .projection_matrix(mat[i,], t(res))
+    expect_true(sum(abs(tmp)) < 1e-6)
+  }
+})
+
+test_that(".sample_matrix_space similary gives proper outputs for rowspace", {
+  set.seed(10)
+  mat <- .segments(10, c(1,3,9))
+  res <- .sample_matrix_space(mat, null = F)
+
+  expect_true(all(dim(res) == c(10,4)))
+
+  tmp <- t(res) %*% res
+  expect_true(sum(abs(tmp - diag(4))) < 1e-6)
 })

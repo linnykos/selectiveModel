@@ -39,39 +39,33 @@
 #' construct a basis for the entire null space of \code{mat}, which is
 #' assumed to have dimension equal to the rank of \code{mat}.
 #'
+#' If \code{null} is \code{TRUE}, then this function samples from the nullspace.
+#' Otherwise, sample from the rowspace.
+#'
 #' @param mat matrix
 #' @param num_vec positive integer or \code{NA}
+#' @param null boolean
 #' @param tol small positive number
 #'
 #' @return a matrix of vectors, with number of rows equal to \code{ncol(mat)}
 #' and number of columns equal to \code{num_vec}
-.sample_nullspace <- function(mat, num_vec = NA, tol = 1e-6){
-  if(is.na(num_vec)) num_vec <- ncol(mat) - Matrix::rankMatrix(mat)
-  stopifnot(num_vec > 0, num_vec %% 1 == 0)
-  stopifnot(nrow(mat) + num_vec <= ncol(mat))
-
-  n <- ncol(mat)
-  vec_mat <- sapply(1:num_vec, function(x){
-    vec <- stats::rnorm(n)
-    .projection_matrix(vec, mat)
-  })
-
-  if(num_vec > 1){
-    for(i in 2:num_vec){
-      vec_mat[,i] <- .projection_matrix(vec_mat[,i], t(vec_mat[,1:(i-1),drop = F]))
-      stopifnot(any(abs(vec_mat[,i]) > tol))
-    }
+.sample_matrix_space <- function(mat, num_vec = NA, null = T, tol = 1e-6){
+  k <- Matrix::rankMatrix(mat)
+  if(is.na(num_vec)){
+    num_vec <- ifelse(null, ncol(mat) - k, k)
   }
+  stopifnot(num_vec > 0, num_vec %% 1 == 0)
+  n <- ncol(mat)
 
-  sapply(1:ncol(vec_mat), function(x){vec_mat[,x]/.l2norm(vec_mat[,x])})
-}
-
-.rowspace <- function(mat, tol = 1e-6){
-  num_vec <- Matrix::rankMatrix(mat)
-  n <- ncol(mat); k <- nrow(mat)
-
-  weights <- matrix(stats::rnorm(k*num_vec), ncol = k)
-  vec_mat <- t(weights %*% mat)
+  if(null){
+    vec_mat <- sapply(1:num_vec, function(x){
+      vec <- stats::rnorm(n)
+      .projection_matrix(vec, mat)
+    })
+  } else {
+    weights <- matrix(stats::rnorm(k*num_vec), ncol = k)
+    vec_mat <- t(weights %*% mat)
+  }
 
   if(num_vec > 1){
     for(i in 2:num_vec){

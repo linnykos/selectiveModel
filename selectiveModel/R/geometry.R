@@ -165,7 +165,7 @@
 #' @return vector
 #' @source \url{https://math.stackexchange.com/questions/832279/closest-point-to-a-vector-in-a-subspace}
 .closest_point_to_origin <- function(plane){
-  rowspace <- .rowspace(plane$a)
+  rowspace <- .sample_matrix_space(plane$a, null = F)
   point <- .point_on_plane(plane)
 
   #project against each vector
@@ -175,8 +175,6 @@
 
   rowSums(mat)
 }
-
-
 
 #' Sample from a n-1 dimensional unit sphere uniformally
 #'
