@@ -91,6 +91,10 @@
 #' @param basis_mat matrix of size nxk
 #'
 #' @return vector of length n
-.change_basis <- function(point, center, basis_mat){
+.change_basis <- function(point, center, basis_mat, scaling){
+  stopifnot(scaling > 0)
+  stopifnot(sum(abs(t(basis_mat)%*%basis_mat) - diag(ncol(basis_mat))) < 1e-6)
+  stopifnot(length(center) == nrow(basis_mat), ncol(basis_mat) == length(point))
 
+  center + scaling * as.numeric(basis_mat %*% point)
 }

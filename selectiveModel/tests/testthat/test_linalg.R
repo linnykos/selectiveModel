@@ -159,3 +159,38 @@ test_that(".sample_matrix_space similary gives proper outputs for rowspace", {
   tmp <- t(res) %*% res
   expect_true(sum(abs(tmp - diag(4))) < 1e-6)
 })
+
+########################
+
+## .change_basis is correct
+
+test_that(".change_basis works", {
+  set.seed(1)
+  plane <- .plane(c(1,1,1), 1)
+  center <- .closest_point_to_origin(plane)
+  major_radius <- 4
+  minor_radius <- sqrt(major_radius^2 - .l2norm(center)^2)
+  nullspace <- .sample_matrix_space(plane$a)
+  x <- .sample_sphere(ncol(nullspace))
+
+  res <- .change_basis(x, center, nullspace, minor_radius)
+
+  expect_true(is.numeric(res))
+  expect_true(length(res) == length(center))
+  expect_true(!is.matrix(res))
+})
+
+test_that(".change_basis gives the right mathematical properties", {
+  set.seed(10)
+  plane <- .plane(c(1,1,1), 1)
+  center <- .closest_point_to_origin(plane)
+  major_radius <- 4
+  minor_radius <- sqrt(major_radius^2 - .l2norm(center)^2)
+  nullspace <- .sample_matrix_space(plane$a)
+  x <- .sample_sphere(ncol(nullspace))
+
+  res <- .change_basis(x, center, nullspace, minor_radius)
+
+  expect_true(abs(.l2norm(res) - major_radius) < 1e-6)
+  expect_true(abs(plane$a%*%res - plane$b) < 1e-6)
+})
