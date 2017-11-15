@@ -84,6 +84,15 @@ test_that(".point_on_plane can handle intersection of planes", {
   expect_true(sum(abs(plane$a %*% res - plane$b)) < 1e-6)
 })
 
+test_that(".point_on_plane works if point is supposed to be negative",{
+  mat <- .segments(5, 3)
+  plane <- .plane(mat, c(-0.1498594, 0.5018780))
+
+  res <- .point_on_plane(plane)
+
+  expect_true(sum(abs(plane$a %*% res - plane$b)) < 1e-6)
+})
+
 ##########################
 
 ## .distance_point_to_plane is correct
@@ -270,4 +279,14 @@ test_that(".closest_point_to_origin returns the correct point", {
 
   expect_true(all(bool_vec))
 })
+
+test_that(".closest_point_to_origin works for this test case", {
+  mat <- .segments(5, 3)
+  plane <- .plane(mat, c(-0.1498594, 0.5018780))
+
+  res <- .closest_point_to_origin(plane)
+
+  expect_true(sum(abs(plane$a%*%res - plane$b)) < 1e-6)
+})
+
 

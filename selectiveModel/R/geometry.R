@@ -81,16 +81,26 @@
     vec
   } else {
     k <- nrow(plane$a); n <- ncol(plane$a)
-    mat <- matrix(0, ncol = 2*n, nrow = k+2*n)
+    mat <- matrix(0, ncol = 3*n, nrow = k+2*n)
+
     mat[1:k,1:n] <- plane$a
-    mat[(k+1):nrow(mat),(n+1):ncol(mat)] <- 1
-    mat[(k+1):(k+n),1:n] <- -1
-    mat[(k+1+n):nrow(mat),1:n] <- 1
+    mat[1:k,(n+1):(2*n)] <- -plane$a
+
+    diag(mat[(k+1):nrow(mat),(2*n+1):(3*n)]) <- 1
+    diag(mat[(k+1):(k+n),1:n]) <- -1
+
+    diag(mat[(k+1+n):nrow(mat),(2*n+1):(3*n)]) <- 1
+    diag(mat[(k+1+n):nrow(mat),(n+1):(2*n)]) <- -1
+
     vec <- c(plane$b, rep(0, 2*n))
-    res <- lpSolve::lp(objective.in = c(rep(0, n), rep(1, n)), const.mat = mat,
+    res <- lpSolve::lp(objective.in = c(rep(0, 2*n), rep(1, n)), const.mat = mat,
                        const.dir = c(rep("=", k), rep(">=", 2*n)),
                        const.rhs = vec)
-    res$solution[1:n]
+
+    if(res$status == 2) {
+      stop("LP to find point on plane failed")
+    }
+    res$solution[1:n] - res$solution[(n+1):(2*n)]
   }
 }
 
