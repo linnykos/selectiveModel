@@ -249,3 +249,25 @@ test_that(".closest_point_to_origin returns a point on the plane", {
 
   expect_true(sum(abs(plane$a%*%res - plane$b)) < 1e-6)
 })
+
+test_that(".closest_point_to_origin returns the correct point", {
+  mat <- .segments(10, c(2,6,9))
+  plane <- .plane(mat, 1:4)
+
+  res <- .closest_point_to_origin(plane)
+  dis <- .l2norm(res)
+
+  trials <- 100
+  nullspace <- .sample_matrix_space(mat)
+  bool_vec <- sapply(1:trials, function(x){
+    set.seed(x)
+    coef <- rnorm(ncol(nullspace))
+    vec <- res + nullspace%*%coef
+
+    new_dis <- .l2norm(vec)
+    new_dis > dis
+  })
+
+  expect_true(all(bool_vec))
+})
+
