@@ -29,7 +29,7 @@ selected_model_inference <- function(y, fit_method,
                                      test_func = .next_jump_statistic,
                                      num_samp = 100,
                                      sample_method = "hitrun",
-                                     param = list(burn_in = 2, seed = 1),
+                                     param = list(burn_in = 2, time_limit = 3600),
                                      cores = 1, verbose = T, ...){
 
   #fit the model, fit polyhedra, and compute test statistic on the observed model
@@ -43,10 +43,17 @@ selected_model_inference <- function(y, fit_method,
 
   #pass to sampler
   if(sample_method == "hitrun") {
-    stopifnot(c("burn_in", "seed") %in% names(param))
+    stopifnot(c("burn_in") %in% names(param))
     samples <- .sampler_hit_run(y, segments, polyhedra, num_samp = num_samp,
                                 cores = cores, burn_in = param$burn_in,
-                                seed = param$seed, verbose = verbose)
+                                verbose = verbose)
+  } else if(sample_method == "rejection") {
+    stopifnot(c("time_limit") %in% names(param))
+    samples <- .sampler_rejection(y, segments, polyhedra, num_samp = num_samp,
+                                cores = cores, time_limit = param$time_limit,
+                                verbose = verbose)
+  } else {
+    stop("sample_method not appropriate")
   }
 
   #for each sample, run the test function

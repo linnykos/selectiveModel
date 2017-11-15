@@ -7,13 +7,11 @@
 #' @param cores umber of cores
 #' @param burn_in positive integer, where we sample \code{num_samp*burn_in}
 #' samples from the null distribution and return every \code{burn_in}th sample
-#' @param seed numeric to adjust the seed of each core
 #' @param verbose boolean
 #'
 #' @return matrix with \code{num_samp} columns and \code{length(y)} rows
 .sampler_hit_run <- function(y, segments, polyhedra, num_samp = 100,
-                             cores = 1, burn_in = 2,
-                             seed = 1, verbose = F){
+                             cores = 1, burn_in = 2, verbose = F){
   if(!is.na(cores)) {
     doMC::registerDoMC(cores = cores)
     num_col <- ceiling(num_samp*burn_in/cores)
@@ -24,11 +22,11 @@
   n <- length(y)
 
   func <- function(i){
+    set.seed(i)
     mat <- matrix(0, ncol = num_col, nrow = n)
     prev_y <- y
 
     for(j in 1:num_col){
-      set.seed((j^i)*seed)
       if(verbose & i == 1 & j %% floor(num_col/10) == 0) cat('*')
       mat[,j] <- .hit_run_next_point(prev_y, segments, polyhedra)
       prev_y <- mat[,j]
