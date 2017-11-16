@@ -4,7 +4,7 @@
 \alias{selected_model_inference}
 \title{Selected model inference}
 \usage{
-selected_model_inference(y, fit_method, test_func = .next_jump_statistic,
+selected_model_inference(y, fit_method, test_func = next_jump_statistic,
   num_samp = 100, sample_method = "hitrun", param = list(burn_in = 2,
   time_limit = 3600), cores = 1, verbose = T, ...)
 }

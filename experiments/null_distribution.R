@@ -1,4 +1,4 @@
-trials <- 100
+trials <- 1000
 
 func <- function(i){
   write.csv(i, file = "../experiments/tmp.csv")
@@ -6,10 +6,13 @@ func <- function(i){
   y <- c(rep(0, 5), rep(5, 5)) + rnorm(10)
   fit_method <- function(y){binSegInf::binSeg_fixedSteps(y, 1)}
 
-  selected_model_inference(y, fit_method, verbose = F, cores = NA,
+  first_val <- function(y, fit, ...){y[1]}
+
+  selected_model_inference(y, fit_method, test_func = first_val, verbose = F, cores = NA,
                            num_samp = 500,
-                           param = list(burn_in = 3, seed = 1, time_limit = 600),
-                           sample_method = "rejection")
+                           param = list(burn_in = 3, seed = 1, time_limit = 600)
+                           #, sample_method = "rejection")
+                           )
 }
 
 doMC::registerDoMC(cores = 3)

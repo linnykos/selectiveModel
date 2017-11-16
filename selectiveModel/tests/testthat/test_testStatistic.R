@@ -55,14 +55,14 @@ test_that(".jump_contrast computes the correct value", {
 
 #################
 
-## .next_jump_statistic is correct
+## next_jump_statistic is correct
 
-test_that(".next_jump_statistic works", {
+test_that("next_jump_statistic works", {
   set.seed(10)
   y <- c(rep(0, 10), rep(1, 10)) + 0.01*rnorm(20)
   fit <- binSegInf::binSeg_fixedSteps(y, 1)
 
-  res <- .next_jump_statistic(y, fit)
+  res <- next_jump_statistic(y, fit)
 
   expect_true(is.numeric(res))
   expect_true(!is.matrix(res))
