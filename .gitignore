@@ -3,3 +3,8 @@
 .RData
 .Ruserdata
 .Rout
+*.RData
+*.Rout
+.csv
+*.csv
+nohup.out
