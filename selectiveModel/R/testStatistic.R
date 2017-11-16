@@ -45,7 +45,29 @@ next_jump.bsFs <- function(obj, y, ...){
 #' @param ... nothing
 #'
 #' @return numeric
-.next_jump_statistic <- function(y, fit, ...){
+#' @export
+next_jump_statistic <- function(y, fit, ...){
   next_fit <- next_jump(fit, y)
   .jump_contrast(y, binSegInf::jumps(fit), binSegInf::jumps(next_fit))
+}
+
+#' Compute the variance across a changepoint model
+#'
+#' @param y data vector
+#' @param fit fitted changepoint object
+#' @param ... not used
+#'
+#' @return numeric
+#' @export
+changepoint_variance <- function(y, fit, ...){
+  n <- length(y)
+  jumps <- binSegInf::jumps(fit)
+  jumps <- unique(sort(c(0, jumps, n)))
+
+  val <- 0
+  for(i in 1:(length(jumps)-1)){
+    val <- val + stats::var(y[(jumps[i]+1):jumps[i+1]])
+  }
+
+  val
 }
