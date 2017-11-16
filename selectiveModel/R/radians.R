@@ -299,7 +299,7 @@
 #' @param point point on circle, as a vector of length 2
 #'
 #' @return radian
-.euclidean_to_radian <- function(circle, point, tol = 1e-6){
+.euclidean_to_radian <- function(circle, point, tol = 1e-3){
   stopifnot(length(point) == 2, length(circle$center) == 2)
   stopifnot(abs(circle$radius^2 - sum(circle$center^2)) < tol)
   stopifnot(abs(sum((point-circle$center)^2) - circle$radius^2) < tol)

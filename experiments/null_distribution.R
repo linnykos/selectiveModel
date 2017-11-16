@@ -7,9 +7,9 @@ func <- function(i){
   y <- c(rep(0, 5), rep(5, 5)) + rnorm(10)
   fit_method <- function(y){binSegInf::binSeg_fixedSteps(y, 1)}
 
-  res <- selected_model_inference(y, fit_method, verbose = F, cores = NA,
+  res <- selected_model_inference(y, fit_method, verbose = T, cores = NA,
                            num_samp = 1000,
-                           param = list(burn_in = 3, seed = 1, 
+                           param = list(burn_in = 3, seed = 1,
                            time_limit = 600))
   res$pval
 }
