@@ -68,3 +68,20 @@ test_that("next_jump_statistic works", {
   expect_true(!is.matrix(res))
   expect_true(length(res) == 1)
 })
+
+##################
+
+## changepoint_variance is correct
+
+test_that("changepoint_variance works", {
+  set.seed(10)
+  y <- c(rep(0, 10), rep(1, 10)) + rnorm(20)
+  fit <- binSegInf::binSeg_fixedSteps(y, 1)
+
+  res <- changepoint_variance(y, fit)
+
+  expect_true(is.numeric(res))
+  expect_true(!is.matrix(res))
+  expect_true(length(res) == 1)
+  expect_true(res >= 0)
+})

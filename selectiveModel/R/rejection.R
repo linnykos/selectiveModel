@@ -73,5 +73,7 @@
     warning("Rejection sampler ran out of time")
   }
 
+  stopifnot(all(.try_polyhedra(y_mat, polyhedra)))
+
   y_mat
 }

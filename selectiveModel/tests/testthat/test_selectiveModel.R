@@ -61,11 +61,13 @@ test_that("selected_model_inference works", {
   fit_method <- function(y){binSegInf::binSeg_fixedSteps(y, 1)}
   res <- selected_model_inference(y, fit_method, num_samp = 10, verbose = F)
 
-  expect_true(is.numeric(res))
-  expect_true(!is.matrix(res))
-  expect_true(length(res) == 1)
-  expect_true(res >= 0)
-  expect_true(res <= 1)
+  expect_true(length(res) == 3)
+  expect_true(all(names(res) == c("pval", "test_stat", "null_stat")))
+  expect_true(is.numeric(res$pval))
+  expect_true(!is.matrix(res$pval))
+  expect_true(length(res$pval) == 1)
+  expect_true(res$pval >= 0)
+  expect_true(res$pval <= 1)
 })
 
 test_that("selected_model_inference works reasonably relatively for hit run", {
@@ -79,7 +81,7 @@ test_that("selected_model_inference works reasonably relatively for hit run", {
   y2 <- c(rep(0, 5), rep(1, 5), rep(5, 10)) + 0.01*rnorm(20)
   res2 <- selected_model_inference(y2, fit_method, num_samp = 50, verbose = F)
 
-  expect_true(res1 > res2)
+  expect_true(res1$pval > res2$pval)
 })
 
 test_that("selected_model_inference works reasonably relatively for rejection", {
@@ -95,5 +97,22 @@ test_that("selected_model_inference works reasonably relatively for rejection", 
   res2 <- selected_model_inference(y2, fit_method, sample_method = "rejection",
                                    num_samp = 15, verbose = F)
 
-  expect_true(res1 > res2)
+  expect_true(res1$pval > res2$pval)
 })
+
+test_that("selected_model_inference works with the variance test statistic", {
+  fit_method <- function(y){binSegInf::binSeg_fixedSteps(y, 1)}
+
+  set.seed(10)
+  y1 <- c(rep(0, 5), rep(5, 5)) + 0.01*rnorm(20)
+  res1 <- selected_model_inference(y1, fit_method, test_func = changepoint_variance,
+                                   num_samp = 15, verbose = F)
+
+  set.seed(10)
+  y2 <- c(rep(0, 2), rep(1, 3), rep(5, 5)) + 0.01*rnorm(10)
+  res2 <- selected_model_inference(y2, fit_method, test_func = changepoint_variance,
+                                   num_samp = 15, verbose = F)
+
+  expect_true(res1$pval > res2$pval)
+})
+

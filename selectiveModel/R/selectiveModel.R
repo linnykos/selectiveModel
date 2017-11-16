@@ -62,7 +62,9 @@ selected_model_inference <- function(y, fit_method,
   })
 
   #compute the quantile
-  length(which(abs(null_stat) >= abs(test_stat)))/length(null_stat)
+  pval <- length(which(abs(null_stat) >= abs(test_stat)))/length(null_stat)
+
+  list(pval = pval, test_stat = test_stat, null_stat = null_stat)
 }
 
 #' Compute the matrix of segments
