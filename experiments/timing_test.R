@@ -1,5 +1,5 @@
 library(selectiveModel)
-n_seq <- ceiling(seq(5, 100, length.out = 10)/2)*2
+n_seq <- ceiling(seq(5, 500, length.out = 10)/2)*2
 time_vec <- rep(0, length(n_seq))
 
 for(i in 1:length(time_vec)){
@@ -11,8 +11,8 @@ for(i in 1:length(time_vec)){
 
   start <- proc.time()["elapsed"]
   res <- selected_model_inference(y, fit_method, verbose = F, cores = 10,
-                                  num_samp = 100,
-                                  param = list(burn_in = 3, seed = 1,
+                                  num_samp = 500,
+                                  param = list(burn_in = 10, seed = 1,
                                                time_limit = 600))
   end <- proc.time()["elapsed"]
 
