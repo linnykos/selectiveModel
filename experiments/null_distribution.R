@@ -1,14 +1,14 @@
 library(selectiveModel)
-trials <- 500
+trials <- 250
 
 func <- function(i){
   write.csv(i, file = "../experiments/tmp.csv")
   set.seed(i)
-  y <- c(rep(0, 5), rep(5, 5)) + rnorm(10)
+  y <- c(rep(0, 2), rep(-2,3), rep(5, 5)) + rnorm(10)
   fit_method <- function(y){binSegInf::binSeg_fixedSteps(y, 1)}
 
   res <- selected_model_inference(y, fit_method, verbose = T, cores = NA,
-                           num_samp = 1000,
+                           num_samp = 250,
                            param = list(burn_in = 3, seed = 1,
                            time_limit = 600))
   res$pval
