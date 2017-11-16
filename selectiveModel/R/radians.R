@@ -1,6 +1,6 @@
 #' Find the range of theta's that are in the polyhedra
 #'
-#' Brute-force finds theta's such that for each theta,
+#' Finds theta's such that for each theta,
 #' \code{.radians_to_data(theta, y, v, w)} is inside the polyhedra.
 #'
 #' @param y vector

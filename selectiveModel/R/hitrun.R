@@ -71,7 +71,7 @@
   } else {
     len <- interval[,2] - interval[,1]
     row_idx <- sample(1:nrow(interval), 1, prob = len)
-  theta <- stats::runif(1, interval[row_idx,1], interval[row_idx,2])
+    theta <- stats::runif(1, interval[row_idx,1], interval[row_idx,2])
   }
 
   y_new <- .radians_to_data(theta, y, v, w)

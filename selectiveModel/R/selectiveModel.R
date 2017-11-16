@@ -84,6 +84,8 @@ selected_model_inference <- function(y, fit_method,
 #'
 #' @return s-row matrix, where s is equal to \code{length(jump_vec+1)}
 .segments <- function(n, jump_vec){
+  if(is.na(jump_vec)) return(matrix(rep(1/n,n), nrow = 1))
+
   stopifnot(all(jump_vec >= 1), all(jump_vec <= n), all(jump_vec %% 1 == 0))
   jump_vec <- unique(sort(c(0,jump_vec, n)))
 
