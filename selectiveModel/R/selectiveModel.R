@@ -49,7 +49,7 @@ selected_model_inference <- function(y, fit_method,
                                 verbose = verbose)
   } else if(sample_method == "rejection") {
     stopifnot(c("time_limit") %in% names(param))
-    samples <- .sampler_rejection(y, segments, polyhedra, num_samp = num_samp,
+    samples <- .sampler_rejection_radial(y, segments, polyhedra, num_samp = num_samp,
                                 cores = cores, time_limit = param$time_limit,
                                 verbose = verbose)
   } else {
