@@ -1,29 +1,29 @@
-context("Test hit and run")
+context("Test hit and run, Radial")
 
-## .hit_run_next_point is correct
+## .hit_run_next_point_radial is correct
 
-test_that(".hit_run_next_point works", {
+test_that(".hit_run_next_point_radial works", {
   set.seed(15)
   y <- rnorm(10)
   obj <- binSegInf::binSeg_fixedSteps(y, 2)
   poly <- binSegInf::polyhedra(obj)
   segments <- .segments(length(y), jump_vec = binSegInf::jumps(obj))
 
-  res <- .hit_run_next_point(y, segments, poly)
+  res <- .hit_run_next_point_radial(y, segments, poly)
 
   expect_true(is.numeric(res))
   expect_true(!is.matrix(res))
   expect_true(length(res) == length(y))
 })
 
-test_that(".hit_run_next_point gives a sample with the correct properties", {
+test_that(".hit_run_next_point_radial gives a sample with the correct properties", {
   set.seed(10)
   y <- rnorm(10)
   obj <- binSegInf::binSeg_fixedSteps(y, 2)
   poly <- binSegInf::polyhedra(obj)
   segments <- .segments(length(y), jump_vec = binSegInf::jumps(obj))
 
-  res <- .hit_run_next_point(y, segments, poly)
+  res <- .hit_run_next_point_radial(y, segments, poly)
 
   expect_true(sum(abs(.segment_means(y, segments) -
                         .segment_means(res, segments))) < 1e-6)
@@ -32,23 +32,23 @@ test_that(".hit_run_next_point gives a sample with the correct properties", {
 
 ###########################
 
-## .sampler_hit_run is correct
+## .sampler_hit_run_radial is correct
 
-test_that(".sampler_hit_run works", {
+test_that(".sampler_hit_run_radial works", {
   set.seed(50)
   y <- rnorm(10)
   obj <- binSegInf::binSeg_fixedSteps(y, 2)
   poly <- binSegInf::polyhedra(obj)
   segments <- .segments(length(y), jump_vec = binSegInf::jumps(obj))
 
-  res <- .sampler_hit_run(y, segments, poly, num_samp = 25)
+  res <- .sampler_hit_run_radial(y, segments, poly, num_samp = 25)
 
   expect_true(is.numeric(res))
   expect_true(is.matrix(res))
   expect_true(all(dim(res) == c(length(y), 25)))
 })
 
-test_that(".sampler_hit_run preserves segment means", {
+test_that(".sampler_hit_run_radial preserves segment means", {
   set.seed(10)
   y <- rnorm(10)
   obj <- binSegInf::binSeg_fixedSteps(y, 2)
@@ -56,7 +56,7 @@ test_that(".sampler_hit_run preserves segment means", {
   segments <- .segments(length(y), jump_vec = binSegInf::jumps(obj))
   seg_mean <- .segment_means(y, segments)
 
-  res <- .sampler_hit_run(y, segments, poly, num_samp = 25)
+  res <- .sampler_hit_run_radial(y, segments, poly, num_samp = 25)
 
   bool_vec <- sapply(1:25, function(x){
     seg_mean2 <- .segment_means(res[,x], segments)
@@ -66,7 +66,7 @@ test_that(".sampler_hit_run preserves segment means", {
   expect_true(all(bool_vec))
 })
 
-test_that(".sampler_hit_run preserves l2norm", {
+test_that(".sampler_hit_run_radial preserves l2norm", {
   set.seed(30)
   y <- rnorm(10)
   obj <- binSegInf::binSeg_fixedSteps(y, 2)
@@ -74,7 +74,7 @@ test_that(".sampler_hit_run preserves l2norm", {
   segments <- .segments(length(y), jump_vec = binSegInf::jumps(obj))
   norm1 <- .l2norm(y)
 
-  res <- .sampler_hit_run(y, segments, poly, num_samp = 25)
+  res <- .sampler_hit_run_radial(y, segments, poly, num_samp = 25)
 
   bool_vec <- sapply(1:25, function(x){
     norm2 <- .l2norm(res[,x])
@@ -84,7 +84,7 @@ test_that(".sampler_hit_run preserves l2norm", {
   expect_true(all(bool_vec))
 })
 
-test_that(".sampler_hit_run are all in polyhedra", {
+test_that(".sampler_hit_run_radial are all in polyhedra", {
   set.seed(10)
   y <- rnorm(10)
   obj <- binSegInf::binSeg_fixedSteps(y, 2)
@@ -92,7 +92,7 @@ test_that(".sampler_hit_run are all in polyhedra", {
   segments <- .segments(length(y), jump_vec = binSegInf::jumps(obj))
   seg_mean <- .segment_means(y, segments)
 
-  res <- .sampler_hit_run(y, segments, poly, num_samp = 25)
+  res <- .sampler_hit_run_radial(y, segments, poly, num_samp = 25)
 
   bool_vec <- sapply(1:25, function(x){
     .try_polyhedra(res[,x], poly)
@@ -101,7 +101,7 @@ test_that(".sampler_hit_run are all in polyhedra", {
   expect_true(all(bool_vec))
 })
 
-test_that(".sampler_hit_run works with no cores", {
+test_that(".sampler_hit_run_radial works with no cores", {
   set.seed(10)
   y <- rnorm(10)
   obj <- binSegInf::binSeg_fixedSteps(y, 2)
@@ -109,7 +109,7 @@ test_that(".sampler_hit_run works with no cores", {
   segments <- .segments(length(y), jump_vec = binSegInf::jumps(obj))
   seg_mean <- .segment_means(y, segments)
 
-  res <- .sampler_hit_run(y, segments, poly, num_samp = 25, cores = NA)
+  res <- .sampler_hit_run_radial(y, segments, poly, num_samp = 25, cores = NA)
 
   expect_true(is.numeric(res))
   expect_true(is.matrix(res))

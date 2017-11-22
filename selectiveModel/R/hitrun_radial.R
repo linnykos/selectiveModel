@@ -1,4 +1,6 @@
-#' Hit and run sampler
+#' Hit and run sampler, Radial
+#'
+#' For unknown sigma
 #'
 #' @param y data
 #' @param segments matrix created by \code{.segments}
@@ -10,7 +12,7 @@
 #' @param verbose boolean
 #'
 #' @return matrix with \code{num_samp} columns and \code{length(y)} rows
-.sampler_hit_run <- function(y, segments, polyhedra, num_samp = 100,
+.sampler_hit_run_radial <- function(y, segments, polyhedra, num_samp = 100,
                              cores = 1, burn_in = 2, verbose = F){
   if(!is.na(cores)) {
     doMC::registerDoMC(cores = cores)
@@ -28,7 +30,7 @@
 
     for(j in 1:num_col){
       if(verbose & i == 1 & j %% floor(num_col/10) == 0) cat('*')
-      mat[,j] <- .hit_run_next_point(prev_y, segments, polyhedra)
+      mat[,j] <- .hit_run_next_point_radial(prev_y, segments, polyhedra)
       prev_y <- mat[,j]
     }
 
@@ -52,14 +54,16 @@
   y_mat
 }
 
-#' Output the next point for hit-and-run sampler
+#' Output the next point for hit-and-run sampler, Radial
+#'
+#' For unknown sigma
 #'
 #' @param y data
 #' @param segments matrix created by \code{.segments}
 #' @param polyhedra \code{polyhedra} object
 #'
 #' @return vector
-.hit_run_next_point <- function(y, segments, polyhedra){
+.hit_run_next_point_radial <- function(y, segments, polyhedra){
   stopifnot(ncol(segments) == length(y))
 
   tmp <- .sample_matrix_space(segments, 2, null = T)

@@ -9,6 +9,10 @@
   structure(list(center = as.numeric(center), radius = as.numeric(radius)), class = "circle")
 }
 
+.line <- function(point, direction){
+
+}
+
 #' Construct a hyperplane
 #'
 #' Hyperplane is of form \code{a%*%x = b}.
@@ -217,4 +221,12 @@
  if(abs(term) < tol) return(-b/(2*a))
 
  sort(c((-b-sqrt(term))/(2*a), (-b+sqrt(term))/(2*a)))
+}
+
+.intersect_polyhedron_line <- function(polyhedra, line){
+
+}
+
+.transform_point <- function(val, shift, rotation){
+
 }

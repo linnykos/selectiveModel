@@ -98,3 +98,11 @@
 
   center + scaling * as.numeric(basis_mat %*% point)
 }
+
+.rotation_matrix <- function(vec1, vec2){
+
+}
+
+.bijection_matrix <- function(segments){
+
+}

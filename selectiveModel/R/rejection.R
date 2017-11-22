@@ -1,6 +1,6 @@
-#' Rejection sampler
+#' Rejection sampler, Radial
 #'
-#' Function returns with a warning if \code{time_limit} is reached.
+#' For unknown sigma. Function returns with a warning if \code{time_limit} is reached.
 #'
 #' @param y data
 #' @param segments matrix created by \code{.segments}
@@ -11,7 +11,7 @@
 #' @param verbose boolean
 #'
 #' @return matrix with at most \code{num_samp} columns and \code{length(y)} rows
-.sampler_rejection <- function(y, segments, polyhedra, num_samp = 100,
+.sampler_rejection_radial <- function(y, segments, polyhedra, num_samp = 100,
                                cores = 1, time_limit = 3600, verbose = F){
   seg_means <- .segment_means(y, segments)
   plane <- .plane(segments, seg_means)
@@ -76,4 +76,8 @@
   stopifnot(all(.try_polyhedra(y_mat, polyhedra)))
 
   y_mat
+}
+
+.sampler_rejection_line <- function(){
+
 }

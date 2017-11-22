@@ -44,7 +44,7 @@ selected_model_inference <- function(y, fit_method,
   #pass to sampler
   if(sample_method == "hitrun") {
     stopifnot(c("burn_in") %in% names(param))
-    samples <- .sampler_hit_run(y, segments, polyhedra, num_samp = num_samp,
+    samples <- .sampler_hit_run_radial(y, segments, polyhedra, num_samp = num_samp,
                                 cores = cores, burn_in = param$burn_in,
                                 verbose = verbose)
   } else if(sample_method == "rejection") {
