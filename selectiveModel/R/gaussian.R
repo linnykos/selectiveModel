@@ -1,4 +1,9 @@
 .gaussian <- function(mean, covariance){
+  stopifnot(!is.matrix(mean))
+  stopifnot(length(covariance) == 1 | is.matrix(covariance))
+
+  if(length(covariance) == 1) covariance <- matrix(covariance)
+
   structure(list(mean = mean, covariance = covariance), class = "gaussian")
 }
 
@@ -16,10 +21,10 @@
   stopifnot(length(gaussian$mean) == length(shift))
   stopifnot(all(dim(gaussian$covariance) == dim(gaussian$rotation)))
 
-  gaussian$mean <- rotation%*%(gaussian$mean - shift)
-  gaussian$covariance <- rotation%*%gaussian$covariance%*%t(rotation)
+  mean <- as.numeric(rotation%*%(gaussian$mean - shift))
+  covariance <- rotation%*%gaussian$covariance%*%t(rotation)
 
-  gaussian
+  .gaussian(mean, covariance)
 }
 
 #' Compute the conditional density of a Gaussian distribution
@@ -44,11 +49,41 @@
   mean <- gaussian$mean[1:len] + gaussian$covariance[1:len, (len+1):d]%*%inv%*%(val-gaussian$mean[(len+1):d])
   cov <- gaussian$covariance[1:len, 1:len] - gaussian$covariance[1:len, (len+1):d] %*% inv %*% t(gaussian$covariance[1:len, (len+1):d])
 
-  .gaussian(mean = mean, covariance = cov)
+  .gaussian(mean = as.numeric(mean), covariance = cov)
 }
 
+#' Sample from a truncated gaussian
+#'
+#' This only works for one-dimensional Gaussian distributions
+#'
+#' @param gaussian a \code{gaussian} object
+#' @param lower numeric
+#' @param upper numeric
+#'
+#' @return numeric
+#' @source \url{https://arxiv.org/pdf/0907.4010.pdf}
 .sampler_truncated_gaussian <- function(gaussian, lower, upper){
+  stopifnot(length(gaussian$mean) == 1, length(gaussian$covariance) == 1)
 
+  lower <- (lower - gaussian$mean)/sqrt(gaussian$covariance)
+  upper <- (upper - gaussian$mean)/sqrt(gaussian$covariance)
+
+  while(TRUE){
+    z <- stats::runif(1, lower, upper)
+
+    if(0 >= lower & 0 <= upper){
+      thres <- exp(-z^2/2)
+    } else if(upper < 0){
+      thres <- exp((upper^2 - z^2)/2)
+    } else {
+      thres <- exp((lower^2 - z^2)/2)
+    }
+
+    u <- stats::runif(1)
+    if(u <= thres) break()
+  }
+
+  as.numeric(sqrt(gaussian$covariance)*z+gaussian$mean)
 }
 
 .segment_gaussian <- function(gaussian, segments, seg_means){

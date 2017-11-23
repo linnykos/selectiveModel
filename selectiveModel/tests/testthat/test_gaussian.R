@@ -40,3 +40,149 @@ test_that(".conditional_gaussian works", {
   expect_true(length(res$mean) == 8)
   expect_true(all(dim(res$covariance) == 8))
 })
+
+###############################
+
+## .sampler_truncated_gaussian is correct
+
+test_that(".sampler_truncated_gaussian works", {
+  set.seed(1)
+  res <- .sampler_truncated_gaussian(.gaussian(0, 1), -1, 1)
+
+  expect_true(length(res) == 1)
+  expect_true(is.numeric(res))
+  expect_true(!is.matrix(res))
+  expect_true(res <= 1)
+  expect_true(res >= -1)
+})
+
+test_that(".sampler_truncated_gaussian gives uniform p-values under ks test, easy case", {
+  trials <- 100
+  num <- 1000
+  gaussian <- .gaussian(0, 1)
+
+  pval1 <- sapply(1:trials, function(x){
+    set.seed(x)
+    vec1 <- sapply(1:trials, function(x){
+      .sampler_truncated_gaussian(gaussian, -1, 1)
+    })
+
+    vec2 <- sapply(1:trials, function(x){
+      while(TRUE){
+        y <- rnorm(1)
+        if(y >= -1 & y <= 1) break()
+      }
+      y
+    })
+
+    ks.test(vec1, vec2)$p.value
+  })
+
+  pval2 <- sapply(1:trials, function(x){
+    set.seed(x)
+    vec1 <- sapply(1:trials, function(x){
+      .sampler_truncated_gaussian(gaussian, -1, 1)
+    })
+
+    vec2 <- sapply(1:trials, function(x){
+      while(TRUE){
+        y <- rnorm(1)
+        if(y >= 1 & y <= 2) break()
+      }
+      y
+    })
+
+    ks.test(vec1, vec2)$p.value
+  })
+
+  expect_true(sum(abs(quantile(pval1) - seq(0, 1, length.out = 5))) <=
+                sum(abs(quantile(pval2) - seq(0, 1, length.out = 5))))
+})
+
+test_that(".sampler_truncated_gaussian gives uniform p-values under ks test, scaled", {
+  trials <- 100
+  num <- 1000
+  gaussian <- .gaussian(3, 4)
+
+  pval1 <- sapply(1:trials, function(x){
+    set.seed(x)
+    vec1 <- sapply(1:trials, function(x){
+      .sampler_truncated_gaussian(gaussian, 1, 5)
+    })
+
+    vec2 <- sapply(1:trials, function(x){
+      while(TRUE){
+        y <- rnorm(1, mean = 3, sd = sqrt(4))
+        if(y >= 1 & y <= 5) break()
+      }
+      y
+    })
+
+    ks.test(vec1, vec2)$p.value
+  })
+
+  pval2 <- sapply(1:trials, function(x){
+    set.seed(x)
+    vec1 <- sapply(1:trials, function(x){
+      .sampler_truncated_gaussian(gaussian, 1, 5)
+    })
+
+    vec2 <- sapply(1:trials, function(x){
+      while(TRUE){
+        y <- rnorm(1, mean = 3)
+        if(y >= 1 & y <= 5) break()
+      }
+      y
+    })
+
+    ks.test(vec1, vec2)$p.value
+  })
+
+  expect_true(sum(abs(quantile(pval1) - seq(0, 1, length.out = 5))) <=
+                sum(abs(quantile(pval2) - seq(0, 1, length.out = 5))))
+})
+
+
+test_that(".sampler_truncated_gaussian samples works when both bounds above mean", {
+  trials <- 100
+  num <- 1000
+  gaussian <- .gaussian(3, 4)
+
+  pval1 <- sapply(1:trials, function(x){
+    set.seed(x)
+    vec1 <- sapply(1:trials, function(x){
+      .sampler_truncated_gaussian(gaussian, 4, 5)
+    })
+
+    vec2 <- sapply(1:trials, function(x){
+      while(TRUE){
+        y <- rnorm(1, mean = 3, sd = sqrt(4))
+        if(y >= 4 & y <= 5) break()
+      }
+      y
+    })
+
+    ks.test(vec1, vec2)$p.value
+  })
+
+  pval2 <- sapply(1:trials, function(x){
+    set.seed(x)
+    vec1 <- sapply(1:trials, function(x){
+      .sampler_truncated_gaussian(gaussian, 1, 5)
+    })
+
+    vec2 <- sapply(1:trials, function(x){
+      while(TRUE){
+        y <- rnorm(1, mean = 5, sd = sqrt(4))
+        if(y >= 4 & y <= 5) break()
+      }
+      y
+    })
+
+    ks.test(vec1, vec2)$p.value
+  })
+
+  expect_true(sum(abs(quantile(pval1) - seq(0, 1, length.out = 5))) <=
+                sum(abs(quantile(pval2) - seq(0, 1, length.out = 5))))
+})
+
