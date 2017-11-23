@@ -100,7 +100,20 @@
 }
 
 .rotation_matrix <- function(vec1, vec2){
+  stopifnot(length(vec1) == length(vec2))
+  d <- length(vec1)
 
+  vec1 <- vec1/.l2norm(vec1)
+  vec2 <- vec2/.l2norm(vec2)
+
+  vcomp <- .projection(vec2, vec1)
+  vcomp <- vcomp/.l2norm(vcomp)
+
+  val <- as.numeric(vec1%*%vec2)
+  mat <- matrix(c(val, sqrt(1-val^2), -sqrt(1-val^2), val), ncol = 2)
+  basis <- cbind(vec1, vcomp)
+
+  diag(d) - vec1%*%t(vec1) - vcomp%*%t(vcomp) + basis %*% mat %*% t(basis)
 }
 
 .bijection_matrix <- function(segments){

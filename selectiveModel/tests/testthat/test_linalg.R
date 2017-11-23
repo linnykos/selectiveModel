@@ -194,3 +194,103 @@ test_that(".change_basis gives the right mathematical properties", {
   expect_true(abs(.l2norm(res) - major_radius) < 1e-6)
   expect_true(abs(plane$a%*%res - plane$b) < 1e-6)
 })
+
+##################
+
+## .rotation_matrix is correct
+
+test_that(".rotation_matrix works", {
+  set.seed(10)
+  vec1 <- c(1, rep(0, 9))
+  vec2 <- rnorm(10)
+
+  res <- .rotation_matrix(vec1, vec2)
+
+  expect_true(is.matrix(res))
+  expect_true(is.numeric(res))
+  expect_true(all(dim(res) == c(10, 10)))
+})
+
+test_that(".rotation_matrix preserves length", {
+  set.seed(10)
+  vec1 <- rnorm(10)
+  vec2 <- rnorm(10)
+  res <- .rotation_matrix(vec1, vec2)
+
+  trials <- 100
+  bool_vec <- sapply(1:trials, function(x){
+    vec <- rnorm(10)
+    next_vec <- res %*% vec
+
+    abs(.l2norm(vec) - .l2norm(next_vec)) < 1e-6
+  })
+
+  expect_true(all(bool_vec))
+})
+
+test_that(".rotation_matrix preserves vectors orthogonal to space", {
+  set.seed(5)
+  vec1 <- rnorm(10)
+  vec2 <- rnorm(10)
+  mat <- rbind(vec1, vec2)
+  res <- .rotation_matrix(vec1, vec2)
+
+  trials <- 100
+  bool_vec <- sapply(1:trials, function(x){
+    vec <- rnorm(10)
+    vcomp <- .projection_matrix(vec, mat)
+
+    next_vec <- res %*% vec
+    nextcomp <- .projection_matrix(next_vec, mat)
+
+    sum(abs(vcomp - nextcomp)) < 1e-6
+  })
+
+  expect_true(all(bool_vec))
+})
+
+test_that(".rotation_matrix gives a matrix whose inverse is its transpose", {
+  trials <- 100
+  bool_vec <- sapply(1:trials, function(x){
+    set.seed(x)
+    vec1 <- rnorm(10)
+    vec2 <- rnorm(10)
+
+    vec1 <- vec1/.l2norm(vec1); vec2 <- vec2/.l2norm(vec2)
+    res <- .rotation_matrix(vec1, vec2)
+
+    sum(abs(diag(10) - res %*% t(res))) < 1e-6
+  })
+})
+
+test_that(".rotation_matrix rotates vectors", {
+  trials <- 100
+  bool_vec <- sapply(1:trials, function(x){
+    set.seed(x)
+    vec1 <- rnorm(10)
+    vec2 <- rnorm(10)
+
+    vec1 <- vec1/.l2norm(vec1); vec2 <- vec2/.l2norm(vec2)
+    res <- .rotation_matrix(vec1, vec2)
+
+    vec <- res %*% vec1
+
+    sum(abs(vec - vec2)) < 1e-6
+  })
+})
+
+test_that(".rotation_matrix can rotate other direction", {
+  trials <- 100
+  bool_vec <- sapply(1:trials, function(x){
+    set.seed(x)
+    vec1 <- rnorm(10)
+    vec2 <- rnorm(10)
+
+    vec1 <- vec1/.l2norm(vec1); vec2 <- vec2/.l2norm(vec2)
+    res <- .rotation_matrix(vec1, vec2)
+
+    vec <- t(res) %*% vec2
+
+    sum(abs(vec - vec1)) < 1e-6
+  })
+})
