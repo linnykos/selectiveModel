@@ -289,4 +289,69 @@ test_that(".closest_point_to_origin works for this test case", {
   expect_true(sum(abs(plane$a%*%res - plane$b)) < 1e-6)
 })
 
+##############################
 
+## .intersect_polyhedron_line is correct
+
+test_that(".intersect_polyhedron_line works", {
+  set.seed(15)
+  y <- rnorm(10)
+  obj <- binSegInf::binSeg_fixedSteps(y, 1)
+  poly <- binSegInf::polyhedra(obj)
+  line <- .line(y, rep(1, 10))
+
+  res <- .intersect_polyhedron_line(poly, line)
+
+  expect_true(length(res) == 2)
+  expect_true(is.numeric(res))
+  expect_true(!is.matrix(res))
+})
+
+test_that(".intersect_polyhedron_line can return two non-Infinite boundaries", {
+  set.seed(15)
+  y <- c(rep(0,5), rep(5,5)) + rnorm(10)
+  obj <- binSegInf::binSeg_fixedSteps(y, 4)
+  poly <- binSegInf::polyhedra(obj)
+  line <- .line(y, rnorm(10))
+
+  res <- .intersect_polyhedron_line(poly, line)
+
+  expect_true(all(abs(res) <= 1e5))
+})
+
+test_that(".intersection_polyhedron_line returns a correct interval", {
+  set.seed(10)
+  y <- c(rep(0,5), rep(5,5)) + rnorm(10)
+  obj <- binSegInf::binSeg_fixedSteps(y, 4)
+  poly <- binSegInf::polyhedra(obj)
+  line <- .line(y, rnorm(10))
+
+  res <- .intersect_polyhedron_line(poly, line)
+
+  trials <- 100
+  bool_vec <- sapply(1:trials, function(x){
+    set.seed(x)
+    alpha <- runif(1, res[1], res[2])
+    vec <- line$point + alpha*line$direction
+    all(poly$gamma %*% vec >= poly$u)
+  })
+
+  expect_true(all(bool_vec))
+})
+
+test_that(".intersection_polyhedron_line gives shorter intervals as more jumps are added", {
+  set.seed(10)
+  y <- 1:10 + rnorm(10)
+  line <- .line(y, rnorm(10))
+
+  obj1 <- binSegInf::binSeg_fixedSteps(y, 1)
+  poly1 <- binSegInf::polyhedra(obj1)
+  res1 <- .intersect_polyhedron_line(poly1, line)
+
+  obj2 <- binSegInf::binSeg_fixedSteps(y, 5)
+  poly2 <- binSegInf::polyhedra(obj2)
+  res2 <- .intersect_polyhedron_line(poly2, line)
+
+  expect_true(res1[1] <= res2[1])
+  expect_true(res1[2] >= res2[2])
+})

@@ -5,12 +5,20 @@
 #'
 #' @return a \code{circle} object
 .circle <- function(center, radius){
-
   structure(list(center = as.numeric(center), radius = as.numeric(radius)), class = "circle")
 }
 
+#' Construct a line object
+#'
+#' @param point vector
+#' @param direction vector
+#'
+#' @return a \code{line} object
 .line <- function(point, direction){
+  stopifnot(length(point) == length(direction))
 
+  direction <- direction/.l2norm(direction)
+  structure(list(point = point, direction = direction), class = "line")
 }
 
 #' Construct a hyperplane
@@ -223,8 +231,45 @@
  sort(c((-b-sqrt(term))/(2*a), (-b+sqrt(term))/(2*a)))
 }
 
+#' Intersect a polyhedron with a line
+#'
+#' Computes one endpoint by solving the following optimization problem:
+#' max a s.t. polyhedra$gamma * (point + a*direction) >= polyhedra$u.
+#' Since the linear program forces all variables to be non-negative, additional
+#' transformations are needed. The other endpoint is solved by a minimization problem.
+#'
+#' This function assumes that \code{line$point} is a valid point inside the
+#' polyhedra.
+#'
+#' @param polyhedra a \code{polyhedra} object
+#' @param line a \code{line} object
+#'
+#' @return a vector of length 2
 .intersect_polyhedron_line <- function(polyhedra, line){
+  stopifnot(ncol(polyhedra$gamma) == length(line$direction))
+  stopifnot(all(polyhedra$gamma %*% line$point >= polyhedra$u))
+  d <- length(polyhedra$u)
 
+  vec <- polyhedra$gamma %*% line$direction
+  rhs_vec <- polyhedra$u - polyhedra$gamma %*% line$point
+  constr_mat <- cbind(vec, -vec)
+
+  res1 <- lpSolve::lp(direction = "min",
+                      objective.in = c(1, -1), const.mat = constr_mat,
+                      const.dir = rep(">=", d), const.rhs = rhs_vec)
+
+  res2 <- lpSolve::lp(direction = "max",
+                      objective.in = c(1, -1), const.mat = constr_mat,
+                      const.dir = rep(">=", d), const.rhs = rhs_vec)
+
+  val1 <- ifelse(res1$status == 0, res1$solution[1] - res1$solution[2],
+                 -Inf)
+  val2 <- ifelse(res2$status == 0, res2$solution[1] - res2$solution[2],
+                 Inf)
+
+  stopifnot(0 >= val1, 0 <= val2)
+
+  c(val1, val2)
 }
 
 .transform_point <- function(val, shift, rotation){
