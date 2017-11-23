@@ -149,7 +149,7 @@ test_that(".sampler_truncated_gaussian samples works when both bounds above mean
   gaussian <- .gaussian(3, 4)
 
   pval1 <- sapply(1:trials, function(x){
-    set.seed(x)
+    set.seed(2*x)
     vec1 <- sapply(1:trials, function(x){
       .sampler_truncated_gaussian(gaussian, 4, 5)
     })
@@ -166,7 +166,7 @@ test_that(".sampler_truncated_gaussian samples works when both bounds above mean
   })
 
   pval2 <- sapply(1:trials, function(x){
-    set.seed(x)
+    set.seed(2*x)
     vec1 <- sapply(1:trials, function(x){
       .sampler_truncated_gaussian(gaussian, 1, 5)
     })
@@ -175,6 +175,50 @@ test_that(".sampler_truncated_gaussian samples works when both bounds above mean
       while(TRUE){
         y <- rnorm(1, mean = 5, sd = sqrt(4))
         if(y >= 4 & y <= 5) break()
+      }
+      y
+    })
+
+    ks.test(vec1, vec2)$p.value
+  })
+
+  expect_true(sum(abs(quantile(pval1) - seq(0, 1, length.out = 5))) <=
+                sum(abs(quantile(pval2) - seq(0, 1, length.out = 5))))
+})
+
+
+test_that(".sampler_truncated_gaussian samples works when both bounds below mean", {
+  trials <- 100
+  num <- 1000
+  gaussian <- .gaussian(3, 4)
+
+  pval1 <- sapply(1:trials, function(x){
+    set.seed(3*x)
+    vec1 <- sapply(1:trials, function(x){
+      .sampler_truncated_gaussian(gaussian, 0, 2)
+    })
+
+    vec2 <- sapply(1:trials, function(x){
+      while(TRUE){
+        y <- rnorm(1, mean = 3, sd = sqrt(4))
+        if(y >= 0 & y <= 2) break()
+      }
+      y
+    })
+
+    ks.test(vec1, vec2)$p.value
+  })
+
+  pval2 <- sapply(1:trials, function(x){
+    set.seed(3*x)
+    vec1 <- sapply(1:trials, function(x){
+      .sampler_truncated_gaussian(gaussian, 0, 2)
+    })
+
+    vec2 <- sapply(1:trials, function(x){
+      while(TRUE){
+        y <- rnorm(1, mean = 3.5)
+        if(y >= 0 & y <= 2) break()
       }
       y
     })

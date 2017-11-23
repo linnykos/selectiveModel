@@ -44,10 +44,11 @@
 .conditional_gaussian <- function(gaussian, val){
   d <-  length(gaussian$mean)
   len <- d - length(val)
-  inv <- solve(gaussian$covariance[(len+1):d,(len+1):d])
+  inv <- solve(gaussian$covariance[(len+1):d,(len+1):d, drop = F])
 
   mean <- gaussian$mean[1:len] + gaussian$covariance[1:len, (len+1):d]%*%inv%*%(val-gaussian$mean[(len+1):d])
-  cov <- gaussian$covariance[1:len, 1:len] - gaussian$covariance[1:len, (len+1):d] %*% inv %*% t(gaussian$covariance[1:len, (len+1):d])
+  cov <- gaussian$covariance[1:len, 1:len, drop = F] -
+    gaussian$covariance[1:len, (len+1):d, drop = F] %*% inv %*% t(gaussian$covariance[1:len, (len+1):d, drop = F])
 
   .gaussian(mean = as.numeric(mean), covariance = cov)
 }
