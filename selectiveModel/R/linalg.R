@@ -99,6 +99,18 @@
   center + scaling * as.numeric(basis_mat %*% point)
 }
 
+#' Rotation matrix
+#'
+#' Creates a rotation matrix such that when multiplied by a vector, the
+#' component of said vector in the plane spanned by \code{vec1} and \code{vec2}
+#' are preserved, and the component in the direction of \code{vec1} is rotated
+#' towards \code{vec2}.
+#'
+#' @param vec1 vector
+#' @param vec2 vector
+#'
+#' @return square matrix with number columns and rows equal to the length of \code{vec1}
+#' @source \url{https://math.stackexchange.com/questions/598750/finding-the-rotation-matrix-in-n-dimensions}
 .rotation_matrix <- function(vec1, vec2){
   stopifnot(length(vec1) == length(vec2))
   d <- length(vec1)
