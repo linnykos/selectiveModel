@@ -75,11 +75,13 @@ test_that("selected_model_inference works reasonably relatively for hit run", {
 
   set.seed(10)
   y1 <- c(rep(0, 10), rep(5, 10)) + 0.01*rnorm(20)
-  res1 <- selected_model_inference(y1, fit_method, num_samp = 50, verbose = F)
+  res1 <- selected_model_inference(y1, fit_method, num_samp = 50, verbose = F,
+                                   param = list("burn_in" = 2))
 
   set.seed(10)
   y2 <- c(rep(0, 5), rep(1, 5), rep(5, 10)) + 0.01*rnorm(20)
-  res2 <- selected_model_inference(y2, fit_method, num_samp = 50, verbose = F)
+  res2 <- selected_model_inference(y2, fit_method, num_samp = 50, verbose = F,
+                                   param = list("burn_in" = 2))
 
   expect_true(res1$pval > res2$pval)
 })
@@ -90,12 +92,14 @@ test_that("selected_model_inference works reasonably relatively for rejection", 
   set.seed(10)
   y1 <- c(rep(0, 5), rep(5, 5)) + 0.01*rnorm(20)
   res1 <- selected_model_inference(y1, fit_method, sample_method = "rejection",
-                                   num_samp = 15, verbose = F)
+                                   num_samp = 15, verbose = F,
+                                   param = list("burn_in" = 2))
 
   set.seed(10)
   y2 <- c(rep(0, 2), rep(1, 3), rep(5, 5)) + 0.01*rnorm(10)
   res2 <- selected_model_inference(y2, fit_method, sample_method = "rejection",
-                                   num_samp = 15, verbose = F)
+                                   num_samp = 15, verbose = F,
+                                   param = list("burn_in" = 2))
 
   expect_true(res1$pval > res2$pval)
 })
@@ -106,12 +110,14 @@ test_that("selected_model_inference works with the variance test statistic", {
   set.seed(10)
   y1 <- c(rep(0, 5), rep(5, 5)) + 0.01*rnorm(20)
   res1 <- selected_model_inference(y1, fit_method, test_func = changepoint_variance,
-                                   num_samp = 15, verbose = F)
+                                   num_samp = 15, verbose = F,
+                                   param = list("burn_in" = 2))
 
   set.seed(10)
   y2 <- c(rep(0, 2), rep(1, 3), rep(5, 5)) + 0.01*rnorm(10)
   res2 <- selected_model_inference(y2, fit_method, test_func = changepoint_variance,
-                                   num_samp = 15, verbose = F)
+                                   num_samp = 15, verbose = F,
+                                   param = list("burn_in" = 2))
 
   expect_true(res1$pval > res2$pval)
 })

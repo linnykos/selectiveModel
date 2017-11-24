@@ -109,3 +109,20 @@ test_that(".sampler_hit_run_line gives samples inside the polyhedra", {
   expect_true(all(vec))
 })
 
+
+test_that(".sampler_hit_run_line works with no cores", {
+  set.seed(10)
+  y <- rnorm(10)
+  obj <- binSegInf::binSeg_fixedSteps(y, 2)
+  poly <- binSegInf::polyhedra(obj)
+  segments <- .segments(length(y), jump_vec = binSegInf::jumps(obj))
+  gaussian <- .gaussian(y, diag(10))
+
+  res <- .sampler_hit_run_line(gaussian, segments, poly, burn_in = 10,
+                               num_samp = 25, cores = NA)
+
+  expect_true(is.numeric(res))
+  expect_true(is.matrix(res))
+  expect_true(all(dim(res) == c(length(y), 25)))
+})
+

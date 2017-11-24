@@ -1,3 +1,18 @@
+#' Hit and run sampler, Line
+#'
+#' For known sigma
+#'
+#' @param gaussian a \code{gaussian} object where the mean represents the data
+#' @param segments matrix created by \code{.segments}
+#' @param polyhedra \code{polyhedra} object
+#' @param num_samp number of desired samples from null distribution
+#' @param cores umber of cores
+#' @param burn_in positive integer of the first few samples to throw out per core
+#' @param lapse positive integer, where we sample \code{num_samp*burn_in}
+#' samples from the null distribution and return every \code{burn_in}th sample
+#' @param verbose boolean
+#'
+#' @return matrix with \code{num_samp} columns and \code{length(gaussian$mean)} rows
 .sampler_hit_run_line <- function(gaussian, segments, polyhedra, num_samp = 100,
                                   cores = 1, burn_in = 500, lapse = 2, verbose = F){
   if(!is.na(cores)) {
@@ -21,7 +36,7 @@
       prev_y <- mat[,j]
     }
 
-    mat
+    mat[,burn_in:ncol(mat)]
   }
 
   i <- 0 #debugging reasons
@@ -32,7 +47,7 @@
     y_mat <- func(1)
   }
 
-  seq_vec <- seq(burn_in, ncol(y_mat), by = lapse)
+  seq_vec <- seq(1, ncol(y_mat), by = lapse)
   stopifnot(length(seq_vec) >= num_samp)
   if(length(seq_vec) > num_samp) seq_vec <- seq_vec[1:num_samp]
 

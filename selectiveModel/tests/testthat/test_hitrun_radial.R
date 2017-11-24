@@ -41,7 +41,7 @@ test_that(".sampler_hit_run_radial works", {
   poly <- binSegInf::polyhedra(obj)
   segments <- .segments(length(y), jump_vec = binSegInf::jumps(obj))
 
-  res <- .sampler_hit_run_radial(y, segments, poly, num_samp = 25)
+  res <- .sampler_hit_run_radial(y, segments, poly, num_samp = 25, burn_in = 10)
 
   expect_true(is.numeric(res))
   expect_true(is.matrix(res))
@@ -56,7 +56,7 @@ test_that(".sampler_hit_run_radial preserves segment means", {
   segments <- .segments(length(y), jump_vec = binSegInf::jumps(obj))
   seg_mean <- .segment_means(y, segments)
 
-  res <- .sampler_hit_run_radial(y, segments, poly, num_samp = 25)
+  res <- .sampler_hit_run_radial(y, segments, poly, num_samp = 25, burn_in = 10)
 
   bool_vec <- sapply(1:25, function(x){
     seg_mean2 <- .segment_means(res[,x], segments)
@@ -74,7 +74,7 @@ test_that(".sampler_hit_run_radial preserves l2norm", {
   segments <- .segments(length(y), jump_vec = binSegInf::jumps(obj))
   norm1 <- .l2norm(y)
 
-  res <- .sampler_hit_run_radial(y, segments, poly, num_samp = 25)
+  res <- .sampler_hit_run_radial(y, segments, poly, num_samp = 25, burn_in = 10)
 
   bool_vec <- sapply(1:25, function(x){
     norm2 <- .l2norm(res[,x])
@@ -92,7 +92,7 @@ test_that(".sampler_hit_run_radial are all in polyhedra", {
   segments <- .segments(length(y), jump_vec = binSegInf::jumps(obj))
   seg_mean <- .segment_means(y, segments)
 
-  res <- .sampler_hit_run_radial(y, segments, poly, num_samp = 25)
+  res <- .sampler_hit_run_radial(y, segments, poly, num_samp = 25, burn_in = 10)
 
   bool_vec <- sapply(1:25, function(x){
     .try_polyhedra(res[,x], poly)
@@ -107,9 +107,8 @@ test_that(".sampler_hit_run_radial works with no cores", {
   obj <- binSegInf::binSeg_fixedSteps(y, 2)
   poly <- binSegInf::polyhedra(obj)
   segments <- .segments(length(y), jump_vec = binSegInf::jumps(obj))
-  seg_mean <- .segment_means(y, segments)
 
-  res <- .sampler_hit_run_radial(y, segments, poly, num_samp = 25, cores = NA)
+  res <- .sampler_hit_run_radial(y, segments, poly, num_samp = 25, cores = NA, burn_in = 10)
 
   expect_true(is.numeric(res))
   expect_true(is.matrix(res))

@@ -29,7 +29,9 @@ selected_model_inference <- function(y, fit_method,
                                      test_func = next_jump_statistic,
                                      num_samp = 100,
                                      sample_method = "hitrun",
-                                     param = list(burn_in = 2, time_limit = 3600),
+                                     param = list(burn_in = default_burn_in(),
+                                                  lapse = default_lapse(),
+                                                  time_limit = default_time_limit()),
                                      cores = 1, verbose = T, ...){
 
   #fit the model, fit polyhedra, and compute test statistic on the observed model
@@ -41,14 +43,14 @@ selected_model_inference <- function(y, fit_method,
   #prepare sampler
   segments <- .segments(n, binSegInf::jumps(fit))
 
+  param <- .fill_in_arguments(param)
+
   #pass to sampler
   if(sample_method == "hitrun") {
-    stopifnot(c("burn_in") %in% names(param))
     samples <- .sampler_hit_run_radial(y, segments, polyhedra, num_samp = num_samp,
-                                cores = cores, burn_in = param$burn_in,
+                                cores = cores, burn_in = param$burn_in, lapse = param$lapse,
                                 verbose = verbose)
   } else if(sample_method == "rejection") {
-    stopifnot(c("time_limit") %in% names(param))
     samples <- .sampler_rejection_radial(y, segments, polyhedra, num_samp = num_samp,
                                 cores = cores, time_limit = param$time_limit,
                                 verbose = verbose)
@@ -113,3 +115,29 @@ selected_model_inference <- function(y, fit_method,
 .l2norm <- function(vec){
   as.numeric(sqrt(sum(vec^2)))
 }
+
+.fill_in_arguments <- function(param){
+  burn_in <- ifelse(!is.null(param$burn_in), param$burn_in, default_burn_in())
+  lapse <- ifelse(!is.null(param$lapse), param$lapse, default_lapse())
+  time_limit <- ifelse(!is.null(param$time_limit), param$time_limit, default_time_limit())
+
+  list(burn_in = burn_in, lapse = lapse, time_limit = time_limit)
+}
+
+#' Default burn in
+#'
+#' @return numeric
+#' @export
+default_burn_in <- function(){500}
+
+#' Default lapse
+#'
+#' @return numeric
+#' @export
+default_lapse <- function(){2}
+
+#' Default time limit (Seconds)
+#'
+#' @return numeric
+#' @export
+default_time_limit <- function(){3600}
