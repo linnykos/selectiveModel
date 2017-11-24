@@ -146,7 +146,7 @@
 #' @param tol small positive number
 #'
 #' @return matrix of size 2x2 or \code{NA}
-.intersect_circle_line <- function(plane, circle, tol = 1e-6){
+.intersect_circle_line <- function(plane, circle, tol = 1e-2){
   stopifnot(length(plane$a) == 2, length(which(plane$a != 0)) > 0)
   stopifnot(nrow(plane$a) == 1)
 
