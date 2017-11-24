@@ -147,9 +147,10 @@
 #' @param plane \code{plane} object
 #' @param circle \code{circle} object
 #' @param tol small positive number
+#' @param tol2 small positive number
 #'
 #' @return matrix of size 2x2 or \code{NA}
-.intersect_circle_line <- function(plane, circle, tol = 1e-6){
+.intersect_circle_line <- function(plane, circle, tol = 1e-6, tol2 = 1e-9){
   stopifnot(length(plane$a) == 2, length(which(plane$a != 0)) > 0)
   stopifnot(nrow(plane$a) == 1)
 
@@ -172,7 +173,7 @@
   stopifnot(all(!is.na(y)))
   x <- (plane$b -a2*y)/a1
 
-  if(length(y) == 1 || abs(y[1]-y[2]) < tol){
+  if(length(y) == 1 || abs(y[1]-y[2]) < tol2){
     mat <- matrix(c(x[1], y[1]), ncol = 2)
   } else {
     mat <- cbind(x, y)
