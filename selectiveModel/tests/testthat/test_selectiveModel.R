@@ -137,3 +137,27 @@ test_that("selected_model_inference works with the variance test statistic", {
   expect_true(res1$pval > res2$pval)
 })
 
+test_that("selected_model_inference works for one problem case", {
+  set.seed(77)
+  y <- rnorm(20)
+  fit_method <- function(y){binSegInf::binSeg_fixedSteps(y, 1)}
+
+  res <- selected_model_inference(y, fit_method, verbose = T, cores = NA,
+                                  num_samp = 150,
+                                  param = list(burn_in = 1, time_limit = 600))
+
+  expect_true(length(res) == 3)
+})
+
+test_that("selected_model_inference works for one problem case", {
+  set.seed(238)
+  y <- rnorm(20)
+  fit_method <- function(y){binSegInf::binSeg_fixedSteps(y, 1)}
+
+  res <- selected_model_inference(y, fit_method, verbose = T, cores = NA,
+                                  num_samp = 150,
+                                  param = list(burn_in = 1, time_limit = 600))
+
+  expect_true(length(res) == 3)
+})
+

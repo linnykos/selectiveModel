@@ -244,7 +244,7 @@
 #'
 #' @param vec vector
 #'
-#' @return
+#' @return vector
 .interpolate <- function(vec){
   n <- length(vec)
   sapply(2:n, function(x){
@@ -304,7 +304,6 @@
 .euclidean_to_radian <- function(circle, point, tol = 1e-3){
   stopifnot(length(point) == 2, length(circle$center) == 2)
   stopifnot(abs(circle$radius^2 - sum(circle$center^2)) < tol)
-  print(abs(sum((point-circle$center)^2) - circle$radius^2))
   stopifnot(abs(sum((point-circle$center)^2) - circle$radius^2) < tol)
 
   if(point[2] != 0){

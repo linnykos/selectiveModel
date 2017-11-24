@@ -141,12 +141,15 @@
 #' If there is only one point, then the output is a 2x1 matrix.
 #' If no points are found, return \code{NA}.
 #'
+#' \code{tol} is used to differentiate zero from non-zero. \code{tol2} is used
+#' to determine if there are one or two roots.
+#'
 #' @param plane \code{plane} object
 #' @param circle \code{circle} object
 #' @param tol small positive number
 #'
 #' @return matrix of size 2x2 or \code{NA}
-.intersect_circle_line <- function(plane, circle, tol = 1e-2){
+.intersect_circle_line <- function(plane, circle, tol = 1e-6){
   stopifnot(length(plane$a) == 2, length(which(plane$a != 0)) > 0)
   stopifnot(nrow(plane$a) == 1)
 
