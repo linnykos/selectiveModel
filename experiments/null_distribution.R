@@ -1,3 +1,4 @@
+rm(list=ls())
 library(selectiveModel)
 trials <- 250
 

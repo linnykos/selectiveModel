@@ -30,6 +30,7 @@
     prev_y <- y
 
     for(j in 1:num_col){
+      print(j)
       if(verbose & i == 1 & j %% floor(num_col/10) == 0) cat('*')
       mat[,j] <- .hit_run_next_point_radial(prev_y, segments, polyhedra)
       prev_y <- mat[,j]
