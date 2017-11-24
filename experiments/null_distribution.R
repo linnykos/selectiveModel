@@ -15,7 +15,7 @@ func <- function(i){
   res$pval
 }
 
-doMC::registerDoMC(cores = 14)
+doMC::registerDoMC(cores = 1)
 res <- foreach::"%dopar%"(foreach::foreach(trial = 1:trials), func(trial))
 res <- unlist(res)
 
