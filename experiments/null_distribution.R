@@ -9,13 +9,13 @@ func <- function(i){
   y <- rnorm(20)
   fit_method <- function(y){binSegInf::binSeg_fixedSteps(y, 1)}
 
-  res <- selected_model_inference(y, fit_method, verbose = T, cores = NA,
+  res <- selected_model_inference(y, fit_method, verbose = F, cores = NA,
                            num_samp = 250,
                            param = list(time_limit = 600))
   res$pval
 }
 
-doMC::registerDoMC(cores = 1)
+doMC::registerDoMC(cores = 14)
 res <- foreach::"%dopar%"(foreach::foreach(trial = 1:trials), func(trial))
 res <- unlist(res)
 
