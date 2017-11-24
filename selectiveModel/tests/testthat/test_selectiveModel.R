@@ -70,6 +70,21 @@ test_that("selected_model_inference works", {
   expect_true(res$pval <= 1)
 })
 
+test_that("selected_model_inference works for known sigma", {
+  set.seed(10)
+  y <- c(rep(0, 10), rep(1, 10)) + 0.01*rnorm(20)
+  fit_method <- function(y){binSegInf::binSeg_fixedSteps(y, 1)}
+  res <- selected_model_inference(y, fit_method, sigma = 1, num_samp = 10, verbose = F)
+
+  expect_true(length(res) == 3)
+  expect_true(all(names(res) == c("pval", "test_stat", "null_stat")))
+  expect_true(is.numeric(res$pval))
+  expect_true(!is.matrix(res$pval))
+  expect_true(length(res$pval) == 1)
+  expect_true(res$pval >= 0)
+  expect_true(res$pval <= 1)
+})
+
 test_that("selected_model_inference works reasonably relatively for hit run", {
   fit_method <- function(y){binSegInf::binSeg_fixedSteps(y, 1)}
 

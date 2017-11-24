@@ -75,7 +75,6 @@ selected_model_inference <- function(y, fit_method,
     }
   }
 
-
   #for each sample, run the test function
   null_stat <- apply(samples, 2, function(x){
     test_func(x, fit, ...)
