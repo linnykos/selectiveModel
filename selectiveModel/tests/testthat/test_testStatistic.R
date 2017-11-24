@@ -85,3 +85,34 @@ test_that("changepoint_variance works", {
   expect_true(length(res) == 1)
   expect_true(res >= 0)
 })
+
+########################
+
+## segment_difference is correct
+
+test_that("segment_difference works", {
+  set.seed(10)
+  y <- c(rep(0, 10), rep(1, 10)) + rnorm(20)
+  fit <- binSegInf::binSeg_fixedSteps(y, 1)
+
+  res <- segment_difference(y, fit, 1)
+
+  expect_true(is.numeric(res))
+  expect_true(!is.matrix(res))
+  expect_true(length(res) == 1)
+})
+
+test_that("segment_difference calculates correctly", {
+  set.seed(5)
+  y <- c(rep(0, 10), rep(1, 5), rep(0, 5)) + rnorm(20)
+  fit <- binSegInf::binSeg_fixedSteps(y, 2)
+  jumps <- binSegInf::jumps(fit)
+
+  res1 <- segment_difference(y, fit, 1)
+  val1 <- mean(y[(jumps[1]+1):jumps[2]]) - mean(y[1:jumps[1]])
+
+  res2 <- segment_difference(y, fit, 2)
+  val2 <- mean(y[(jumps[2]+1):20]) - mean(y[(jumps[1]+1):jumps[2]])
+
+  expect_true(sum(abs(c(res1, res2) - c(val1, val2))) < 1e-6)
+})

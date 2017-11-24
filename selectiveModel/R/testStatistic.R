@@ -71,3 +71,32 @@ changepoint_variance <- function(y, fit, ...){
 
   val
 }
+
+#' Compute the height of a specific jump
+#'
+#' \code{jump_number} refers to the \code{jump_number}th jump starting from
+#' the left. This function outputs the difference between the mean of \code{y}
+#' to the left and to the right of that jump (right minus left)
+#'
+#' @param y data vector
+#' @param fit fitted changepoint object
+#' @param jump_number positive integer
+#' @param ... not used
+#'
+#' @return numeric
+#' @export
+segment_difference <- function(y, fit, jump_number, ...){
+  stopifnot(jump_number %% 1 == 0, jump_number > 0)
+
+  jumps <- sort(binSegInf::jumps(fit))
+  stopifnot(jump_number <= length(jumps))
+  jump <- jumps[jump_number]
+  stopifnot(jump < length(y))
+
+  jumps <- sort(unique(c(0, jumps, length(y))))
+  idx <- which(jumps == jump)
+  stopifnot(idx != 1)
+
+  mean(y[(jumps[idx]+1):jumps[idx+1]]) -
+    mean(y[(jumps[idx-1]+1):jumps[idx]])
+}
