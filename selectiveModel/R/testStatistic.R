@@ -85,7 +85,7 @@ changepoint_variance <- function(y, fit, ...){
 #'
 #' @return numeric
 #' @export
-segment_difference <- function(y, fit, jump_number, ...){
+segment_difference <- function(y, fit, jump_number = 1, ...){
   stopifnot(jump_number %% 1 == 0, jump_number > 0)
 
   jumps <- sort(binSegInf::jumps(fit))

@@ -5,9 +5,9 @@
 \title{Selected model inference}
 \usage{
 selected_model_inference(y, fit_method, test_func = next_jump_statistic,
-  num_samp = 100, sample_method = "hitrun", param = list(burn_in =
-  default_burn_in(), lapse = default_lapse(), time_limit =
-  default_time_limit()), cores = 1, verbose = T, ...)
+  num_samp = 100, sample_method = "hitrun", sigma = NA,
+  param = list(burn_in = default_burn_in(), lapse = default_lapse(),
+  time_limit = default_time_limit()), cores = 1, verbose = T, ...)
 }
 \arguments{
 \item{y}{data of length n}
@@ -19,6 +19,8 @@ selected_model_inference(y, fit_method, test_func = next_jump_statistic,
 \item{num_samp}{number of desired samples from null distribution}
 
 \item{sample_method}{either \code{hit_run} or \code{rejection}}
+
+\item{sigma}{postive number or \code{NA}.}
 
 \item{param}{additional parameters for \code{sample_method} passed in as a list}
 
@@ -45,4 +47,8 @@ Currently the test is a 2-sided test.
 The \code{test_func} should be a function that takes in \code{y} as the first
 input and the output of \code{fit_method} as the second input, and \code{...}
 as the third input.
+
+If \code{sigma} is \code{NA}, then the function conditions on \code{.l2norm(y)}.
+Otherwise, \code{sigma} represents the standard deviation of the marginal distribution
+of \code{y}, asserting that each coordinate is independent and Gaussian.
 }

@@ -4,7 +4,7 @@
 \alias{segment_difference}
 \title{Compute the height of a specific jump}
 \usage{
-segment_difference(y, fit, jump_number, ...)
+segment_difference(y, fit, jump_number = 1, ...)
 }
 \arguments{
 \item{y}{data vector}

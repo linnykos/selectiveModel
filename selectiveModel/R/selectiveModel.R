@@ -13,11 +13,16 @@
 #' input and the output of \code{fit_method} as the second input, and \code{...}
 #' as the third input.
 #'
+#' If \code{sigma} is \code{NA}, then the function conditions on \code{.l2norm(y)}.
+#' Otherwise, \code{sigma} represents the standard deviation of the marginal distribution
+#' of \code{y}, asserting that each coordinate is independent and Gaussian.
+#'
 #' @param y data of length n
 #' @param fit_method function to fit changepoint model
 #' @param test_func function to apply to each \code{y} and fitted model
 #' @param num_samp number of desired samples from null distribution
 #' @param sample_method either \code{hit_run} or \code{rejection}
+#' @param sigma postive number or \code{NA}.
 #' @param param additional parameters for \code{sample_method} passed in as a list
 #' @param cores number of cores
 #' @param verbose boolean
@@ -29,6 +34,7 @@ selected_model_inference <- function(y, fit_method,
                                      test_func = next_jump_statistic,
                                      num_samp = 100,
                                      sample_method = "hitrun",
+                                     sigma = NA,
                                      param = list(burn_in = default_burn_in(),
                                                   lapse = default_lapse(),
                                                   time_limit = default_time_limit()),
@@ -46,17 +52,29 @@ selected_model_inference <- function(y, fit_method,
   param <- .fill_in_arguments(param)
 
   #pass to sampler
-  if(sample_method == "hitrun") {
-    samples <- .sampler_hit_run_radial(y, segments, polyhedra, num_samp = num_samp,
-                                cores = cores, burn_in = param$burn_in, lapse = param$lapse,
-                                verbose = verbose)
-  } else if(sample_method == "rejection") {
-    samples <- .sampler_rejection_radial(y, segments, polyhedra, num_samp = num_samp,
-                                cores = cores, time_limit = param$time_limit,
-                                verbose = verbose)
+  if(is.na(sigma)) {
+    if(sample_method == "hitrun") {
+      samples <- .sampler_hit_run_radial(y, segments, polyhedra, num_samp = num_samp,
+                                         cores = cores, burn_in = param$burn_in, lapse = param$lapse,
+                                         verbose = verbose)
+    } else if(sample_method == "rejection") {
+      samples <- .sampler_rejection_radial(y, segments, polyhedra, num_samp = num_samp,
+                                           cores = cores, time_limit = param$time_limit,
+                                           verbose = verbose)
+    } else {
+      stop("sample_method not appropriate")
+    }
   } else {
-    stop("sample_method not appropriate")
+    if(sample_method == "hitrun") {
+      gaussian <- .gaussian(y, sigma^2*diag(n))
+      samples <- .sampler_hit_run_line(gaussian, segments, polyhedra, num_samp = num_samp,
+                                         cores = cores, burn_in = param$burn_in, lapse = param$lapse,
+                                         verbose = verbose)
+    } else {
+      stop("sample_method not appropriate")
+    }
   }
+
 
   #for each sample, run the test function
   null_stat <- apply(samples, 2, function(x){
