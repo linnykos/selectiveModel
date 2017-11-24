@@ -26,6 +26,7 @@
       matrix(c(-pi/2, pi/2), ncol = 2)
     } else {
       mat <- .intersect_circle_line(plane, circle)
+      stopifnot(nrow(mat) == 2)
       vec <- apply(mat, 1, .euclidean_to_radian, circle = circle)
       init_theta <- .initial_theta(y, v, w)
       .interval(vec, init_theta)
@@ -141,6 +142,7 @@
 #'
 #' @return vector of length 2
 .basic_interval <- function(endpoints, theta){
+  stopifnot(length(endpoints) == 2)
   stopifnot(all(abs(endpoints) <= pi/2))
 
   endpoints <- sort(endpoints)
