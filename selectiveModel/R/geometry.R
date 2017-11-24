@@ -224,7 +224,7 @@
 #' @param tol small positive number
 #'
 #' @return vector of length 2
-.quadratic <- function(a, b, c, tol = 1e-4){
+.quadratic <- function(a, b, c, tol = 1e-8){
   stopifnot(is.numeric(a), is.numeric(b), is.numeric(c))
   stopifnot(length(c(a,b,c)) == 3)
 
