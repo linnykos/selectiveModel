@@ -4,11 +4,12 @@ trials <- 250
 
 func <- function(i){
   write.csv(i, file = "../experiments/tmp.csv")
+  print(i)
   set.seed(i)
   y <- rnorm(20)
   fit_method <- function(y){binSegInf::binSeg_fixedSteps(y, 1)}
 
-  res <- selected_model_inference(y, fit_method, verbose = T, cores = NA,
+  res <- selected_model_inference(y, fit_method, verbose = F, cores = NA,
                            num_samp = 250,
                            param = list(time_limit = 600))
   res$pval
