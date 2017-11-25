@@ -46,8 +46,8 @@ test_that(".conditional_gaussian performs the correct calculation", {
   gaussian <- .gaussian(mean = c(175, 71), covariance = matrix(c(550, 40, 40, 8), nrow = 2))
   res <- .conditional_gaussian(gaussian, 70)
 
-  expect_true(res$mean == 70)
-  expect_true(res$covariance == 350)
+  expect_true(abs(res$mean - 170) < 1e-6)
+  expect_true(abs(res$covariance - 350) < 1e-6)
 })
 
 test_that(".conditional_gaussian works in our pipeline", {
