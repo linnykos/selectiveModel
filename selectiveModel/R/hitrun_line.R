@@ -71,6 +71,7 @@
 
   n <- length(y)
   v <- as.numeric(.sample_matrix_space(segments, 1, null = T))
+  stopifnot(abs(.l2norm(v)-1) < 1e-6)
   line <- .line(y, v)
   interval <- .intersect_polyhedron_line(polyhedra, line)
 

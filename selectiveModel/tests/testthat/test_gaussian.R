@@ -41,6 +41,37 @@ test_that(".conditional_gaussian works", {
   expect_true(all(dim(res$covariance) == 8))
 })
 
+# source: https://onlinecourses.science.psu.edu/stat505/node/43
+test_that(".conditional_gaussian performs the correct calculation", {
+  gaussian <- .gaussian(mean = c(175, 71), covariance = matrix(c(550, 40, 40, 8), nrow = 2))
+  res <- .conditional_gaussian(gaussian, 70)
+
+  expect_true(res$mean == 70)
+  expect_true(res$covariance == 350)
+})
+
+test_that(".conditional_gaussian works in our pipeline", {
+  n <- 10
+  y <- rep(0, n)
+  v <-  c(1, 1, rep(0,n-2)); v <- v/.l2norm(v)
+  gaussian <- .gaussian(rep(0, n), diag(n))
+
+  line <- .line(y, v)
+  polyhedra <- structure(list(gamma = matrix(c(rep(-1, 10), rep(1, 10)), nrow = 2, byrow = T),
+                         u = c(-1, -1)), class = "polyhedra")
+  interval <- .intersect_polyhedron_line(polyhedra, line)
+  rotation <- .rotation_matrix(v, c(1, rep(0, n-1)))
+  c <- y + interval[1]*v
+  d <- y + interval[2]*v
+
+  gaussian <- .transform_gaussian(gaussian, c, rotation)
+
+  univariate <- .conditional_gaussian(gaussian, rep(0, n-1))
+
+  expect_true(abs(univariate$covariance - 1) < 1e-6)
+  expect_true(abs(univariate$mean - abs(diff(interval))/2) < 1e-6)
+})
+
 ###############################
 
 ## .sampler_truncated_gaussian is correct
