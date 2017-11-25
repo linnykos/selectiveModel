@@ -48,7 +48,6 @@ selected_model_inference <- function(y, fit_method,
 
   #prepare sampler
   segments <- .segments(n, binSegInf::jumps(fit))
-
   param <- .fill_in_arguments(param)
 
   #pass to sampler

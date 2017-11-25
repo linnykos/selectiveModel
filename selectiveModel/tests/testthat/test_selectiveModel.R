@@ -59,7 +59,8 @@ test_that("selected_model_inference works", {
   set.seed(10)
   y <- c(rep(0, 10), rep(1, 10)) + 0.01*rnorm(20)
   fit_method <- function(y){binSegInf::binSeg_fixedSteps(y, 1)}
-  res <- selected_model_inference(y, fit_method, num_samp = 10, verbose = F)
+  res <- selected_model_inference(y, fit_method, num_samp = 10, verbose = F,
+                                  param = list(burn_in = 10))
 
   expect_true(length(res) == 3)
   expect_true(all(names(res) == c("pval", "test_stat", "null_stat")))
@@ -74,7 +75,8 @@ test_that("selected_model_inference works for known sigma", {
   set.seed(10)
   y <- c(rep(0, 10), rep(1, 10)) + 0.01*rnorm(20)
   fit_method <- function(y){binSegInf::binSeg_fixedSteps(y, 1)}
-  res <- selected_model_inference(y, fit_method, sigma = 1, num_samp = 10, verbose = F)
+  res <- selected_model_inference(y, fit_method, sigma = 1, num_samp = 10, verbose = F,
+                                  param = list(burn_in = 10))
 
   expect_true(length(res) == 3)
   expect_true(all(names(res) == c("pval", "test_stat", "null_stat")))
@@ -91,12 +93,12 @@ test_that("selected_model_inference works reasonably relatively for hit run", {
   set.seed(10)
   y1 <- c(rep(0, 10), rep(5, 10)) + 0.01*rnorm(20)
   res1 <- selected_model_inference(y1, fit_method, num_samp = 50, verbose = F,
-                                   param = list("burn_in" = 2))
+                                   param = list(burn_in = 10))
 
   set.seed(10)
   y2 <- c(rep(0, 5), rep(1, 5), rep(5, 10)) + 0.01*rnorm(20)
   res2 <- selected_model_inference(y2, fit_method, num_samp = 50, verbose = F,
-                                   param = list("burn_in" = 2))
+                                   param = list(burn_in = 10))
 
   expect_true(res1$pval > res2$pval)
 })
@@ -108,13 +110,13 @@ test_that("selected_model_inference works reasonably relatively for rejection", 
   y1 <- c(rep(0, 5), rep(5, 5)) + 0.01*rnorm(20)
   res1 <- selected_model_inference(y1, fit_method, sample_method = "rejection",
                                    num_samp = 15, verbose = F,
-                                   param = list("burn_in" = 2))
+                                   param = list(burn_in = 10))
 
   set.seed(10)
   y2 <- c(rep(0, 2), rep(1, 3), rep(5, 5)) + 0.01*rnorm(10)
   res2 <- selected_model_inference(y2, fit_method, sample_method = "rejection",
                                    num_samp = 15, verbose = F,
-                                   param = list("burn_in" = 2))
+                                   param = list(burn_in = 10))
 
   expect_true(res1$pval > res2$pval)
 })
@@ -126,13 +128,13 @@ test_that("selected_model_inference works with the variance test statistic", {
   y1 <- c(rep(0, 5), rep(5, 5)) + 0.01*rnorm(20)
   res1 <- selected_model_inference(y1, fit_method, test_func = changepoint_variance,
                                    num_samp = 15, verbose = F,
-                                   param = list("burn_in" = 2))
+                                   param = list(burn_in = 10))
 
   set.seed(10)
   y2 <- c(rep(0, 2), rep(1, 3), rep(5, 5)) + 0.01*rnorm(10)
   res2 <- selected_model_inference(y2, fit_method, test_func = changepoint_variance,
                                    num_samp = 15, verbose = F,
-                                   param = list("burn_in" = 2))
+                                   param = list(burn_in = 10))
 
   expect_true(res1$pval > res2$pval)
 })
@@ -143,8 +145,8 @@ test_that("selected_model_inference works for one problem case", {
   fit_method <- function(y){binSegInf::binSeg_fixedSteps(y, 1)}
 
   res <- selected_model_inference(y, fit_method, verbose = F, cores = NA,
-                                  num_samp = 150,
-                                  param = list(burn_in = 1, time_limit = 600))
+                                  num_samp = 50,
+                                  param = list(burn_in = 10, time_limit = 600))
 
   expect_true(length(res) == 3)
 })
@@ -155,8 +157,8 @@ test_that("selected_model_inference works for one problem case", {
   fit_method <- function(y){binSegInf::binSeg_fixedSteps(y, 1)}
 
   res <- selected_model_inference(y, fit_method, verbose = F, cores = NA,
-                                  num_samp = 150,
-                                  param = list(burn_in = 1, time_limit = 600))
+                                  num_samp = 50,
+                                  param = list(burn_in = 10, time_limit = 600))
 
   expect_true(length(res) == 3)
 })
