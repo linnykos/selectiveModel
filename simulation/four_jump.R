@@ -27,8 +27,8 @@ criterion_closure <- function(fit_method,
 ##################
 
 n <- 60
-trials <- 250
-paramMat <- as.matrix(expand.grid(c(0, 0.5, 1, 1.5, 2), c(1:4)))
+trials <- 100
+paramMat <- as.matrix(expand.grid(c(0, 0.5, 1, 1.5, 2), 1))
 fit_method = function(x){binSegInf::binSeg_fixedSteps(x, numSteps = 4)}
 
 rule <- rule_closure(n)
