@@ -25,6 +25,13 @@ test_that(".segments forms the proper matrix", {
   expect_true(all(res[3,1:7] == 0))
 })
 
+test_that(".segments can ignore properly", {
+  res <- .segments(10, c(3, 7), ignore_jump = 1)
+
+  expect_true(all(dim(res) == c(2, 10)))
+  expect_true(all(res[1,] == c(rep(1/7,7), rep(0,3))))
+})
+
 ########################
 
 ## .segment_means is correct

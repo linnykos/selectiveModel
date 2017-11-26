@@ -6,8 +6,9 @@
 \usage{
 selected_model_inference(y, fit_method, test_func = next_jump_statistic,
   num_samp = 100, sample_method = "hitrun", sigma = NA,
-  param = list(burn_in = default_burn_in(), lapse = default_lapse(),
-  time_limit = default_time_limit()), cores = 1, verbose = T, ...)
+  ignore_jump = NA, param = list(burn_in = default_burn_in(), lapse =
+  default_lapse(), time_limit = default_time_limit()), cores = 1,
+  verbose = T, ...)
 }
 \arguments{
 \item{y}{data of length n}
@@ -21,6 +22,8 @@ selected_model_inference(y, fit_method, test_func = next_jump_statistic,
 \item{sample_method}{either \code{hit_run} or \code{rejection}}
 
 \item{sigma}{postive number or \code{NA}.}
+
+\item{ignore_jump}{which jump to ignore}
 
 \item{param}{additional parameters for \code{sample_method} passed in as a list}
 

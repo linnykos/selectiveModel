@@ -4,14 +4,14 @@
 \alias{segment_difference}
 \title{Compute the height of a specific jump}
 \usage{
-segment_difference(y, fit, jump_number = 1, ...)
+segment_difference(y, fit, jump = 1, ...)
 }
 \arguments{
 \item{y}{data vector}
 
 \item{fit}{fitted changepoint object}
 
-\item{jump_number}{positive integer}
+\item{jump}{positive integer}
 
 \item{...}{not used}
 }

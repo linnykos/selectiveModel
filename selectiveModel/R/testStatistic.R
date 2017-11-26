@@ -80,21 +80,21 @@ changepoint_variance <- function(y, fit, ...){
 #'
 #' @param y data vector
 #' @param fit fitted changepoint object
-#' @param jump_number positive integer
+#' @param jump positive integer
 #' @param ... not used
 #'
 #' @return numeric
 #' @export
-segment_difference <- function(y, fit, jump_number = 1, ...){
-  stopifnot(jump_number %% 1 == 0, jump_number > 0)
+segment_difference <- function(y, fit, jump = 1, ...){
+  stopifnot(jump %% 1 == 0, jump > 0)
 
   jumps <- sort(binSegInf::jumps(fit))
-  stopifnot(jump_number <= length(jumps))
-  jump <- jumps[jump_number]
-  stopifnot(jump < length(y))
+  stopifnot(jump <= length(jumps))
+  jump_idx <- jumps[jump]
+  stopifnot(jump_idx < length(y))
 
   jumps <- sort(unique(c(0, jumps, length(y))))
-  idx <- which(jumps == jump)
+  idx <- which(jumps == jump_idx)
   stopifnot(idx != 1)
 
   mean(y[(jumps[idx]+1):jumps[idx+1]]) -

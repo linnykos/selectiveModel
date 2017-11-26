@@ -23,6 +23,7 @@
 #' @param num_samp number of desired samples from null distribution
 #' @param sample_method either \code{hit_run} or \code{rejection}
 #' @param sigma postive number or \code{NA}.
+#' @param ignore_jump which jump to ignore
 #' @param param additional parameters for \code{sample_method} passed in as a list
 #' @param cores number of cores
 #' @param verbose boolean
@@ -35,6 +36,7 @@ selected_model_inference <- function(y, fit_method,
                                      num_samp = 100,
                                      sample_method = "hitrun",
                                      sigma = NA,
+                                     ignore_jump = NA,
                                      param = list(burn_in = default_burn_in(),
                                                   lapse = default_lapse(),
                                                   time_limit = default_time_limit()),
@@ -44,10 +46,10 @@ selected_model_inference <- function(y, fit_method,
   n <- length(y)
   fit <- fit_method(y)
   polyhedra <- binSegInf::polyhedra(fit)
-  test_stat <- test_func(y, fit, ...)
+  test_stat <- test_func(y, fit, jump = ignore_jump, ...)
 
   #prepare sampler
-  segments <- .segments(n, binSegInf::jumps(fit))
+  segments <- .segments(n, binSegInf::jumps(fit), ignore_jump = ignore_jump)
   param <- .fill_in_arguments(param)
 
   #pass to sampler
@@ -76,7 +78,7 @@ selected_model_inference <- function(y, fit_method,
 
   #for each sample, run the test function
   null_stat <- apply(samples, 2, function(x){
-    test_func(x, fit, ...)
+    test_func(x, fit, jump = ignore_jump, ...)
   })
 
   #compute the quantile
@@ -99,12 +101,18 @@ selected_model_inference <- function(y, fit_method,
 #'
 #' @param n number of samples
 #' @param jump_vec vector of indices
+#' @param ignore_jump which jump to ignore
 #'
 #' @return s-row matrix, where s is equal to \code{length(jump_vec+1)}
-.segments <- function(n, jump_vec){
+.segments <- function(n, jump_vec, ignore_jump = NA){
   if(all(is.na(jump_vec))) return(matrix(rep(1/n,n), nrow = 1))
 
   stopifnot(all(jump_vec >= 1), all(jump_vec <= n), all(jump_vec %% 1 == 0))
+  jump_vec <- sort(jump_vec)
+  if(!is.na(ignore_jump)){
+    stopifnot(ignore_jump %% 1 == 0, ignore_jump > 0, ignore_jump <= length(jump_vec))
+    jump_vec <- jump_vec[-ignore_jump]
+  }
   jump_vec <- unique(sort(c(0,jump_vec, n)))
 
   len <- length(jump_vec)
