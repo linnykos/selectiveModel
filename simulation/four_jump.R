@@ -14,11 +14,12 @@ rule_closure <- function(n){
 
 criterion_closure <- function(fit_method,
                               test_func = selectiveModel::segment_difference, num_samp = 250,
-                              cores = 14, verbose = F){
+                              cores = 14, verbose = T){
   function(dat, vec, ...){
     res <- selectiveModel::selected_model_inference(dat, fit_method = fit_method, test_func = test_func,
                              num_samp = num_samp, ignore_jump = vec[2], cores = cores,
                              verbose = verbose)
+    print("\n")
     res$pval
   }
 }
@@ -33,5 +34,7 @@ fit_method = function(x){binSegInf::binSeg_fixedSteps(x, numSteps = 4)}
 rule <- rule_closure(n)
 criterion <- criterion_closure(fit_method)
 
-simulation::simulation_generator(rule, criterion, paramMat, trials = trials, cores = 1,
+res <- simulation::simulation_generator(rule, criterion, paramMat, trials = trials, cores = 1,
                                  as_list = F, filepath = "../simulation/tmp.RData")
+
+save.image("../simulation/four_jump.RData")
