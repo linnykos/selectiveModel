@@ -52,4 +52,4 @@ criterion <- criterion_closure(fit_method)
 res <- simulation::simulation_generator(rule, criterion, paramMat, trials = trials, cores = 5,
                                  as_list = F, filepath = "../simulation/tmp.RData")
 
-save.image("../simulation/four_jump.RData")
+save.image("../simulation/comparison_pvalue.RData")
