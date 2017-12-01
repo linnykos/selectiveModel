@@ -43,13 +43,13 @@ criterion_closure <- function(fit_method,
 
 n <- 200
 trials <- 100
-paramMat <- matrix(c(1, 2), ncol = 2)
+paramMat <- matrix(c(0.25, 2), ncol = 2)
 fit_method <- function(x){binSegInf::binSeg_fixedSteps(x, numSteps = 4)}
 
 rule <- rule_closure(n)
 criterion <- criterion_closure(fit_method)
 
-res <- simulation::simulation_generator(rule, criterion, paramMat, trials = trials, cores = 5,
+res <- simulation::simulation_generator(rule, criterion, paramMat, trials = trials, cores = 10,
                                  as_list = F, filepath = "../simulation/tmp.RData")
 
 save.image("../simulation/comparison_pvalue.RData")
