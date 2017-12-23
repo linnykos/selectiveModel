@@ -49,7 +49,7 @@ fit_method <- function(x){binSegInf::binSeg_fixedSteps(x, numSteps = 4)}
 rule <- rule_closure(n)
 criterion <- criterion_closure(fit_method)
 
-res <- simulation::simulation_generator(rule, criterion, paramMat, trials = trials, cores = 5,
+res <- simulation::simulation_generator(rule, criterion, paramMat, trials = trials, cores = 10,
                                  as_list = F, filepath = "../simulation/tmp.RData")
 
 save.image("../simulation/comparison_pvalue.RData")
