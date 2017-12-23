@@ -9,14 +9,14 @@ rule_closure <- function(n){
 
     n5 <- ceiling(n/5)
     mean_vec <- c(rep(0, n5), rep(lev, n5), rep(0, n5), rep(-2*lev, n5), rep(0, n5))
-    
+
     while(TRUE){
       y <- mean_vec + stats::rnorm(length(mean_vec))
       fit <- binSegInf::binSeg_fixedSteps(y, 4)
       jumps <- binSegInf::jumps(fit)
       if(max(sort(jumps) - n5*c(1:4)) <= 1) break()
     }
-    
+
     y
   }
 }
@@ -29,7 +29,7 @@ criterion_closure <- function(fit_method,
     poly <- binSegInf::polyhedra(fit)
     contrast <- binSegInf::contrast_vector(fit, vec[2])
     saturated_pval <- binSegInf::pvalue(dat, poly, contrast)
- 
+
 
     selected <- selectiveModel::selected_model_inference(dat, fit_method = fit_method, test_func = test_func,
                              num_samp = num_samp, ignore_jump = vec[2], cores = cores,
@@ -43,7 +43,7 @@ criterion_closure <- function(fit_method,
 
 n <- 200
 trials <- 100
-paramMat <- matrix(c(1, 2), ncol = 2)
+paramMat <- cbind(1, seq(0, 4, by = 0.5))
 fit_method <- function(x){binSegInf::binSeg_fixedSteps(x, numSteps = 4)}
 
 rule <- rule_closure(n)
