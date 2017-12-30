@@ -355,3 +355,25 @@ test_that(".intersection_polyhedron_line gives shorter intervals as more jumps a
   expect_true(res1[1] <= res2[1])
   expect_true(res1[2] >= res2[2])
 })
+
+test_that(".intersection_polyhedron_line works on harder case", {
+  poly <- list(gamma = matrix(c(1,-1, 2,1, -2/3,1, -1/3,-1), nrow = 4, byrow = T),
+               u = c(-1, -2, -2, -1))
+  y <- c(2, -1/2); v <- c(1,1)
+  line <- .line(y, v)
+  interval <- .intersect_polyhedron_line(poly, line)
+
+  c <- y + interval[1]*line$direction
+  d <- y + interval[2]*line$direction
+
+  expect_true(all(poly$gamma %*% c + 1e-6 >= poly$u))
+  expect_true(all(poly$gamma %*% d + 1e-6 >= poly$u))
+
+  c1 <- y + (interval[1]-0.05)*v
+  d1 <- y + (interval[2]+0.05)*v
+
+  expect_true(!all(poly$gamma %*% c >= poly$u))
+  expect_true(!all(poly$gamma %*% d >= poly$u))
+})
+
+

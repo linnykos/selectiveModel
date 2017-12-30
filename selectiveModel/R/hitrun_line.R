@@ -76,8 +76,8 @@
   interval <- .intersect_polyhedron_line(polyhedra, line)
 
   rotation <- .rotation_matrix(v, c(1, rep(0, n-1)))
-  c <- y + interval[1]*v
-  d <- y + interval[2]*v
+  c <- y + interval[1]*line$direction
+  d <- y + interval[2]*line$direction
 
   gaussian <- .transform_gaussian(gaussian, c, rotation)
 
@@ -90,5 +90,5 @@
   univariate <- .conditional_gaussian(gaussian, rep(0, n-1))
 
   alpha <- .sampler_truncated_gaussian(univariate, 0, interval[2]-interval[1])
-  y + (alpha+interval[1])*v
+  y + (alpha+interval[1])*line$direction
 }

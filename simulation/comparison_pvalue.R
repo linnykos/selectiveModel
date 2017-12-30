@@ -30,7 +30,6 @@ criterion_closure <- function(fit_method,
     contrast <- binSegInf::contrast_vector(fit, vec[2])
     saturated_pval <- binSegInf::pvalue(dat, poly, contrast)
 
-
     selected <- selectiveModel::selected_model_inference(dat, fit_method = fit_method, test_func = test_func,
                              num_samp = num_samp, ignore_jump = vec[2], cores = cores,
                              verbose = verbose)
