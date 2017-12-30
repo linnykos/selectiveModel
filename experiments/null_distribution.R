@@ -10,7 +10,7 @@ func <- function(i){
   fit_method <- function(y){binSegInf::binSeg_fixedSteps(y, 1)}
 
   res <- selected_model_inference(y, fit_method, verbose = F, cores = NA,
-                           num_samp = 250, sigma = 1,
+                           num_samp = 250, sigma = 1, ignore_jump = 1,
                            param = list(time_limit = 600))
   res$pval
 }
