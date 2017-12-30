@@ -44,7 +44,7 @@ mat <- create_prob_grid(xlim, ylim, density_func)
 plot_grid(mat, asp = T)
 
 # let's draw points
-y <- c(2, -1/2); v <- c(1,1)
+y <- c(0, 0); v <- c(1,0)
 line <- .line(y, v)
 interval <- .intersect_polyhedron_line(poly, line)
 rotation <- .rotation_matrix(v, c(1, rep(0, 1)))
@@ -65,5 +65,5 @@ for(i in 1:1000){
 }
 
 # plot them
-points(newsamp, pch = 16, col = rgb(0.5, 0.5, 0.5, 0.01))
+points(newsamp, pch = 16, col = rgb(0.5, 0.5, 0.5, 0.1))
 hist(intermediate)

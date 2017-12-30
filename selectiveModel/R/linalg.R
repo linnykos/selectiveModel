@@ -118,6 +118,8 @@
   vec1 <- vec1/.l2norm(vec1)
   vec2 <- vec2/.l2norm(vec2)
 
+  if(sum(abs(vec1 - vec2)) <= 1e-6) return(diag(d))
+
   vcomp <- .projection(vec2, vec1)
   vcomp <- vcomp/.l2norm(vcomp)
 
