@@ -69,6 +69,20 @@
   lower <- (lower - gaussian$mean)/sqrt(gaussian$covariance)
   upper <- (upper - gaussian$mean)/sqrt(gaussian$covariance)
 
+  # one-sided fix
+  if(is.infinite(lower) | is.infinite(upper)){
+
+    if(is.infinite(lower) & is.infinite(upper)){
+      return(sqrt(gaussian$covariance)*stats::rnorm(1)+gaussian$mean)
+    }
+
+    if(is.infinite(lower)){
+      lower <- upper - 10
+    } else {
+      upper <- lower + 10
+    }
+  }
+
   while(TRUE){
     z <- stats::runif(1, lower, upper)
 
@@ -85,8 +99,4 @@
   }
 
   as.numeric(sqrt(gaussian$covariance)*z+gaussian$mean)
-}
-
-.segment_gaussian <- function(gaussian, segments, seg_means){
-
 }

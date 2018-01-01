@@ -67,7 +67,7 @@ selected_model_inference <- function(y, fit_method,
     }
   } else {
     if(sample_method == "hitrun") {
-      gaussian <- .gaussian(y, sigma^2*diag(n))
+      gaussian <- .gaussian(rep(0, n), sigma^2*diag(n))
       samples <- .sampler_hit_run_line(gaussian, segments, polyhedra, num_samp = num_samp,
                                          cores = cores, burn_in = param$burn_in, lapse = param$lapse,
                                          verbose = verbose)
@@ -84,7 +84,8 @@ selected_model_inference <- function(y, fit_method,
   #compute the quantile
   pval <- length(which(abs(null_stat) >= abs(test_stat)))/length(null_stat)
 
-  list(pval = pval, test_stat = test_stat, null_stat = null_stat)
+  list(pval = pval, test_stat = test_stat, null_stat = null_stat,
+       samples = samples)
 }
 
 #' Compute the matrix of segments
