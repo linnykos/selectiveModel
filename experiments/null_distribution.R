@@ -12,7 +12,7 @@ func <- function(i){
                                   test_func = selectiveModel::segment_difference,
                                   verbose = F, cores = NA,
                                   num_samp = 250, sigma = 1, ignore_jump = 1,
-                                  param = list(burn_in = 5000, lapse = 10, time_limit = 600))
+                                  param = list(burn_in = 7500, lapse = 100, time_limit = 600))
   res$pval
 }
 
