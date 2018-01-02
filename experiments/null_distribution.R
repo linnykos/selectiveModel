@@ -1,6 +1,6 @@
 rm(list=ls())
 library(selectiveModel)
-trials <- 250
+trials <- 1000
 
 func <- function(i){
   print(i)
