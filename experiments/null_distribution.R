@@ -5,14 +5,14 @@ trials <- 1000
 func <- function(i){
   print(i)
   set.seed(i)
-  y <- rnorm(200)
+  y <- rnorm(20)
   fit_method <- function(y){binSegInf::binSeg_fixedSteps(y, 1)}
 
   res <- selected_model_inference(y, fit_method,
                                   test_func = selectiveModel::segment_difference,
                                   verbose = F, cores = NA,
                                   num_samp = 250, sigma = 1, ignore_jump = 1,
-                                  param = list(burn_in = 7500, lapse = 100, time_limit = 600))
+                                  param = list(burn_in = 7500, lapse = 10, time_limit = 600))
   res$pval
 }
 
