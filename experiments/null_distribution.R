@@ -5,7 +5,7 @@ trials <- 1000
 func <- function(i){
   print(i)
   set.seed(i)
-  y <- rnorm(20)
+  y <- rnorm(200)
   fit_method <- function(y){binSegInf::binSeg_fixedSteps(y, 1)}
 
   res <- selected_model_inference(y, fit_method,
