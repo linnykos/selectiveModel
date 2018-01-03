@@ -261,6 +261,8 @@ test_that(".rotation_matrix gives a matrix whose inverse is its transpose", {
 
     sum(abs(diag(10) - res %*% t(res))) < 1e-6
   })
+
+  expect_true(all(bool_vec))
 })
 
 test_that(".rotation_matrix rotates vectors", {
@@ -277,6 +279,8 @@ test_that(".rotation_matrix rotates vectors", {
 
     sum(abs(vec - vec2)) < 1e-6
   })
+
+  expect_true(all(bool_vec))
 })
 
 test_that(".rotation_matrix can rotate other direction", {
@@ -293,4 +297,6 @@ test_that(".rotation_matrix can rotate other direction", {
 
     sum(abs(vec - vec1)) < 1e-6
   })
+
+  expect_true(all(bool_vec))
 })
