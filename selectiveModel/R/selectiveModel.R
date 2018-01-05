@@ -25,7 +25,7 @@
 #' @param sigma postive number or \code{NA}.
 #' @param ignore_jump which jump to ignore
 #' @param param additional parameters for \code{sample_method} passed in as a list
-#' @param cores number of cores
+#' @param cores number of cores, only for rejection sampling
 #' @param verbose boolean
 #' @param ... optional inputs for \code{test_func}
 #'
@@ -38,8 +38,7 @@ selected_model_inference <- function(y, fit_method,
                                      sigma = NA,
                                      ignore_jump = NA,
                                      param = list(burn_in = default_burn_in(),
-                                                  lapse = default_lapse(),
-                                                  time_limit = default_time_limit()),
+                                                  lapse = default_lapse()),
                                      cores = 1, verbose = T, ...){
 
   #fit the model, fit polyhedra, and compute test statistic on the observed model
@@ -56,21 +55,20 @@ selected_model_inference <- function(y, fit_method,
   if(is.na(sigma)) {
     if(sample_method == "hitrun") {
       samples <- .sampler_hit_run_radial(y, segments, polyhedra, num_samp = num_samp,
-                                         cores = cores, burn_in = param$burn_in, lapse = param$lapse,
+                                         burn_in = param$burn_in, lapse = param$lapse,
                                          verbose = verbose)
     } else if(sample_method == "rejection") {
       samples <- .sampler_rejection_radial(y, segments, polyhedra, num_samp = num_samp,
-                                           cores = cores, time_limit = param$time_limit,
-                                           verbose = verbose)
+                                           cores = cores, verbose = verbose)
     } else {
       stop("sample_method not appropriate")
     }
   } else {
     if(sample_method == "hitrun") {
       gaussian <- .gaussian(rep(0, n), sigma^2*diag(n))
-      samples <- .sampler_hit_run_line(gaussian, segments, polyhedra, num_samp = num_samp,
-                                         cores = cores, burn_in = param$burn_in, lapse = param$lapse,
-                                         verbose = verbose)
+      samples <- .sampler_hit_run_line(y, gaussian, segments, polyhedra, num_samp = num_samp,
+                                       burn_in = param$burn_in, lapse = param$lapse,
+                                       verbose = verbose)
     } else {
       stop("sample_method not appropriate")
     }
@@ -143,9 +141,8 @@ selected_model_inference <- function(y, fit_method,
 .fill_in_arguments <- function(param){
   burn_in <- ifelse(!is.null(param$burn_in), param$burn_in, default_burn_in())
   lapse <- ifelse(!is.null(param$lapse), param$lapse, default_lapse())
-  time_limit <- ifelse(!is.null(param$time_limit), param$time_limit, default_time_limit())
 
-  list(burn_in = burn_in, lapse = lapse, time_limit = time_limit)
+  list(burn_in = burn_in, lapse = lapse)
 }
 
 #' Default burn in
@@ -159,9 +156,3 @@ default_burn_in <- function(){500}
 #' @return numeric
 #' @export
 default_lapse <- function(){2}
-
-#' Default time limit (Seconds)
-#'
-#' @return numeric
-#' @export
-default_time_limit <- function(){3600}

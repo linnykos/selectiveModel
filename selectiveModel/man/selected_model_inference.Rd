@@ -7,8 +7,7 @@
 selected_model_inference(y, fit_method, test_func = next_jump_statistic,
   num_samp = 100, sample_method = "hitrun", sigma = NA,
   ignore_jump = NA, param = list(burn_in = default_burn_in(), lapse =
-  default_lapse(), time_limit = default_time_limit()), cores = 1,
-  verbose = T, ...)
+  default_lapse()), cores = 1, verbose = T, ...)
 }
 \arguments{
 \item{y}{data of length n}
@@ -27,7 +26,7 @@ selected_model_inference(y, fit_method, test_func = next_jump_statistic,
 
 \item{param}{additional parameters for \code{sample_method} passed in as a list}
 
-\item{cores}{number of cores}
+\item{cores}{number of cores, only for rejection sampling}
 
 \item{verbose}{boolean}
 

@@ -100,17 +100,3 @@ test_that(".sampler_hit_run_radial are all in polyhedra", {
 
   expect_true(all(bool_vec))
 })
-
-test_that(".sampler_hit_run_radial works with no cores", {
-  set.seed(10)
-  y <- rnorm(10)
-  obj <- binSegInf::binSeg_fixedSteps(y, 2)
-  poly <- binSegInf::polyhedra(obj)
-  segments <- .segments(length(y), jump_vec = binSegInf::jumps(obj))
-
-  res <- .sampler_hit_run_radial(y, segments, poly, num_samp = 25, cores = NA, burn_in = 10)
-
-  expect_true(is.numeric(res))
-  expect_true(is.matrix(res))
-  expect_true(all(dim(res) == c(length(y), 25)))
-})

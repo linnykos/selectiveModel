@@ -14,43 +14,22 @@
 #'
 #' @return matrix with \code{num_samp} columns and \code{length(y)} rows
 .sampler_hit_run_radial <- function(y, segments, polyhedra, num_samp = 100,
-                             cores = 1, burn_in = 500, lapse = 2, verbose = F){
-  if(!is.na(cores)) {
-    doMC::registerDoMC(cores = cores)
-    num_col <- ceiling(burn_in + num_samp*lapse/cores)
-  } else {
-    num_col <- burn_in + num_samp*lapse
-  }
+                                    burn_in = 500, lapse = 2, verbose = F){
+  num_col <- burn_in + num_samp*lapse
+  y_mat <- matrix(NA, nrow = length(y), ncol = num_samp)
+  seq_idx <- burn_in + (1:num_samp)*lapse
 
-  n <- length(y)
+  prev_y <- y
 
-  func <- function(i){
-    set.seed(i)
-    mat <- matrix(0, ncol = num_col, nrow = n)
-    prev_y <- y
-
-    for(j in 1:num_col){
-      if(verbose & i == 1 & j %% floor(num_col/10) == 0) cat('*')
-      mat[,j] <- .hit_run_next_point_radial(prev_y, segments, polyhedra)
-      prev_y <- mat[,j]
+  for(i in 1:num_col){
+    next_y <- .hit_run_next_point_radial(prev_y, segments, polyhedra)
+    if(i %in% seq_idx){
+      y_mat[,which(seq_idx == i)] <- next_y
     }
 
-    mat[,burn_in:ncol(mat)]
+    prev_y <- next_y
   }
 
-  i <- 0 #debugging reasons
-  if(!is.na(cores)) {
-    y_mat <- do.call(cbind, foreach::"%dopar%"(foreach::foreach(i = 1:cores),
-                     func(i)))
-  } else {
-    y_mat <- func(1)
-  }
-
-  seq_vec <- seq(1, ncol(y_mat), by = lapse)
-  stopifnot(length(seq_vec) >= num_samp)
-  if(length(seq_vec) > num_samp) seq_vec <- seq_vec[1:num_samp]
-
-  y_mat <- y_mat[,seq_vec]
   stopifnot(all(.try_polyhedra(y_mat, polyhedra)))
   y_mat
 }
