@@ -57,4 +57,4 @@ criterion <- criterion_closure(fit_method)
 res <- simulation::simulation_generator(rule, criterion, paramMat, trials = trials, cores = 1,
                                  as_list = F, filepath = "../simulation/tmp.RData")
 
-save.image("../simulation/comparison_pvalue_saturated.RData")
+save.image("../simulation/comparison_pvalue.RData")
