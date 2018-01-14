@@ -24,7 +24,7 @@ criterion_closure <- function(fit_method,
                               test_func = selectiveModel::segment_difference, num_samp = 2000,
                               cores = NA, verbose = T){
   function(dat, vec, ...){
-    fit <- binSegInf::binSeg_fixedSteps(dat, 4)
+    fit <- binSegInf::binSeg_fixedSteps(dat, 1)
     poly <- binSegInf::polyhedra(fit)
     contrast <- binSegInf::contrast_vector(fit, vec[2])
     # saturated_pval <- binSegInf:::poly.pval2(dat, poly, contrast, sigma = 1, bits = 1000)$pv
