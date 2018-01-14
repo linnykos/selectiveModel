@@ -10,7 +10,7 @@ rule_closure <- function(n){
     mean_vec <- c(rep(0, floor(n/2)), rep(lev, floor(n/2)))
 
      while(TRUE){
-      y <- mean_vec + stats::rnorm(length(mean_vec))
+       y <- mean_vec + stats::rnorm(length(mean_vec))
        fit <- binSegInf::binSeg_fixedSteps(y, 1)
        jumps <- binSegInf::jumps(fit)
        if(abs(jumps - floor(n/2)) <= 1) break()
@@ -44,7 +44,7 @@ criterion_closure <- function(fit_method,
 
 n <- 10
 trials <- 1000
-paramMat <- cbind(seq(0, 1.5, by = 0.5), 1)
+paramMat <- cbind(seq(0, 7.5, by = 0.5), 1)
 fit_method <- function(x){binSegInf::binSeg_fixedSteps(x, numSteps = 4)}
 
 rule <- rule_closure(n)
