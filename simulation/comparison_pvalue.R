@@ -11,9 +11,9 @@ rule_closure <- function(n){
 
      while(TRUE){
        y <- mean_vec + stats::rnorm(length(mean_vec))
-       fit <- binSegInf::binSeg_fixedSteps(y, 1)
+       fit <- binSegInf::binSeg_fixedSteps(y, 2)
        jumps <- binSegInf::jumps(fit)
-       if(abs(jumps - floor(n/2)) <= 1) break()
+       if(all(abs(jumps - floor(n/2)) <= 1)) break()
      }
 
     y
@@ -21,7 +21,7 @@ rule_closure <- function(n){
 }
 
 criterion_closure <- function(fit_method,
-                              test_func = selectiveModel::segment_difference, num_samp = 2000,
+                              test_func = selectiveModel::segment_difference, num_samp = 1000,
                               cores = NA, verbose = T){
   function(dat, vec, ...){
     fit <- binSegInf::binSeg_fixedSteps(dat, 1)
@@ -36,7 +36,7 @@ criterion_closure <- function(fit_method,
     #
     # print(paste0("saturated: ", round(saturated_pval,3), "// selected: ", round(selected$pval,3)))
     # c(saturated_pval, selected$pval)
-    selected$pval
+    c(selected$pval, binSegInf::jumps(fit))
   }
 }
 
@@ -44,8 +44,8 @@ criterion_closure <- function(fit_method,
 
 n <- 10
 trials <- 1000
-paramMat <- cbind(seq(0, 7.5, length.out = 4), 1)
-fit_method <- function(x){binSegInf::binSeg_fixedSteps(x, numSteps = 4)}
+paramMat <- cbind(seq(0, 1.5, length.out = 4), 1)
+fit_method <- function(x){binSegInf::binSeg_fixedSteps(x, numSteps = 1)}
 
 rule <- rule_closure(n)
 criterion <- criterion_closure(fit_method)
