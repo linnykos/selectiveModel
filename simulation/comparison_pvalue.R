@@ -44,7 +44,7 @@ criterion_closure <- function(fit_method,
 
 n <- 10
 trials <- 1000
-paramMat <- cbind(seq(0, 7.5, by = 0.5), 1)
+paramMat <- cbind(seq(0, 7.5, length.out = 4), 1)
 fit_method <- function(x){binSegInf::binSeg_fixedSteps(x, numSteps = 4)}
 
 rule <- rule_closure(n)
