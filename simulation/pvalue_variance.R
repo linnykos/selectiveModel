@@ -42,7 +42,7 @@ y_list <- lapply(seq(0, 1.5, length.out = 4), function(lev){
 
   while(TRUE){
     y <- mean_vec + stats::rnorm(length(mean_vec))
-    fit <- binSegInf::binSeg_fixedSteps(y, 2)
+    fit <- binSegInf::binSeg_fixedSteps(y, 1)
     jumps <- binSegInf::jumps(fit)
     if(all(abs(jumps - floor(n/2)) <= 1)) break()
   }
