@@ -27,17 +27,17 @@ criterion_closure <- function(fit_method,
     fit <- binSegInf::binSeg_fixedSteps(dat, 1)
     poly <- binSegInf::polyhedra(fit)
     contrast <- binSegInf::contrast_vector(fit, vec[2])
-    saturated_pval <- binSegInf:::poly.pval2(dat, poly, contrast, sigma = 1, bits = 1000)$pv
+    # saturated_pval <- binSegInf:::poly.pval2(dat, poly, contrast, sigma = 1, bits = 1000)$pv
 
-    # selected <- selected_model_inference(dat, fit_method = fit_method, test_func = test_func,
-    #                                       num_samp = num_samp, ignore_jump = vec[2], cores = cores,
-    #                                       verbose = F, sigma = 1,
-    #                                       param = list(burn_in = 7500, lapse = 10))
+    selected <- selected_model_inference(dat, fit_method = fit_method, test_func = test_func,
+                                          num_samp = num_samp, ignore_jump = vec[2], cores = cores,
+                                          verbose = F, sigma = 1,
+                                          param = list(burn_in = 1000, lapse = 100))
 
     # print(paste0("saturated: ", round(saturated_pval,3), "// selected: ", round(selected$pval,3)))
     # c(saturated_pval, selected$pval)
-    # c(selected$pval, binSegInf::jumps(fit))
-    saturated_pval
+    c(selected$pval, binSegInf::jumps(fit))
+    # saturated_pval
   }
 }
 
@@ -45,13 +45,14 @@ criterion_closure <- function(fit_method,
 
 n <- 10
 trials <- 1000
-paramMat <- cbind(seq(0, 1.5, length.out = 4), 1)
+# paramMat <- cbind(seq(0, 1.5, length.out = 4), 1)
+paramMat <- matrix(c(0,1), nrow = 1)
 fit_method <- function(x){binSegInf::binSeg_fixedSteps(x, numSteps = 1)}
 
 rule <- rule_closure(n)
 criterion <- criterion_closure(fit_method)
 
-res <- simulation::simulation_generator(rule, criterion, paramMat, trials = trials, cores = 1,
+res <- simulation::simulation_generator(rule, criterion, paramMat, trials = trials, cores = 10,
                                  as_list = F, filepath = "../simulation/tmp.RData")
 
 save.image("../simulation/comparison_pvalue_saturated.RData")
