@@ -76,27 +76,60 @@
       return(sqrt(gaussian$covariance)*stats::rnorm(1)+gaussian$mean)
     }
 
-    if(is.infinite(lower)){
-      lower <- upper - 10
+    if(is.infinite(upper)){
+      z <- .sampler_truncated_gaussian_onesided(lower)
     } else {
-      upper <- lower + 10
+      z <- -1*.sampler_truncated_gaussian_onesided(-upper)
     }
-  }
-
-  while(TRUE){
-    z <- stats::runif(1, lower, upper)
-
-    if(0 >= lower & 0 <= upper){
-      thres <- exp(-z^2/2)
-    } else if(upper < 0){
-      thres <- exp((upper^2 - z^2)/2)
-    } else {
-      thres <- exp((lower^2 - z^2)/2)
-    }
-
-    u <- stats::runif(1)
-    if(u <= thres) break()
+  } else {
+    z <- .sampler_truncated_gaussian_twosided(lower, upper)
   }
 
   as.numeric(sqrt(gaussian$covariance)*z+gaussian$mean)
+}
+
+.sampler_truncated_gaussian_onesided <- function(lower, limit = 2){
+  if(lower < limit){
+    while(TRUE){
+      z <- stats::rnorm(1)
+      if(z >= lower) break()
+    }
+  } else {
+    astar <- (lower + sqrt(lower^2+4))/2
+    while(TRUE){
+      z <- stats::rexp(1, astar) + lower
+      thres <- exp(-(z - astar)^2/2)
+      u <- stats::runif(1)
+
+      if(u <= thres) break()
+    }
+  }
+
+  z
+}
+
+.sampler_truncated_gaussian_twosided <- function(lower, upper, limit = 2){
+  if(abs(lower) <= limit & abs(upper) <= limit){
+    while(TRUE){
+      z <- stats::rnorm(1)
+      if(z >= lower & z <= upper) break()
+    }
+  } else {
+    while(TRUE){
+      z <- stats::runif(1, lower, upper)
+
+      if(0 >= lower & 0 <= upper){
+        thres <- exp(-z^2/2)
+      } else if(upper < 0){
+        thres <- exp((upper^2 - z^2)/2)
+      } else {
+        thres <- exp((lower^2 - z^2)/2)
+      }
+
+      u <- stats::runif(1)
+      if(u <= thres) break()
+    }
+  }
+
+  z
 }
