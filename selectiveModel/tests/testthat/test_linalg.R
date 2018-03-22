@@ -319,3 +319,22 @@ test_that(".rotation_matrix properly rotates many times", {
 
   expect_true(all(bool_vec))
 })
+
+
+test_that(".rotation_matrix properly rotates many times, even in low dimension", {
+  trials <- 100
+  bool_vec <- sapply(1:trials, function(x){
+    set.seed(x)
+    vec1 <- rnorm(2)
+    vec2 <- c(1, 0)
+
+    vec1 <- vec1/.l2norm(vec1); vec2 <- vec2/.l2norm(vec2)
+    res <- .rotation_matrix(vec1, vec2)
+
+    vec <- res %*% vec1
+
+    sum(abs(vec - vec2)) < 1e-6
+  })
+
+  expect_true(all(bool_vec))
+})
