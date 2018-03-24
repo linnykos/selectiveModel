@@ -158,6 +158,41 @@ test_that(".sample_matrix_space similary gives proper outputs for rowspace", {
   expect_true(sum(abs(tmp - diag(4))) < 1e-6)
 })
 
+test_that(".sample_matrix_space is properly uniform", {
+  set.seed(10)
+  trials <- 100
+  mat <- .segments(3, 1, ignore_jump = 1)
+  v_mat <- sapply(1:trials, function(x){
+    .sample_matrix_space(mat, num_vec = 1, null = T)
+  })
+
+  basis1 <- c(1,1,1); basis1 <- basis1/.l2norm(basis1)
+  basis2 <- c(0,-1,1); basis2 <- basis2/.l2norm(basis2)
+  basis3 <- c(-2,1,1); basis3 <- basis3/.l2norm(basis3)
+  basis <- rbind(basis1, basis2, basis3)
+
+  v_mat <- apply(v_mat, 2, function(x){
+    solve(t(basis), x)[2:3]
+  })
+
+  angle_vec <- apply(v_mat, 2, function(x){
+    if(x[1] >= 0 & x[2] >= 0) {
+      atan(x[2]/x[1])
+    } else if (x[1] <= 0 & x[2] >= 0){
+      atan(x[2]/x[1])+pi
+    } else if (x[1] <= 0 & x[2] <= 0){
+      atan(x[2]/x[1])+pi
+    } else {
+      atan(x[2]/x[1])+2*pi
+    }
+  })
+
+  angle_vec2 <- rnorm(trials, mean = pi, sd = pi/2)
+
+  expect_true(sum(abs(sort(angle_vec) - seq(0, 2*pi, length.out = trials))) <
+                sum(abs(sort(angle_vec) - sort(angle_vec2))))
+})
+
 ########################
 
 ## .change_basis is correct
