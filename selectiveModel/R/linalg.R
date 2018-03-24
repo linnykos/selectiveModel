@@ -51,26 +51,26 @@
 #' and number of columns equal to \code{num_vec}
 .sample_matrix_space <- function(mat, num_vec = NA, null = T, tol = 1e-6){
   k <- Matrix::rankMatrix(mat)
-  if(is.na(num_vec)){
-    num_vec <- ifelse(null, ncol(mat) - k, k)
-  }
-  stopifnot(num_vec > 0, num_vec %% 1 == 0)
   n <- ncol(mat)
 
+  # form basis of either rowspace or nullspace
   if(null){
-    vec_mat <- sapply(1:num_vec, function(x){
-      vec <- stats::rnorm(n)
-      .projection_matrix(vec, mat)
-    })
+    res <- matrix(stats::rnorm(n*(n-k)), ncol = n-k)
+    res <- apply(res, 2, .projection_matrix, mat = mat)
+    res <- svd(t(res))$v
   } else {
-    weights <- matrix(stats::rnorm(k*num_vec), ncol = k)
-    vec_mat <- t(weights %*% mat)
+    res <- svd(mat)$v
   }
 
+  if(is.na(num_vec)) return(res)
+
+  weights <- matrix(stats::rnorm(num_vec*ncol(res)), nrow = ncol(res))
+  vec_mat <- res %*% weights
+
+  #make the vectors orthogonal
   if(num_vec > 1){
     for(i in 2:num_vec){
-      vec_mat[,i] <- .projection_matrix(vec_mat[,i], t(vec_mat[,1:(i-1),drop = F]))
-      stopifnot(any(abs(vec_mat[,i]) > tol))
+      vec_mat[,i] <- .projection_matrix(vec_mat[,i], mat = t(vec_mat[,1:(i-1), drop = F]))
     }
   }
 

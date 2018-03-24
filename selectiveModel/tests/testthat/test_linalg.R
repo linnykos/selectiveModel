@@ -117,7 +117,7 @@ test_that(".sample_matrix_space gives vectors that are orthogonal to mat", {
   }
 })
 
-test_that(".sample_matrix_space gives vectors that are orthogonal", {
+test_that(".sample_matrix_space gives vectors that are orthogonal when num_vec is not 1", {
   set.seed(10)
   mat <- .segments(10, c(3, 7))
   vec_mat <- .sample_matrix_space(mat, 3)
@@ -126,14 +126,12 @@ test_that(".sample_matrix_space gives vectors that are orthogonal", {
   expect_true(sum(abs(res - diag(3))) < 1e-6)
 })
 
-test_that(".sample_matrix_space can determine num_vec automatically", {
+test_that(".sample_matrix_space gives vectors that are orthogonal", {
   set.seed(10)
   mat <- .segments(10, c(3, 7))
-  vec_mat <- .sample_matrix_space(mat)
-
-  expect_true(all(dim(vec_mat) == c(10,7)))
-
+  vec_mat <- .sample_matrix_space(mat, NA)
   res <- t(vec_mat)%*%vec_mat
+
   expect_true(sum(abs(res - diag(7))) < 1e-6)
 })
 
