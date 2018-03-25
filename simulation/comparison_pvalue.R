@@ -44,7 +44,7 @@ criterion_closure <- function(fit_method,
 ##################
 
 n <- 10
-trials <- 1000
+trials <- 500
 # paramMat <- cbind(seq(0, 1.5, length.out = 4), 1)
 paramMat <- matrix(c(0,1), nrow = 1)
 fit_method <- function(x){binSegInf::binSeg_fixedSteps(x, numSteps = 1)}
@@ -52,7 +52,7 @@ fit_method <- function(x){binSegInf::binSeg_fixedSteps(x, numSteps = 1)}
 rule <- rule_closure(n)
 criterion <- criterion_closure(fit_method)
 
-res <- simulation::simulation_generator(rule, criterion, paramMat, trials = trials, cores = 10,
+res <- simulation::simulation_generator(rule, criterion, paramMat, trials = trials, cores = 14,
                                  as_list = F, filepath = "../simulation/tmp.RData")
 
-save.image("../simulation/comparison_pvalue_saturated.RData")
+save.image("../simulation/comparison_pvalue.RData")
