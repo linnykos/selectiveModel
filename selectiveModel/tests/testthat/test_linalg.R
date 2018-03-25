@@ -117,7 +117,7 @@ test_that(".sample_matrix_space gives vectors that are orthogonal to mat", {
   }
 })
 
-test_that(".sample_matrix_space gives vectors that are orthogonal", {
+test_that(".sample_matrix_space gives vectors that are orthogonal when num_vec is not 1", {
   set.seed(10)
   mat <- .segments(10, c(3, 7))
   vec_mat <- .sample_matrix_space(mat, 3)
@@ -126,14 +126,12 @@ test_that(".sample_matrix_space gives vectors that are orthogonal", {
   expect_true(sum(abs(res - diag(3))) < 1e-6)
 })
 
-test_that(".sample_matrix_space can determine num_vec automatically", {
+test_that(".sample_matrix_space gives vectors that are orthogonal", {
   set.seed(10)
   mat <- .segments(10, c(3, 7))
-  vec_mat <- .sample_matrix_space(mat)
-
-  expect_true(all(dim(vec_mat) == c(10,7)))
-
+  vec_mat <- .sample_matrix_space(mat, NA)
   res <- t(vec_mat)%*%vec_mat
+
   expect_true(sum(abs(res - diag(7))) < 1e-6)
 })
 
@@ -158,6 +156,41 @@ test_that(".sample_matrix_space similary gives proper outputs for rowspace", {
 
   tmp <- t(res) %*% res
   expect_true(sum(abs(tmp - diag(4))) < 1e-6)
+})
+
+test_that(".sample_matrix_space is properly uniform", {
+  set.seed(10)
+  trials <- 100
+  mat <- .segments(3, 1, ignore_jump = 1)
+  v_mat <- sapply(1:trials, function(x){
+    .sample_matrix_space(mat, num_vec = 1, null = T)
+  })
+
+  basis1 <- c(1,1,1); basis1 <- basis1/.l2norm(basis1)
+  basis2 <- c(0,-1,1); basis2 <- basis2/.l2norm(basis2)
+  basis3 <- c(-2,1,1); basis3 <- basis3/.l2norm(basis3)
+  basis <- rbind(basis1, basis2, basis3)
+
+  v_mat <- apply(v_mat, 2, function(x){
+    solve(t(basis), x)[2:3]
+  })
+
+  angle_vec <- apply(v_mat, 2, function(x){
+    if(x[1] >= 0 & x[2] >= 0) {
+      atan(x[2]/x[1])
+    } else if (x[1] <= 0 & x[2] >= 0){
+      atan(x[2]/x[1])+pi
+    } else if (x[1] <= 0 & x[2] <= 0){
+      atan(x[2]/x[1])+pi
+    } else {
+      atan(x[2]/x[1])+2*pi
+    }
+  })
+
+  angle_vec2 <- rnorm(trials, mean = pi, sd = pi/2)
+
+  expect_true(sum(abs(sort(angle_vec) - seq(0, 2*pi, length.out = trials))) <
+                sum(abs(sort(angle_vec) - sort(angle_vec2))))
 })
 
 ########################
@@ -296,6 +329,44 @@ test_that(".rotation_matrix can rotate other direction", {
     vec <- t(res) %*% vec2
 
     sum(abs(vec - vec1)) < 1e-6
+  })
+
+  expect_true(all(bool_vec))
+})
+
+
+test_that(".rotation_matrix properly rotates many times", {
+  trials <- 100
+  bool_vec <- sapply(1:trials, function(x){
+    set.seed(x)
+    vec1 <- rnorm(10)
+    vec2 <- c(1, rep(0, 9))
+
+    vec1 <- vec1/.l2norm(vec1); vec2 <- vec2/.l2norm(vec2)
+    res <- .rotation_matrix(vec1, vec2)
+
+    vec <- res %*% vec1
+
+    sum(abs(vec - vec2)) < 1e-6
+  })
+
+  expect_true(all(bool_vec))
+})
+
+
+test_that(".rotation_matrix properly rotates many times, even in low dimension", {
+  trials <- 100
+  bool_vec <- sapply(1:trials, function(x){
+    set.seed(x)
+    vec1 <- rnorm(2)
+    vec2 <- c(1, 0)
+
+    vec1 <- vec1/.l2norm(vec1); vec2 <- vec2/.l2norm(vec2)
+    res <- .rotation_matrix(vec1, vec2)
+
+    vec <- res %*% vec1
+
+    sum(abs(vec - vec2)) < 1e-6
   })
 
   expect_true(all(bool_vec))
