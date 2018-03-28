@@ -6,10 +6,8 @@ zz <- res
 load("../simulation/comparison_pvalue.RData")
 for(i in 1:length(res)){
   res[[i]][2,] <- res[[i]][1,]
-  res[[i]][1,] <- zz[[i]]
+  res[[i]][1,] <- zz[[i]][1:ncol(res[[i]])]
 }
-
-# load("../simulation/comparison_pvalue.RData")
 
 pdf("../figures/qq.pdf", height = 3, width = 10)
 par(mfrow = c(1, length(res)))

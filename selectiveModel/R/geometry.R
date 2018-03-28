@@ -275,7 +275,3 @@
 
   c(val1, val2)
 }
-
-.transform_point <- function(val, shift, rotation){
-
-}
