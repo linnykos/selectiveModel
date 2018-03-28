@@ -376,4 +376,26 @@ test_that(".intersection_polyhedron_line works on harder case", {
   expect_true(!all(poly$gamma %*% d >= poly$u))
 })
 
+test_that(".intersection_polyhedron_line solution remains the same after rotation", {
+  set.seed(5)
+  y <- rnorm(10)
+  obj <- binSegInf::binSeg_fixedSteps(y, 2)
+  polyhedra <- binSegInf::polyhedra(obj)
+  segments <- .segments(length(y), jump_vec = binSegInf::jumps(obj))
+  gaussian <- .gaussian(rep(0,10), diag(10))
+
+  n <- length(y)
+  v <- as.numeric(.sample_matrix_space(segments, 1, null = T))
+  stopifnot(abs(.l2norm(v)-1) < 1e-6)
+  line <- .line(y, v)
+  interval <- .intersect_polyhedron_line(polyhedra, line)
+
+  tol <- 1e-6
+  rotation <- .rotation_matrix(v, c(1, rep(0, n-1)))
+  expect_true(all(polyhedra$gamma %*% (t(rotation)%*%c(1, rep(0, n-1))*(interval[1]+tol) + y) >=
+                    polyhedra$u))
+  expect_true(all(polyhedra$gamma %*% (t(rotation)%*%c(1, rep(0, n-1))*(interval[2]-tol) + y) >=
+                    polyhedra$u))
+})
+
 
