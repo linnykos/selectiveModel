@@ -45,11 +45,10 @@
 #' @param mat matrix
 #' @param num_vec positive integer or \code{NA}
 #' @param null boolean
-#' @param tol small positive number
 #'
 #' @return a matrix of vectors, with number of rows equal to \code{ncol(mat)}
 #' and number of columns equal to \code{num_vec}
-.sample_matrix_space <- function(mat, num_vec = NA, null = T, tol = 1e-6){
+.sample_matrix_space <- function(mat, num_vec = NA, null = T){
   k <- Matrix::rankMatrix(mat)
   n <- ncol(mat)
 
