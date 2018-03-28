@@ -13,7 +13,7 @@ rule_closure <- function(n){
        y <- mean_vec + stats::rnorm(length(mean_vec))
        fit <- binSegInf::binSeg_fixedSteps(y, 2)
        jumps <- binSegInf::jumps(fit)
-       if(all(abs(jumps - floor(n/2)) <= 1)) break()
+       if(all(abs(jumps - floor(n/2)) <= 0)) break()
      }
 
     y
@@ -32,7 +32,7 @@ criterion_closure <- function(fit_method,
     selected <- selected_model_inference(dat, fit_method = fit_method, test_func = test_func,
                                           num_samp = num_samp, ignore_jump = vec[2], cores = cores,
                                           verbose = F, sigma = 1,
-                                          param = list(burn_in = 1000, lapse = 100))
+                                          param = list(burn_in = 5000, lapse = 50))
 
     # print(paste0("saturated: ", round(saturated_pval,3), "// selected: ", round(selected$pval,3)))
     # c(saturated_pval, selected$pval)
@@ -43,8 +43,8 @@ criterion_closure <- function(fit_method,
 
 ##################
 
-n <- 10
-trials <- 500
+n <- 6
+trials <- 1000
 # paramMat <- cbind(seq(0, 1.5, length.out = 4), 1)
 paramMat <- matrix(c(0,1), nrow = 1)
 fit_method <- function(x){binSegInf::binSeg_fixedSteps(x, numSteps = 1)}
