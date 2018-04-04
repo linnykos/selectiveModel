@@ -1,3 +1,5 @@
+# from https://github.com/selective-inference/R-software/blob/master/forLater/maxZ/funs.constraints.R
+
 #
 # Some utilities for affine constraints
 #
