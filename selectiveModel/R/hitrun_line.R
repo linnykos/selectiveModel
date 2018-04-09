@@ -1,7 +1,7 @@
 ## code modified from https://github.com/selective-inference/R-software/blob/master/forLater/maxZ/funs.constraints.R
 
 .sampler_hit_run_line <- function(start_y, gaussian, segments, polyhedra, num_samp = 100,
-                                  burn_in = 500, verbose = F){
+                                  burn_in = 500){
 
   n <- length(start_y)
   nullspace_mat <- .sample_matrix_space(segments)
@@ -12,24 +12,24 @@
   setting_2 <- .whiten(setting_1$gaussian, setting_1$polyhedra)
   new_polyhedra <- setting_2$polyhedra
 
-  directions <- .generate_directions(n)
   start_z <- setting_2$forward_translation(setting_1$forward_translation(start_y))
-  alphas <- new_polyhedra$gamma %*% directions
+  directions <- .generate_directions(length(start_z))
+  alphas <- new_polyhedra$gamma %*% t(directions)
   slack <- new_polyhedra$gamma %*% start_z - new_polyhedra$u
 
-  num_draw <- burn_in+num_samp
-  z_sample <- matrix(rep(0, n * num_draw), nrow = n, ncol = num_draw)
+  z_sample <- matrix(rep(0, n * num_samp), nrow = n, ncol = num_samp)
+
   result <- .C("sample_truncnorm_white",
               as.numeric(start_z),
               as.numeric(slack),
               as.numeric(t(directions)),
               as.numeric(alphas),
               output=z_sample,
-              as.integer(nconstraint),
-              as.integer(ndirection),
-              as.integer(nstate),
-              as.integer(burnin),
-              as.integer(ndraw),
+              as.integer(nrow(new_polyhedra$gamma)),
+              as.integer(nrow(directions)),
+              as.integer(length(start_z)),
+              as.integer(burn_in),
+              as.integer(num_samp),
               package="selectiveModel")
   z_sample <- result$output
 
@@ -56,7 +56,7 @@
 }
 
 .remove_nullspace_gaussian <- function(gaussian, segments_full, mean_val){
-  new_gaussian <- .gaussian(mean = segments_full %*% gaussian$mean,
+  new_gaussian <- .gaussian(mean = as.numeric(segments_full %*% gaussian$mean),
                             covariance = segments_full %*% gaussian$covariance %*% t(segments_full))
   conditional_gaussian <- .conditional_gaussian(new_gaussian, val = mean_val)
 }
@@ -114,7 +114,7 @@
 
 .factor_covariance = function(mat){
   k <- Matrix::rankMatrix(mat)
-  svd_X <- svd(S, nu=k, nv=k)
+  svd_X <- svd(mat, nu=k, nv=k)
   sqrt_cov <- t(sqrt(svd_X$d[1:k]) * t(svd_X$u[,1:k]))
   sqrt_inv <- t((1. / sqrt(svd_X$d[1:k])) * t(svd_X$u[,1:k]))
 
@@ -126,7 +126,7 @@
                matrix(rnorm(n^2), n, n))
 
   scaling <- apply(mat, 1, .l2norm)
-  mat / scaling
+  mat/scaling
 }
 
 
