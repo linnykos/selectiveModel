@@ -1,14 +1,41 @@
 ## code modified from https://github.com/selective-inference/R-software/blob/master/forLater/maxZ/funs.constraints.R
 
 .sampler_hit_run_line <- function(start_y, gaussian, segments, polyhedra, num_samp = 100,
-                                  burn_in = 500, lapse = 2, verbose = F){
+                                  burn_in = 500, verbose = F){
 
+  n <- length(start_y)
   nullspace_mat <- .sample_matrix_space(segments)
   mean_val <- as.numeric(segments%*%y)
   segments_full <- rbind(t(nullspace_mat), segments)
 
-  setting <- .remove_nullspace(gaussian, polyhedra, segments_full, mean_val)
+  setting_1 <- .remove_nullspace(gaussian, polyhedra, segments_full, mean_val)
+  setting_2 <- .whiten(setting_1$gaussian, setting_1$polyhedra)
+  new_polyhedra <- setting_2$polyhedra
 
+  directions <- .generate_directions(n)
+  start_z <- setting_2$forward_translation(setting_1$forward_translation(start_y))
+  alphas <- new_polyhedra$gamma %*% directions
+  slack <- new_polyhedra$gamma %*% start_z - new_polyhedra$u
+
+  num_draw <- burn_in+num_samp
+  z_sample <- matrix(rep(0, n * num_draw), nrow = n, ncol = num_draw)
+  result <- .C("sample_truncnorm_white",
+              as.numeric(start_z),
+              as.numeric(slack),
+              as.numeric(t(directions)),
+              as.numeric(alphas),
+              output=z_sample,
+              as.integer(nconstraint),
+              as.integer(ndirection),
+              as.integer(nstate),
+              as.integer(burnin),
+              as.integer(ndraw),
+              package="selectiveModel")
+  z_sample <- result$output
+
+  apply(z_sample, 2, function(x){
+    setting_1$backward_translation(setting_2$backward_translation(x))
+  })
 }
 
 .remove_nullspace <- function(gaussian, polyhedra, segments_full, mean_val){
@@ -77,10 +104,15 @@
   gamma <- gamma/scaling
   u <- u/scaling
 
+  #remove redundant rows
+  idx <- sort(unique(c(which(is.finite(u)), which(u >= 0))))
+  gamma <- gamma[idx,,drop = F]
+  u <- u[idx]
+
   binSegInf::polyhedra(gamma, u)
 }
 
-.factor_covariance = function(mat) {
+.factor_covariance = function(mat){
   k <- Matrix::rankMatrix(mat)
   svd_X <- svd(S, nu=k, nv=k)
   sqrt_cov <- t(sqrt(svd_X$d[1:k]) * t(svd_X$u[,1:k]))
@@ -88,3 +120,13 @@
 
   list(sqrt_cov=sqrt_cov, sqrt_inv=sqrt_inv)
 }
+
+.generate_directions <- function(n){
+  mat <- rbind(diag(rep(1, n)),
+               matrix(rnorm(n^2), n, n))
+
+  scaling <- apply(mat, 1, .l2norm)
+  mat / scaling
+}
+
+
