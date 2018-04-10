@@ -1,5 +1,6 @@
 #include <R.h>
 #include <Rmath.h>
+#include <Rinternals.h>
 
 // Code modified from https://github.com/selective-inference/R-software/blob/master/selectiveInference-currentCRAN/src/truncnorm.c
 
@@ -7,14 +8,14 @@
 
 // Assumes the covariance is identity
 
-void gibbs_step(double *state,     /* state has law N(0,I) constrained to polyhedral set \{y:Ay \leq b\}*/ 
+void gibbs_step(double *state,     /* state has law N(0,I) constrained to polyhedral set \{y:Ay \leq b\}*/
 		double *direction, /* direction we will take Gibbs step */
 		double *U,         /* A %*% state - b */
 		double *alpha,     /* A %*% direction */
 		int nconstraint,   /* number of rows of A */
 		int nstate)        /* dimension of state */
 {
-               
+
   int istate;
   double value = 0;
 
@@ -59,7 +60,7 @@ void gibbs_step(double *state,     /* state has law N(0,I) constrained to polyhe
   /* Check to see if constraints are satisfied */
 
   /* if (lower_bound > upper_bound) {
-    
+
      }*/
 
   /* Now, take a step */
@@ -76,7 +77,7 @@ void gibbs_step(double *state,     /* state has law N(0,I) constrained to polyhe
     /* so Z = upper_bound - E / fabs(upper_bound) */
     /* and the truncation of the exponential is */
     /* E < fabs(upper_bound - lower_bound) * fabs(upper_bound) = D */
-    
+
     /* this has distribution function (1 - exp(-x)) / (1 - exp(-D)) */
     /* so to draw from this distribution */
     /* we set E = - log(1 - U * (1 - exp(-D))) where U is Unif(0,1) */
@@ -94,22 +95,22 @@ void gibbs_step(double *state,     /* state has law N(0,I) constrained to polyhe
     tnorm = (lower_bound - log(1 - unif) / lower_bound);
   }
   else if (lower_bound < 0) {
-    cdfL = pnorm(lower_bound, 0., 1., 1, 0); 
-    cdfU = pnorm(upper_bound, 0., 1., 1, 0); 
-    unif = runif(0., 1.) * (cdfU - cdfL) + cdfL; 
+    cdfL = pnorm(lower_bound, 0., 1., 1, 0);
+    cdfU = pnorm(upper_bound, 0., 1., 1, 0);
+    unif = runif(0., 1.) * (cdfU - cdfL) + cdfL;
     if (unif < 0.5) {
-      tnorm = qnorm(unif, 0., 1., 1, 0); 
+      tnorm = qnorm(unif, 0., 1., 1, 0);
     }
     else {
-      tnorm = -qnorm(1-unif, 0., 1., 1, 0); 
+      tnorm = -qnorm(1-unif, 0., 1., 1, 0);
     }
   }
   else {
-    cdfL = pnorm(-lower_bound, 0., 1., 1, 0); 
-    cdfU = pnorm(-upper_bound, 0., 1., 1, 0); 
+    cdfL = pnorm(-lower_bound, 0., 1., 1, 0);
+    cdfU = pnorm(-upper_bound, 0., 1., 1, 0);
     unif = runif(0., 1.) * (cdfL - cdfU) + cdfU;
     if (unif < 0.5) {
-      tnorm = -qnorm(unif, 0., 1., 1, 0); 
+      tnorm = -qnorm(unif, 0., 1., 1, 0);
     }
     else {
       tnorm = qnorm(1-unif, 0., 1., 1, 0);
@@ -131,7 +132,7 @@ void gibbs_step(double *state,     /* state has law N(0,I) constrained to polyhe
 
 }
 
-void sample_truncnorm_white(double *state,      /* state has law N(0,I) constrained to polyhedral set \{y:Ay \leq b\}*/ 
+void sample_truncnorm_white(double *state,      /* state has law N(0,I) constrained to polyhedral set \{y:Ay \leq b\}*/
 			    double *U,          /* A %*% state - b */
 			    double *directions, /* possible steps for sampler to take */
                                                 /* assumed to be stored as list of columns of dimension nstate */
@@ -140,7 +141,7 @@ void sample_truncnorm_white(double *state,      /* state has law N(0,I) constrai
       			                        /* has shape (nconstraint, ndirection) */
 			    double *output,     /* array in which to store samples */
                                                 /* assumed will stored as list of vectors of dimension nstate */
-                                                /* has shape (nstate, ndraw) */  
+                                                /* has shape (nstate, ndraw) */
 			    int *pnconstraint,  /* number of rows of A */
 			    int *pndirection,   /* the possible number of directions to choose from */
                                                 /* `directions` should have size nstate*ndirection */
@@ -161,10 +162,10 @@ void sample_truncnorm_white(double *state,      /* state has law N(0,I) constrai
   double *direction, *alpha;
 
   for (iter_count = 0; iter_count < burnin + ndraw; iter_count++) {
-  
-    which_direction = (int) floor(runif(0., 1.) * ndirection); 
-    direction = ((double *) directions) + nstate * which_direction; 
-    alpha = ((double *) alphas) + nconstraint * which_direction; 
+
+    which_direction = (int) floor(runif(0., 1.) * ndirection);
+    direction = ((double *) directions) + nstate * which_direction;
+    alpha = ((double *) alphas) + nconstraint * which_direction;
 
     /* take a step, which implicitly updates `state` and `U` */
 
