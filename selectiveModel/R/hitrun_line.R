@@ -5,7 +5,7 @@
                                   burn_in = 500){
 
   nullspace_mat <- .sample_matrix_space(segments)
-  mean_val <- as.numeric(segments%*%y)
+  mean_val <- as.numeric(segments%*%start_y)
   segments_full <- rbind(t(nullspace_mat), segments)
 
   setting_1 <- .remove_nullspace(gaussian, polyhedra, segments_full, mean_val)
@@ -58,7 +58,7 @@
 .remove_nullspace_gaussian <- function(gaussian, segments_full, mean_val){
   new_gaussian <- .gaussian(mean = as.numeric(segments_full %*% gaussian$mean),
                             covariance = segments_full %*% gaussian$covariance %*% t(segments_full))
-  conditional_gaussian <- .conditional_gaussian(new_gaussian, val = mean_val)
+  .conditional_gaussian(new_gaussian, val = mean_val)
 }
 
 .remove_nullspace_polyhedra <- function(polyhedra, segments_full, mean_val){
@@ -67,8 +67,8 @@
   k <- length(mean_val)
 
   gamma <- polyhedra$gamma %*% solve(segments_full)
-  u <- polyhedra$u - gamma[,(n-k+1):n]*mean_val
-  gamma <- gamma[,1:(n-k)]
+  u <- polyhedra$u - gamma[,(n-k+1):n,drop = F] %*% mean_val
+  gamma <- gamma[,1:(n-k),drop = F]
 
   binSegInf::polyhedra(gamma, u)
 }

@@ -16,8 +16,8 @@ test_that(".remove_nullspace_gaussian works", {
   res <- .remove_nullspace_gaussian(gaussian, segments_full, mean_val)
 
   expect_true(class(res) == "gaussian")
-  expect_true(length(res$mean) == length(gaussian$mean))
-  expect_true(all(dim(res$covariance) == dim(gaussian$covariance)))
+  expect_true(length(res$mean) + nrow(segments) == length(gaussian$mean))
+  expect_true(all(dim(res$covariance) + nrow(segments) == dim(gaussian$covariance)))
 })
 
 #######
@@ -40,7 +40,7 @@ test_that(".remove_nullspace_polyhedra works", {
 
   expect_true(class(res) == "polyhedra")
   expect_true(all(length(res$u) == length(polyhedra$u)))
-  expect_true(all(dim(res$gamma) == dim(polyhedra$gamma)))
+  expect_true(all(dim(res$gamma) + c(0, nrow(segments)) == dim(polyhedra$gamma)))
 })
 
 ########
@@ -96,7 +96,7 @@ test_that(".whiten_polyhedra works", {
 
 test_that(".factor_covariance works", {
   set.seed(10)
-  mat <- stats::cov(matrix(rnorm(100), 10, 10))
+  mat <- stats::cov(matrix(sample(200), 20, 10))
   res <- .factor_covariance(mat)
 
   expect_true(all(dim(res$sqrt_cov) == dim(mat)))
