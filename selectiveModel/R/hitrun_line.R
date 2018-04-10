@@ -4,7 +4,6 @@
 .sampler_hit_run_line <- function(start_y, gaussian, segments, polyhedra, num_samp = 100,
                                   burn_in = 500){
 
-  n <- length(start_y)
   nullspace_mat <- .sample_matrix_space(segments)
   mean_val <- as.numeric(segments%*%y)
   segments_full <- rbind(t(nullspace_mat), segments)
@@ -14,7 +13,8 @@
   new_polyhedra <- setting_2$polyhedra
 
   start_z <- setting_2$forward_translation(setting_1$forward_translation(start_y))
-  directions <- .generate_directions(length(start_z))
+  n <- length(start_z)
+  directions <- .generate_directions(n)
   alphas <- new_polyhedra$gamma %*% t(directions)
   slack <- new_polyhedra$gamma %*% start_z - new_polyhedra$u
 

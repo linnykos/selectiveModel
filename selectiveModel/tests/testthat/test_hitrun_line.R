@@ -161,5 +161,26 @@ test_that(".sampler_hit_run_line works", {
 
   segments <- .segments(n, binSegInf::jumps(fit), 1)
 
-  res <- .sampler_hit_run_line(y, gaussian, segments, polyhedra)
+  res <- .sampler_hit_run_line(y, gaussian, segments, polyhedra, num_samp = 100)
+
+  expect_true(all(dim(res) == c(10, 100)))
+})
+
+test_that(".sampler_hit_run_line gives the correct mean for no jumps", {
+  set.seed(20)
+  n <- 10
+  y <- c(rep(0, n/2), rep(1, n/2)) + rnorm(n)
+  fit <- binSegInf::binSeg_fixedSteps(y, 1)
+  polyhedra <- binSegInf::polyhedra(fit)
+  gaussian <- .gaussian(rep(0, n), diag(n))
+
+  segments <- .segments(n, binSegInf::jumps(fit), 1)
+
+  res <- .sampler_hit_run_line(y, gaussian, segments, polyhedra, num_samp = 100)
+
+  bool_vec <- apply(res, 2, function(x){
+    abs(mean(x) - mean(y)) < 1e-6
+  })
+
+  expect_true(all(bool_vec))
 })

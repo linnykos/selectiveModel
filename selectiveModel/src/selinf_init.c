@@ -2,19 +2,13 @@
 #include <Rinternals.h>
 
 /* . entry points */
-/* extern void update1(double *Q2, double *w, int *mp, int *kp);
-static R_NativePrimitiveArgType update1_t[] = {
-  REALSXP, REALSXP, INTSXP, INTSXP
-};
-
-extern void downdate1(double *Q1, double *R, int *j0p, int *mp, int *np);
-static R_NativePrimitiveArgType downdate1_t[] = {
-  REALSXP, REALSXP, INTSXP, INTSXP, INTSXP
+extern void sample_truncnorm_white(double *state, double *U, double *directions, double *alphas, double *output, int *pnconstraint, int *pndirection, int *pnstate, int *pburnin, int *pndraw);
+static R_NativePrimitiveArgType sample_truncnorm_white_t[] = {
+  REALSXP, REALSXP, REALSXP, REALSXP, REALSXP, INTSXP, INTSXP, INTSXP, INTSXP, INTSXP
 };
 
 static const R_CMethodDef CEntries[] = {
-  {"update1", (DL_FUNC) &update1, 4},
-  {"downdate1", (DL_FUNC) &downdate1, 5},
+  {"sample_truncnorm_white", (DL_FUNC) &sample_truncnorm_white, 10},
   {NULL, NULL, 0}
 };
 
@@ -22,4 +16,3 @@ void R_init_cubature(DllInfo *dll) {
   R_registerRoutines(dll, CEntries, NULL, NULL, NULL);
   R_useDynamicSymbols(dll, FALSE);
 }
-*/
