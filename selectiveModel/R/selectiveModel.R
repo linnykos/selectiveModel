@@ -148,7 +148,7 @@ selected_model_inference <- function(y, fit_method,
 #'
 #' @return numeric
 #' @export
-default_burn_in <- function(){500}
+default_burn_in <- function(){2000}
 
 #' Default lapse
 #'

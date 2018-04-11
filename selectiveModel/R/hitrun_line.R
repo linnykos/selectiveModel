@@ -120,7 +120,7 @@
 
 .generate_directions <- function(n){
   mat <- rbind(diag(rep(1, n)),
-               matrix(rnorm(n^2), n, n))
+               matrix(stats::rnorm(n^2), n, n))
 
   scaling <- apply(mat, 1, .l2norm)
   mat/scaling
