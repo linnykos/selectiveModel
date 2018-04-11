@@ -43,6 +43,7 @@ test_that(".remove_nullspace_polyhedra works", {
   expect_true(all(dim(res$gamma) + c(0, nrow(segments)) == dim(polyhedra$gamma)))
 })
 
+
 ########
 
 ## .remove_nullspace is correct
@@ -67,6 +68,69 @@ test_that(".remove_nullspace works", {
   expect_true("backward_translation" %in% names(res))
   expect_true(class(res$gaussian) == "gaussian")
   expect_true(class(res$polyhedra) == "polyhedra")
+})
+
+test_that(".remove_nullspace preserves the set of allowed vectors", {
+  n <- 10
+  set.seed(10)
+  y <- rnorm(n)
+  fit <- binSegInf::binSeg_fixedSteps(y, 1)
+  polyhedra <- binSegInf::polyhedra(fit)
+  gaussian <- .gaussian(rep(0, n), diag(n))
+
+  jump <- binSegInf::jumps(fit)
+  segments <- .segments(n, jump)
+  nullspace_mat <- .sample_matrix_space(segments)
+  mean_val <- as.numeric(segments%*%y)
+  segments_full <- rbind(t(nullspace_mat), segments)
+
+  res <- .remove_nullspace(gaussian, polyhedra, segments_full, mean_val)
+
+  trials <- 1000
+  bool_vec <- sapply(1:trials, function(x){
+    set.seed(x)
+    vec <- rnorm(n)
+    vec[1:jump] <- vec[1:jump] + (mean_val[1] - mean(vec[1:jump]))
+    vec[(jump+1):n] <- vec[(jump+1):n] + (mean_val[2] - mean(vec[(jump+1):n]))
+
+    bool1 <- all(polyhedra$gamma %*% vec >= polyhedra$u)
+    bool2 <- all(res$polyhedra$gamma %*% res$forward_translation(vec) >= res$polyhedra$u)
+
+    bool1 == bool2
+  })
+
+  expect_true(all(bool_vec))
+})
+
+test_that(".remove_nullspace has correct forward and backward translations", {
+  n <- 10
+  set.seed(10)
+  y <- rnorm(n)
+  fit <- binSegInf::binSeg_fixedSteps(y, 1)
+  polyhedra <- binSegInf::polyhedra(fit)
+  gaussian <- .gaussian(rep(0, n), diag(n))
+
+  jump <- binSegInf::jumps(fit)
+  segments <- .segments(n, jump)
+  nullspace_mat <- .sample_matrix_space(segments)
+  mean_val <- as.numeric(segments%*%y)
+  segments_full <- rbind(t(nullspace_mat), segments)
+
+  res <- .remove_nullspace(gaussian, polyhedra, segments_full, mean_val)
+
+  trials <- 1000
+  bool_vec <- sapply(1:trials, function(x){
+    set.seed(x)
+    vec <- rnorm(n)
+    vec[1:jump] <- vec[1:jump] + (mean_val[1] - mean(vec[1:jump]))
+    vec[(jump+1):n] <- vec[(jump+1):n] + (mean_val[2] - mean(vec[(jump+1):n]))
+
+    vec2 <- res$backward_translation(res$forward_translation(vec))
+
+    sum(abs(vec - vec2)) < 1e-6
+  })
+
+  expect_true(all(bool_vec))
 })
 
 ########
@@ -135,6 +199,57 @@ test_that(".whiten works", {
   expect_true("backward_translation" %in% names(res))
   expect_true(class(res$gaussian) == "gaussian")
   expect_true(class(res$polyhedra) == "polyhedra")
+})
+
+test_that(".whiten preserves the polyhedra", {
+  n <- 10
+  set.seed(10)
+  y <- rnorm(n)
+  fit <- binSegInf::binSeg_fixedSteps(y, 1)
+  polyhedra <- binSegInf::polyhedra(fit)
+  cov_mat <- matrix(1, n, n)
+  diag(cov_mat) <- 2
+  gaussian <- .gaussian(rep(0, n), cov_mat)
+
+  res <- .whiten(gaussian, polyhedra)
+
+  trials <- 1000
+
+  bool_vec <- sapply(1:trials, function(x){
+    set.seed(x)
+    vec <- rnorm(n)
+
+    bool1 <- all(polyhedra$gamma %*% vec >= polyhedra$u)
+
+    vec2 <- res$forward_translation(vec)
+    bool2 <- all(res$polyhedra$gamma %*% vec2 >= res$polyhedra$u)
+
+    bool1 == bool2
+  })
+})
+
+test_that(".remove_nullspace has correct forward and backward translations", {
+  n <- 10
+  set.seed(10)
+  y <- rnorm(n)
+  fit <- binSegInf::binSeg_fixedSteps(y, 1)
+  polyhedra <- binSegInf::polyhedra(fit)
+  cov_mat <- matrix(1, n, n)
+  diag(cov_mat) <- 2
+  gaussian <- .gaussian(rep(0, n), cov_mat)
+
+  res <- .whiten(gaussian, polyhedra)
+
+  trials <- 1000
+  bool_vec <- sapply(1:trials, function(x){
+    set.seed(x)
+    vec <- rnorm(n)
+    vec2 <- res$backward_translation(res$forward_translation(vec))
+
+    sum(abs(vec - vec2)) < 1e-6
+  })
+
+  expect_true(all(bool_vec))
 })
 
 ############

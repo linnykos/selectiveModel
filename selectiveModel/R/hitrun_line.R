@@ -42,8 +42,13 @@
   new_gaussian <- .remove_nullspace_gaussian(gaussian, segments_full, mean_val)
   new_polyhedra <- .remove_nullspace_polyhedra(polyhedra, segments_full, mean_val)
 
+  n <- ncol(polyhedra$gamma)
+  k <- length(mean_val)
+
   forward_translation <- function(y){
-    as.numeric(segments_full %*% y)[1:length(mean_val)]
+    stopifnot(sum(abs(as.numeric(segments_full %*% y)[(n-k+1):n] - mean_val)) < 1e-6)
+
+    as.numeric(segments_full %*% y)[1:(n-k)]
   }
 
   backward_translation <- function(z){
@@ -76,9 +81,8 @@
 .whiten <- function(gaussian, polyhedra){
 
   n <- length(gaussian$mean)
-  factor_cov <- .factor_covariance(gaussian$covariance)
-  sqrt_cov <- factor_cov$sqrt_cov
-  sqrt_inv <- factor_cov$sqrt_inv
+  sqrt_cov <- t(base::chol(gaussian$covariance))
+  sqrt_inv <- solve(chol_mat)
 
   new_polyhedra <- .whiten_polyhedra(polyhedra, sqrt_cov, gaussian$mean)
 
@@ -110,15 +114,6 @@
   u <- u[idx]
 
   binSegInf::polyhedra(gamma, u)
-}
-
-.factor_covariance = function(mat){
-  k <- Matrix::rankMatrix(mat)
-  svd_X <- svd(mat, nu=k, nv=k)
-  sqrt_cov <- t(sqrt(svd_X$d[1:k]) * t(svd_X$u[,1:k]))
-  sqrt_inv <- t((1. / sqrt(svd_X$d[1:k])) * t(svd_X$u[,1:k]))
-
-  list(sqrt_cov=sqrt_cov, sqrt_inv=sqrt_inv)
 }
 
 .generate_directions <- function(n){
