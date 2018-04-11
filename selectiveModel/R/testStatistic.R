@@ -51,27 +51,6 @@ next_jump_statistic <- function(y, fit, ...){
   .jump_contrast(y, binSegInf::jumps(fit), binSegInf::jumps(next_fit))
 }
 
-#' Compute the variance across a changepoint model
-#'
-#' @param y data vector
-#' @param fit fitted changepoint object
-#' @param ... not used
-#'
-#' @return numeric
-#' @export
-changepoint_variance <- function(y, fit, ...){
-  n <- length(y)
-  jumps <- binSegInf::jumps(fit)
-  jumps <- unique(sort(c(0, jumps, n)))
-
-  val <- 0
-  for(i in 1:(length(jumps)-1)){
-    val <- val + stats::var(y[(jumps[i]+1):jumps[i+1]])
-  }
-
-  val
-}
-
 #' Compute the height of a specific jump
 #'
 #' \code{jump_number} refers to the \code{jump_number}th jump starting from

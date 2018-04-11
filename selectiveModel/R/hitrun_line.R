@@ -1,8 +1,8 @@
 ## code modified from https://github.com/selective-inference/R-software/blob/master/forLater/maxZ/funs.constraints.R
 
 #' @useDynLib selectiveModel sample_truncnorm_white
-.sampler_hit_run_line <- function(start_y, gaussian, segments, polyhedra, num_samp = 100,
-                                  burn_in = 500){
+.sampler_hit_run_line <- function(start_y, gaussian, segments, polyhedra, num_samp = 8000,
+                                  burn_in = 2000){
 
   nullspace_mat <- .sample_matrix_space(segments)
   mean_val <- as.numeric(segments%*%start_y)
@@ -15,8 +15,10 @@
   start_z <- setting_2$forward_translation(setting_1$forward_translation(start_y))
   n <- length(start_z)
   directions <- .generate_directions(n)
-  alphas <- new_polyhedra$gamma %*% t(directions)
-  slack <- new_polyhedra$gamma %*% start_z - new_polyhedra$u
+  alphas <- -new_polyhedra$gamma %*% t(directions)
+
+  #flip the slack to accommodate our setting
+  slack <- -new_polyhedra$gamma %*% start_z + new_polyhedra$u
 
   z_sample <- matrix(rep(0, n * num_samp), nrow = n, ncol = num_samp)
 
@@ -82,7 +84,7 @@
 
   n <- length(gaussian$mean)
   sqrt_cov <- t(base::chol(gaussian$covariance))
-  sqrt_inv <- solve(chol_mat)
+  sqrt_inv <- solve(sqrt_cov)
 
   new_polyhedra <- .whiten_polyhedra(polyhedra, sqrt_cov, gaussian$mean)
 
