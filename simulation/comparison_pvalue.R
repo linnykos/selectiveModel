@@ -32,7 +32,7 @@ criterion_closure <- function(fit_method,
     selected <- selected_model_inference(dat, fit_method = fit_method, test_func = test_func,
                                           num_samp = num_samp, ignore_jump = vec[2], cores = cores,
                                           verbose = F, sigma = 1,
-                                          param = list(burn_in = 1000, lapse = 100))
+                                          param = list(burn_in = 2000))
 
     c(saturated_pval, selected$pval, binSegInf::jumps(fit))
   }
@@ -40,10 +40,10 @@ criterion_closure <- function(fit_method,
 
 ##################
 
-n <- 6
+n <- 20
 trials <- 1000
-# paramMat <- cbind(seq(0, 1.5, length.out = 4), 1)
-paramMat <- matrix(c(0,1), nrow = 1)
+paramMat <- cbind(seq(0, 1.5, length.out = 4), 1)
+# paramMat <- matrix(c(0,1), nrow = 1)
 fit_method <- function(x){binSegInf::binSeg_fixedSteps(x, numSteps = 1)}
 
 rule <- rule_closure(n)
