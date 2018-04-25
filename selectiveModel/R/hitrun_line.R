@@ -1,65 +1,129 @@
-#' Hit and run sampler, Line
-#'
-#' For known sigma
-#'
-#' @param start_y initial y to draw from
-#' @param gaussian a \code{gaussian} object where the mean represents the data
-#' @param segments matrix created by \code{.segments}
-#' @param polyhedra \code{polyhedra} object
-#' @param num_samp number of desired samples from null distribution
-#' @param burn_in positive integer of the first few samples to throw out per core
-#' @param lapse positive integer, where we sample \code{num_samp*burn_in}
-#' samples from the null distribution and return every \code{burn_in}th sample
-#' @param verbose boolean
-#'
-#' @return matrix with \code{num_samp} columns and \code{length(gaussian$mean)} rows
-.sampler_hit_run_line <- function(start_y, gaussian, segments, polyhedra, num_samp = 100,
-                                  burn_in = 500, lapse = 2, verbose = F){
+## code modified from https://github.com/selective-inference/R-software/blob/master/forLater/maxZ/funs.constraints.R
 
-  stopifnot(all(polyhedra$gamma %*% start_y >= polyhedra$u))
-  num_col <- burn_in + num_samp*lapse
+#' @useDynLib selectiveModel sample_truncnorm_white
+.sampler_hit_run_line <- function(start_y, gaussian, segments, polyhedra, num_samp = 8000,
+                                  burn_in = 2000){
 
-  prev_y <- start_y
-  y_mat <- matrix(NA, nrow = length(start_y), ncol = num_samp)
-  seq_idx <- burn_in + (1:num_samp)*lapse
+  nullspace_mat <- .sample_matrix_space(segments)
+  mean_val <- as.numeric(segments%*%start_y)
+  segments_full <- rbind(t(nullspace_mat), segments)
 
-  for(i in 1:num_col){
-    next_y <- .hit_run_next_point_line(prev_y, segments, polyhedra, gaussian)
-    if(i %in% seq_idx){
-      y_mat[,which(seq_idx == i)] <- next_y
-    }
+  setting_1 <- .remove_nullspace(gaussian, polyhedra, segments_full, mean_val)
+  setting_2 <- .whiten(setting_1$gaussian, setting_1$polyhedra)
+  new_polyhedra <- setting_2$polyhedra
 
-    prev_y <- next_y
+  start_z <- setting_2$forward_translation(setting_1$forward_translation(start_y))
+  n <- length(start_z)
+  directions <- .generate_directions(n)
+  alphas <- -new_polyhedra$gamma %*% t(directions)
+
+  #flip the slack to accommodate our setting
+  slack <- -new_polyhedra$gamma %*% start_z + new_polyhedra$u
+
+  z_sample <- matrix(rep(0, n * num_samp), nrow = n, ncol = num_samp)
+
+  result <- .C("sample_truncnorm_white",
+              as.numeric(start_z),
+              as.numeric(slack),
+              as.numeric(t(directions)),
+              as.numeric(alphas),
+              output=z_sample,
+              as.integer(nrow(new_polyhedra$gamma)),
+              as.integer(nrow(directions)),
+              as.integer(length(start_z)),
+              as.integer(burn_in),
+              as.integer(num_samp))
+  z_sample <- result$output
+
+  apply(z_sample, 2, function(x){
+    setting_1$backward_translation(setting_2$backward_translation(x))
+  })
+}
+
+.remove_nullspace <- function(gaussian, polyhedra, segments_full, mean_val){
+  new_gaussian <- .remove_nullspace_gaussian(gaussian, segments_full, mean_val)
+  new_polyhedra <- .remove_nullspace_polyhedra(polyhedra, segments_full, mean_val)
+
+  n <- ncol(polyhedra$gamma)
+  k <- length(mean_val)
+
+  forward_translation <- function(y){
+    stopifnot(sum(abs(as.numeric(segments_full %*% y)[(n-k+1):n] - mean_val)) < 1e-6)
+
+    as.numeric(segments_full %*% y)[1:(n-k)]
   }
 
-  stopifnot(all(.try_polyhedra(y_mat, polyhedra)))
-  y_mat
+  backward_translation <- function(z){
+    as.numeric(solve(segments_full) %*% c(z, mean_val))
+  }
+
+  list(gaussian = new_gaussian, polyhedra = new_polyhedra,
+       forward_translation = forward_translation,
+       backward_translation = backward_translation)
 }
 
-#' Output the next point for hit-and-run sampler, Line
-#'
-#' For known sigma
-#'
-#' @param y data
-#' @param segments matrix created by \code{.segments}
-#' @param polyhedra \code{polyhedra} object
-#' @param gaussian \code{gaussian} object
-#'
-#' @return vector
-.hit_run_next_point_line <- function(y, segments, polyhedra, gaussian){
-  stopifnot(length(y) == length(gaussian$mean))
-
-  n <- length(y)
-  v <- as.numeric(.sample_matrix_space(segments, 1, null = T))
-  stopifnot(abs(.l2norm(v)-1) < 1e-6)
-  line <- .line(y, v)
-  interval <- .intersect_polyhedron_line(polyhedra, line)
-
-  rotation <- .rotation_matrix(v, c(1, rep(0, n-1)))
-  gaussian <- .transform_gaussian(gaussian, y, rotation)
-
-  univariate <- .conditional_gaussian(gaussian, rep(0, n-1))
-
-  alpha <- .sampler_truncated_gaussian(univariate, interval[1], interval[2])
-  y + alpha*line$direction
+.remove_nullspace_gaussian <- function(gaussian, segments_full, mean_val){
+  new_gaussian <- .gaussian(mean = as.numeric(segments_full %*% gaussian$mean),
+                            covariance = segments_full %*% gaussian$covariance %*% t(segments_full))
+  .conditional_gaussian(new_gaussian, val = mean_val)
 }
+
+.remove_nullspace_polyhedra <- function(polyhedra, segments_full, mean_val){
+  stopifnot(nrow(segments_full) == ncol(segments_full))
+  n <- ncol(segments_full)
+  k <- length(mean_val)
+
+  gamma <- polyhedra$gamma %*% solve(segments_full)
+  u <- polyhedra$u - gamma[,(n-k+1):n,drop = F] %*% mean_val
+  gamma <- gamma[,1:(n-k),drop = F]
+
+  binSegInf::polyhedra(gamma, u)
+}
+
+.whiten <- function(gaussian, polyhedra){
+
+  n <- length(gaussian$mean)
+  sqrt_cov <- t(base::chol(gaussian$covariance))
+  sqrt_inv <- solve(sqrt_cov)
+
+  new_polyhedra <- .whiten_polyhedra(polyhedra, sqrt_cov, gaussian$mean)
+
+  forward_translation <- function(y){
+    as.numeric(sqrt_inv %*% (y - gaussian$mean))
+  }
+
+  backward_translation <- function(z){
+    as.numeric(sqrt_cov %*% z) + gaussian$mean
+  }
+
+  list(gaussian = .gaussian(rep(0, n), diag(n)),
+       polyhedra = new_polyhedra,
+       forward_translation = forward_translation,
+       backward_translation = backward_translation)
+}
+
+.whiten_polyhedra <- function(polyhedra, sqrt_cov, mean_vec){
+  gamma <- polyhedra$gamma %*% sqrt_cov
+  u <- polyhedra$u - polyhedra$gamma %*% mean_vec
+
+  scaling <- sqrt(apply(gamma^2, 1, sum))
+  gamma <- gamma/scaling
+  u <- u/scaling
+
+  #remove redundant rows
+  idx <- sort(unique(c(which(is.finite(u)), which(u >= 0))))
+  gamma <- gamma[idx,,drop = F]
+  u <- u[idx]
+
+  binSegInf::polyhedra(gamma, u)
+}
+
+.generate_directions <- function(n){
+  mat <- rbind(diag(rep(1, n)),
+               matrix(stats::rnorm(n^2), n, n))
+
+  scaling <- apply(mat, 1, .l2norm)
+  mat/scaling
+}
+
+

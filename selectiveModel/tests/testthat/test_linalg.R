@@ -193,6 +193,26 @@ test_that(".sample_matrix_space is properly uniform", {
                 sum(abs(sort(angle_vec) - sort(angle_vec2))))
 })
 
+test_that(".sample_matrix_space gives the proper segments_full", {
+  n <- 10
+  set.seed(10)
+  y <- rnorm(n)
+  fit <- binSegInf::binSeg_fixedSteps(y, 1)
+  polyhedra <- binSegInf::polyhedra(fit)
+  gaussian <- .gaussian(rep(0, n), diag(n))
+
+  jump <- binSegInf::jumps(fit)
+  segments <- .segments(n, jump)
+  nullspace_mat <- .sample_matrix_space(segments)
+  mean_val <- as.numeric(segments%*%y)
+  segments_full <- rbind(t(nullspace_mat), segments)
+
+  res <- segments_full %*% y
+
+  expect_true(abs(res[9] - mean(y[1:jump])) < 1e-6)
+  expect_true(abs(res[10] - mean(y[(jump+1):n])) < 1e-6)
+})
+
 ########################
 
 ## .change_basis is correct

@@ -67,8 +67,7 @@ selected_model_inference <- function(y, fit_method,
     if(sample_method == "hitrun") {
       gaussian <- .gaussian(rep(0, n), sigma^2*diag(n))
       samples <- .sampler_hit_run_line(y, gaussian, segments, polyhedra, num_samp = num_samp,
-                                       burn_in = param$burn_in, lapse = param$lapse,
-                                       verbose = verbose)
+                                       burn_in = param$burn_in)
     } else {
       stop("sample_method not appropriate")
     }
@@ -149,7 +148,7 @@ selected_model_inference <- function(y, fit_method,
 #'
 #' @return numeric
 #' @export
-default_burn_in <- function(){500}
+default_burn_in <- function(){2000}
 
 #' Default lapse
 #'
