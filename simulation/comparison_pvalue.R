@@ -20,9 +20,7 @@ criterion_closure <- function(fit_method,
     poly <- binSegInf::polyhedra(fit)
     contrast <- binSegInf::contrast_vector(fit, vec[2])
     saturated_pval <- binSegInf:::poly.pval2(dat, poly, contrast, sigma = 1, bits = 1000)$pv
-    selected <- selected_model_inference(dat, fit_method = fit_method, test_func = test_func, 
-	num_samp = num_samp, ignore_jump = vec[2], cores = cores, verbose = F, 
-	sigma = 1)
+    selected <- selected_model_inference(dat, fit_method = fit_method, test_func = test_func, num_samp = num_samp, ignore_jump = vec[2], cores = cores, verbose = F, sigma = 1)
     c(saturated_pval, selected$pval, binSegInf::jumps(fit))
   }
 }
