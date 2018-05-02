@@ -157,30 +157,36 @@
   dis <- .distance_point_to_plane(circle$center, plane)
   if(dis > circle$radius + tol) return(NA)
 
-  if(abs(plane$a[1]) > tol){
+  if(abs(plane$a[2]) < tol){
+    #treat plane$a[2] as zero
+    x <- plane$b/plane$a[1]
+    y <- sqrt(circle$radius^2 - (x - circle$center[1])^2) + circle$center[1]
+
+  } else if(abs(plane$a[1]) < tol) {
+    #treat plane$a[1] as zero
+    y <- plane$b/plane$a[2]
+    x <- sqrt(circle$radius^2 - (y - circle$center[2])^2) + circle$center[1]
+
+  } else {
     a1 <- plane$a[1]; a2 <- plane$a[2]
     c1 <- circle$center[1]; c2 <- circle$center[2]
-  } else {
-    a1 <- plane$a[2]; a2 <- plane$a[1]
-    c1 <- circle$center[2]; c2 <- circle$center[1]
+
+    a <- 1 + (a1/a2)^2
+    b <- -2*(a1/a2)*(plane$b/a2 - c2) -2*c1
+    c <- -circle$radius^2 + (plane$b/a2 - c2)^2 + c1^2
+
+    x <- .quadratic(a, b, c)
+    stopifnot(all(!is.na(x)))
+    y <- (plane$b - a1*x)/a2
   }
 
-  a <- 1 + (a1/a2)^2
-  b <- -2*(a1/a2)*(plane$b/a2 - c2) -2*c1
-  c <- -circle$radius^2 + (plane$b/a2 - c2)^2 + c1^2
-
-  x <- .quadratic(a, b, c)
-  stopifnot(all(!is.na(x)))
-  y <- (plane$b - a1*x)/a2
-
-  if(length(y) == 1 || abs(y[1]-y[2]) < tol2){
-    mat <- matrix(c(x[1], y[1]), ncol = 2)
+  if(length(x) == 1 || abs(x[1]-x[2]) < tol2){
+    mat <- matrix(c(x[1], y[1]), nrow = 2)
   } else {
     mat <- rbind(x, y)
   }
   colnames(mat) <- NULL
 
-  if(abs(plane$a[1]) < tol) mat <- mat[,c(2,1)]
   mat
 }
 

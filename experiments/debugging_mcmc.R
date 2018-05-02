@@ -51,8 +51,9 @@ y <- prev_y
 tmp <- .sample_matrix_space(segments, 2, null = T)
 v <- tmp[,1]; w <- tmp[,2]
 # interval <- .range_theta_polyhedra(y, v, w, polyhedra)
-
+#
 # interval_list <- lapply(1:nrow(polyhedra$gamma), function(x){
+#   print(x)
 #   plane <- .plane(polyhedra$gamma[x,], polyhedra$u[x])
 #   plane <- .intersect_plane_basis(plane, y, v, w)
 #   if(any(is.na(plane))) return(matrix(c(-pi/2, pi/2), ncol = 2))
@@ -66,7 +67,7 @@ v <- tmp[,1]; w <- tmp[,2]
 #   } else {
 #     mat <- .intersect_circle_line(plane, circle)
 #     stopifnot(nrow(mat) == 2)
-#     vec <- apply(mat, 1, .euclidean_to_radian, circle = circle)
+#     vec <- apply(mat, 2, .euclidean_to_radian, circle = circle)
 #     init_theta <- .initial_theta(y, v, w)
 #     .interval(vec, init_theta)
 #   }
@@ -86,8 +87,8 @@ dis <- .distance_point_to_plane(center, plane2)
   mat <- .intersect_circle_line(plane2, circle)
   stopifnot(nrow(mat) == 2)
   vec <- apply(mat, 2, .euclidean_to_radian, circle = circle)
-  # init_theta <- .initial_theta(y, v, w)
-  # .interval(vec, init_theta)
+  init_theta <- .initial_theta(y, v, w)
+  .interval(vec, init_theta)
 #}
 
 # #####checking .intersect_plane_basis
