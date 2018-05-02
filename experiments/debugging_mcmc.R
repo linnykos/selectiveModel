@@ -90,31 +90,31 @@ dis <- .distance_point_to_plane(center, plane2)
   # .interval(vec, init_theta)
 #}
 
-#####checking .intersect_plane_basis
-zz <- 1000
-bool_vec <- sapply(1:zz, function(x){
-  set.seed(x)
-  test_z <- 5*rnorm(2)
-  bool1 <- all(plane2$a %*% test_z >= plane2$b)
-
-  test_y <- y + test_z[1]*v + test_z[2]*w
-  bool2 <- all(plane$a%*%test_y >= plane$b)
-
-  bool1 == bool2
-})
-all(bool_vec)
-
-######checking .distance_point_to_plane
-zz <- 1000
-bool_vec <- sapply(1:zz, function(x){
-  set.seed(x) #fails for 732
-  test_z <- c(5*rnorm(1), 0)
-  test_z[2] <- (plane2$b - test_z[1]*plane2$a[1])/plane2$a[2]
-  dis2 <- .l2norm(test_z - center)
-
-  dis2 >= dis
-})
-all(bool_vec)
+# #####checking .intersect_plane_basis
+# zz <- 1000
+# bool_vec <- sapply(1:zz, function(x){
+#   set.seed(x)
+#   test_z <- 5*rnorm(2)
+#   bool1 <- all(plane2$a %*% test_z >= plane2$b)
+#
+#   test_y <- y + test_z[1]*v + test_z[2]*w
+#   bool2 <- all(plane$a%*%test_y >= plane$b)
+#
+#   bool1 == bool2
+# })
+# all(bool_vec)
+#
+# ######checking .distance_point_to_plane
+# zz <- 1000
+# bool_vec <- sapply(1:zz, function(x){
+#   set.seed(x) #fails for 732
+#   test_z <- c(5*rnorm(1), 0)
+#   test_z[2] <- (plane2$b - test_z[1]*plane2$a[1])/plane2$a[2]
+#   dis2 <- .l2norm(test_z - center)
+#
+#   dis2 >= dis
+# })
+# all(bool_vec)
 
 ######.intersect_circle_line
 bool_vec <- apply(mat, 2, function(x){ #check to be on plane. WARNING: this should be bound by columns, not rows...
