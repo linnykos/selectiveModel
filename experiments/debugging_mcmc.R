@@ -27,9 +27,9 @@ polyhedra <- binSegInf::polyhedra(fit)
 test_stat <- test_func(y, fit, jump = ignore_jump)
 segments <- .segments(n, binSegInf::jumps(fit), ignore_jump = ignore_jump)
 param <- .fill_in_arguments(param)
-# samples <- .sampler_hit_run_radial(y, segments, polyhedra, num_samp = num_samp,
-#                                    burn_in = param$burn_in, lapse = param$lapse,
-#                                    verbose = verbose)
+samples <- .sampler_hit_run_radial(y, segments, polyhedra, num_samp = num_samp,
+                                   burn_in = param$burn_in, lapse = param$lapse,
+                                   verbose = verbose)
 
 burn_in <- param$burn_in
 lapse <- param$lapse
@@ -38,7 +38,7 @@ y_mat <- matrix(NA, nrow = length(y), ncol = num_samp)
 seq_idx <- burn_in + (1:num_samp)*lapse
 prev_y <- y
 for(i in 1:num_col){
-  if(i == 2169) break()
+  #if(i == 2169) break()
   next_y <- .hit_run_next_point_radial(prev_y, segments, polyhedra)
   if(i %in% seq_idx){
     y_mat[,which(seq_idx == i)] <- next_y
@@ -50,15 +50,15 @@ y_org <- y
 y <- prev_y
 tmp <- .sample_matrix_space(segments, 2, null = T)
 v <- tmp[,1]; w <- tmp[,2]
-# interval <- .range_theta_polyhedra(y, v, w, polyhedra)
-# if(nrow(interval) == 1) {
-#   theta <- stats::runif(1, interval[1], interval[2])
-# } else {
-#   len <- interval[,2] - interval[,1]
-#   row_idx <- sample(1:nrow(interval), 1, prob = len)
-#   theta <- stats::runif(1, interval[row_idx,1], interval[row_idx,2])
-# }
-# y_new <- .radians_to_data(theta, y, v, w)
+interval <- .range_theta_polyhedra(y, v, w, polyhedra)
+if(nrow(interval) == 1) {
+  theta <- stats::runif(1, interval[1], interval[2])
+} else {
+  len <- interval[,2] - interval[,1]
+  row_idx <- sample(1:nrow(interval), 1, prob = len)
+  theta <- stats::runif(1, interval[row_idx,1], interval[row_idx,2])
+}
+y_new <- .radians_to_data(theta, y, v, w)
 
 interval_list <- lapply(1:nrow(polyhedra$gamma), function(x){
   print(x)
