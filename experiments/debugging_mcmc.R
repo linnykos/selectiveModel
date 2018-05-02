@@ -51,27 +51,35 @@ y <- prev_y
 tmp <- .sample_matrix_space(segments, 2, null = T)
 v <- tmp[,1]; w <- tmp[,2]
 # interval <- .range_theta_polyhedra(y, v, w, polyhedra)
-#
-# interval_list <- lapply(1:nrow(polyhedra$gamma), function(x){
-#   print(x)
-#   plane <- .plane(polyhedra$gamma[x,], polyhedra$u[x])
-#   plane <- .intersect_plane_basis(plane, y, v, w)
-#   if(any(is.na(plane))) return(matrix(c(-pi/2, pi/2), ncol = 2))
-#   center <- c(-y%*%v, -y%*%w)
-#   radius <- sqrt(sum(center^2))
-#   circle <- .circle(center, radius)
-#   dis <- .distance_point_to_plane(center, plane)
-#
-#   if(dis >= radius){
-#     matrix(c(-pi/2, pi/2), ncol = 2)
-#   } else {
-#     mat <- .intersect_circle_line(plane, circle)
-#     stopifnot(nrow(mat) == 2)
-#     vec <- apply(mat, 2, .euclidean_to_radian, circle = circle)
-#     init_theta <- .initial_theta(y, v, w)
-#     .interval(vec, init_theta)
-#   }
-# })
+# if(nrow(interval) == 1) {
+#   theta <- stats::runif(1, interval[1], interval[2])
+# } else {
+#   len <- interval[,2] - interval[,1]
+#   row_idx <- sample(1:nrow(interval), 1, prob = len)
+#   theta <- stats::runif(1, interval[row_idx,1], interval[row_idx,2])
+# }
+# y_new <- .radians_to_data(theta, y, v, w)
+
+interval_list <- lapply(1:nrow(polyhedra$gamma), function(x){
+  print(x)
+  plane <- .plane(polyhedra$gamma[x,], polyhedra$u[x])
+  plane <- .intersect_plane_basis(plane, y, v, w)
+  if(any(is.na(plane))) return(matrix(c(-pi/2, pi/2), ncol = 2))
+  center <- c(-y%*%v, -y%*%w)
+  radius <- sqrt(sum(center^2))
+  circle <- .circle(center, radius)
+  dis <- .distance_point_to_plane(center, plane)
+
+  if(dis >= radius){
+    matrix(c(-pi/2, pi/2), ncol = 2)
+  } else {
+    mat <- .intersect_circle_line(plane, circle)
+    stopifnot(nrow(mat) == 2)
+    vec <- apply(mat, 2, .euclidean_to_radian, circle = circle)
+    init_theta <- .initial_theta(y, v, w)
+    .interval(vec, init_theta)
+  }
+})
 
 x <- 7
 plane <- .plane(polyhedra$gamma[x,], polyhedra$u[x])

@@ -160,12 +160,12 @@
   if(abs(plane$a[2]) < tol){
     #treat plane$a[2] as zero
     x <- plane$b/plane$a[1]
-    y <- sqrt(circle$radius^2 - (x - circle$center[1])^2) + circle$center[1]
+    y <- circle$center[1] + c(-1, 1) * sqrt(circle$radius^2 - (x - circle$center[1])^2)
 
   } else if(abs(plane$a[1]) < tol) {
     #treat plane$a[1] as zero
     y <- plane$b/plane$a[2]
-    x <- sqrt(circle$radius^2 - (y - circle$center[2])^2) + circle$center[1]
+    x <- circle$center[1] + c(-1, 1) * sqrt(circle$radius^2 - (y - circle$center[2])^2)
 
   } else {
     a1 <- plane$a[1]; a2 <- plane$a[2]
@@ -180,7 +180,7 @@
     y <- (plane$b - a1*x)/a2
   }
 
-  if(length(x) == 1 || abs(x[1]-x[2]) < tol2){
+  if((length(x) == 1 || abs(x[1]-x[2]) < tol2) && (length(y) == 1 || abs(y[1]-y[2]) < tol2)){
     mat <- matrix(c(x[1], y[1]), nrow = 2)
   } else {
     mat <- rbind(x, y)

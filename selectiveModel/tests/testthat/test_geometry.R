@@ -220,6 +220,23 @@ test_that(".intersect_circle_line gives a proper point with small values of a[1]
   expect_true(all(bool_vec))
 })
 
+test_that(".intersect_circle_line gives a proper point with small values of a[1] always gives 2 points", {
+  trials <- 100
+  radius <- 100
+  b <- 2
+  bool_vec <- sapply(1:trials, function(x){
+    set.seed(x)
+    a_vec <- c(0, rnorm(1))
+    plane <- .plane(a_vec, b = b)
+    circle <- .circle(c(0,0), radius*plane$b)
+    points <- .intersect_circle_line(plane, circle)
+
+    ncol(points) == 2
+  })
+
+  expect_true(all(bool_vec))
+})
+
 test_that(".intersect_circle_line gives a proper point with small values of a[1] and offcenter circle", {
   trials <- 100
   radius <- 100
