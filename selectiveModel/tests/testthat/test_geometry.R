@@ -162,10 +162,32 @@ test_that(".intersect_circle_line gives a proper point", {
     points <- .intersect_circle_line(plane, circle)
 
     #check to see points are in circle
-    res1 <- apply(points, 1, function(x){sum(abs(sqrt(x[1]^2+x[2]^2) - 1)) < 1e-6})
+    res1 <- apply(points, 2, function(x){sum(abs(sqrt(x[1]^2+x[2]^2) - 1)) < 1e-6})
 
     #check to see points are on plane
-    res2 <- apply(points, 1, function(x){abs(plane$a%*%x) < 1e-6})
+    res2 <- apply(points, 2, function(x){abs(plane$a%*%x) < 1e-6})
+
+    all(c(res1, res2))
+  })
+
+  expect_true(all(bool_vec))
+})
+
+test_that(".intersect_circle_line gives a proper point with b", {
+  trials <- 100
+  radius <- 100
+  b <- 3
+  bool_vec <- sapply(1:trials, function(x){
+    set.seed(x)
+    plane <- .plane(rnorm(2), b = b)
+    circle <- .circle(c(0,0), radius)
+    points <- .intersect_circle_line(plane, circle)
+
+    #check to see points are in circle
+    res1 <- apply(points, 2, function(x){sum(abs(sqrt(x[1]^2+x[2]^2) - radius)) < 1e-6})
+
+    #check to see points are on plane
+    res2 <- apply(points, 2, function(x){abs(plane$a%*%x - plane$b) < 1e-6})
 
     all(c(res1, res2))
   })

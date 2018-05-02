@@ -27,7 +27,7 @@
     } else {
       mat <- .intersect_circle_line(plane, circle)
       stopifnot(nrow(mat) == 2)
-      vec <- apply(mat, 1, .euclidean_to_radian, circle = circle)
+      vec <- apply(mat, 2, .euclidean_to_radian, circle = circle)
       init_theta <- .initial_theta(y, v, w)
       .interval(vec, init_theta)
     }

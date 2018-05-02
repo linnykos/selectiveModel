@@ -135,8 +135,8 @@
 #'
 #' The \code{plane} object must be in 2-dimensions
 #'
-#' The output is a 2x2 matrix, where the first row represents the first
-#' point and the second row represents the second point.
+#' The output is a 2x2 matrix, where the first column represents the first
+#' point and the second column represents the second point.
 #'
 #' If there is only one point, then the output is a 2x1 matrix.
 #' If no points are found, return \code{NA}.
@@ -159,24 +159,24 @@
 
   if(abs(plane$a[1]) > tol){
     a1 <- plane$a[1]; a2 <- plane$a[2]
+    c1 <- circle$center[1]; c2 <- circle$center[2]
   } else {
     a1 <- plane$a[2]; a2 <- plane$a[1]
+    c1 <- circle$center[2]; c2 <- circle$center[1]
   }
 
-  a <- 1 + (a2/a1)^2
-  b <- -2*(a2/a1)*(plane$b/a1 - circle$center[1]) -
-    2*circle$center[2]
-  c <- -circle$radius^2 + (plane$b/a1 - circle$center[1])^2 +
-    circle$center[2]^2
+  a <- 1 + (a1/a2)^2
+  b <- -2*(a1/a2)*(plane$b/a2 - c2) -2*c1
+  c <- -circle$radius^2 + (plane$b/a2 - c2)^2 + c1^2
 
-  y <- .quadratic(a, b, c)
-  stopifnot(all(!is.na(y)))
-  x <- (plane$b -a2*y)/a1
+  x <- .quadratic(a, b, c)
+  stopifnot(all(!is.na(x)))
+  y <- (plane$b - a1*x)/a2
 
   if(length(y) == 1 || abs(y[1]-y[2]) < tol2){
     mat <- matrix(c(x[1], y[1]), ncol = 2)
   } else {
-    mat <- cbind(x, y)
+    mat <- rbind(x, y)
   }
   colnames(mat) <- NULL
 
