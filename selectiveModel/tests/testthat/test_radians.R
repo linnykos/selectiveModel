@@ -257,9 +257,19 @@ test_that(".euclidean_to_radian works with .intersect_circle_line", {
   circle <- .circle(center = center, radius = sqrt(sum(center^2)))
   points <- .intersect_circle_line(plane, circle)
 
-  theta <- apply(points, 1, function(x){
+  theta <- apply(points, 2, function(x){
     .euclidean_to_radian(circle, x)
   })
+
+  bool_vec <- apply(points, 2, function(x){ #check to be on plane.
+    abs(plane$a %*%x - plane$b) < 1e-16
+  })
+  expect_true(all(bool_vec))
+
+  bool_vec <- apply(points, 2, function(x){ #check to be on plane
+    abs(.l2norm(x - circle$center) - circle$radius) < 1e-6
+  })
+  expect_true(all(bool_vec))
 
   expect_true(all(theta <= pi/2))
   expect_true(all(theta >= -pi/2))

@@ -160,7 +160,7 @@
   if(abs(plane$a[2]) < tol){
     #treat plane$a[2] as zero
     x <- plane$b/plane$a[1]
-    y <- circle$center[1] + c(-1, 1) * sqrt(circle$radius^2 - (x - circle$center[1])^2)
+    y <- circle$center[2] + c(-1, 1) * sqrt(circle$radius^2 - (x - circle$center[1])^2)
 
   } else if(abs(plane$a[1]) < tol) {
     #treat plane$a[1] as zero

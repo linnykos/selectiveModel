@@ -262,6 +262,31 @@ test_that(".intersect_circle_line gives a proper point with small values of a[1]
   expect_true(all(bool_vec))
 })
 
+test_that(".intersect_circle_line gives a proper point with small values of a[2] and offcenter circle", {
+  trials <- 100
+  radius <- 100
+  b <- 2
+  bool_vec <- sapply(1:trials, function(x){
+    set.seed(x)
+    a_vec <- c(rnorm(1), 0)
+    plane <- .plane(a_vec, b = b)
+    circle <- .circle(c(1,2), radius*plane$b)
+    points <- .intersect_circle_line(plane, circle)
+
+    if(!is.matrix(points)) points <- as.matrix(points, nrow = 1)
+
+    #check to see points are in circle
+    res1 <- apply(points, 2, function(x){sum(abs(sqrt((x[1]-circle$center[1])^2+(x[2]-circle$center[2])^2) - circle$radius)) < 1e-6})
+
+    #check to see points are on plane
+    res2 <- apply(points, 2, function(x){abs(plane$a%*%x - plane$b) < 1e-6})
+
+    all(c(res1, res2))
+  })
+
+  expect_true(all(bool_vec))
+})
+
 test_that(".intersect_circle_line can give NA", {
   plane <- .plane(c(1,-1), b = 10)
   circle <- .circle(c(0,0), 1)
@@ -278,7 +303,7 @@ test_that(".intersect_circle_line can give one point", {
 
   expect_true(is.matrix(res))
   expect_true(is.numeric(res))
-  expect_true(all(dim(res) == c(1,2)))
+  expect_true(all(dim(res) == c(2,1)))
 })
 
 ######################################
