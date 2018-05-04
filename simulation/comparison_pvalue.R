@@ -19,9 +19,14 @@ criterion_closure <- function(fit_method,
     fit <- binSegInf::binSeg_fixedSteps(dat, 1)
     poly <- binSegInf::polyhedra(fit)
     contrast <- binSegInf::contrast_vector(fit, vec[2])
-    selected <- selected_model_inference(dat, fit_method = fit_method, test_func = test_func,
+    known_sigma <- selected_model_inference(dat, fit_method = fit_method, test_func = test_func,
+                                         num_samp = num_samp, ignore_jump = vec[2], cores = cores, verbose = F, sigma = 1, param = list(burn_in = 2000, lapse = 1))
+
+    unknown_sigma <- selected_model_inference(dat, fit_method = fit_method, test_func = test_func,
                                          num_samp = num_samp, ignore_jump = vec[2], cores = cores, verbose = F, param = list(burn_in = 2000, lapse = 1))
-    c(selected$pval, binSegInf::jumps(fit))
+
+
+    c(known_sigma$pval, unknown_sigma$pval, binSegInf::jumps(fit))
   }
 }
 
@@ -29,8 +34,7 @@ criterion_closure <- function(fit_method,
 
 n <- 6
 trials <- 1000
-# paramMat <- cbind(seq(0, 1.5, length.out = 4), 1)
-paramMat <- matrix(c(0,1), nrow = 1)
+paramMat <- cbind(seq(0, 1.5, length.out = 4), 1)
 fit_method <- function(x){binSegInf::binSeg_fixedSteps(x, numSteps = 1)}
 
 rule <- rule_closure(n)
