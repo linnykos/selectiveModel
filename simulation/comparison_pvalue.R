@@ -16,9 +16,8 @@ rule_closure <- function(n){
 criterion_closure <- function(fit_method,
                               test_func = selectiveModel::segment_difference, num_samp = 2000, cores = NA, verbose = T){
   function(dat, vec, y, ...){
-    fit <- binSegInf::binSeg_fixedSteps(dat, 1)
-    poly <- binSegInf::polyhedra(fit)
-    contrast <- binSegInf::contrast_vector(fit, vec[2])
+    fit <- fit_method(dat)
+
     known_sigma <- selected_model_inference(dat, fit_method = fit_method, test_func = test_func,
                                          num_samp = num_samp, ignore_jump = vec[2], cores = cores, verbose = F, sigma = 1, param = list(burn_in = 2000, lapse = 1))
 
