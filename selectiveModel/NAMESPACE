@@ -8,3 +8,7 @@ export(next_jump_statistic)
 export(segment_difference)
 export(selected_model_inference)
 useDynLib(selectiveModel,sample_truncnorm_white)
+
+useDynLib(selectiveModel, .registration=TRUE)
+exportPattern("^[[:alpha:]]+")
+importFrom(Rcpp, evalCpp)

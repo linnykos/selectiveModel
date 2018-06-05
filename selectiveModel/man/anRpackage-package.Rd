@@ -1,6 +1,6 @@
-\name{selectiveModel-package}
-\alias{selectiveModel-package}
-\alias{selectiveModel}
+\name{anRpackage-package}
+\alias{anRpackage-package}
+\alias{anRpackage}
 \docType{package}
 \title{
   A short title line describing what the package does
