@@ -5,6 +5,10 @@ unique_sort_native <- function(x) {
     .Call('_selectiveModel_unique_sort_native', PACKAGE = 'selectiveModel', x)
 }
 
+construct_midpoints <- function(x) {
+    .Call('_selectiveModel_construct_midpoints', PACKAGE = 'selectiveModel', x)
+}
+
 rcpp_hello_world <- function() {
     .Call('_selectiveModel_rcpp_hello_world', PACKAGE = 'selectiveModel')
 }

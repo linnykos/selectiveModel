@@ -6,13 +6,24 @@
 using namespace Rcpp;
 
 // unique_sort_native
-Rcpp::NumericVector unique_sort_native(Rcpp::NumericVector x);
+Rcpp::NumericVector unique_sort_native(const Rcpp::NumericVector& x);
 RcppExport SEXP _selectiveModel_unique_sort_native(SEXP xSEXP) {
 BEGIN_RCPP
     Rcpp::RObject rcpp_result_gen;
     Rcpp::RNGScope rcpp_rngScope_gen;
-    Rcpp::traits::input_parameter< Rcpp::NumericVector >::type x(xSEXP);
+    Rcpp::traits::input_parameter< const Rcpp::NumericVector& >::type x(xSEXP);
     rcpp_result_gen = Rcpp::wrap(unique_sort_native(x));
+    return rcpp_result_gen;
+END_RCPP
+}
+// construct_midpoints
+Rcpp::NumericVector construct_midpoints(const Rcpp::NumericVector& x);
+RcppExport SEXP _selectiveModel_construct_midpoints(SEXP xSEXP) {
+BEGIN_RCPP
+    Rcpp::RObject rcpp_result_gen;
+    Rcpp::RNGScope rcpp_rngScope_gen;
+    Rcpp::traits::input_parameter< const Rcpp::NumericVector& >::type x(xSEXP);
+    rcpp_result_gen = Rcpp::wrap(construct_midpoints(x));
     return rcpp_result_gen;
 END_RCPP
 }
@@ -31,6 +42,7 @@ RcppExport void sample_truncnorm_white(void *, void *, void *, void *, void *, v
 
 static const R_CallMethodDef CallEntries[] = {
     {"_selectiveModel_unique_sort_native", (DL_FUNC) &_selectiveModel_unique_sort_native, 1},
+    {"_selectiveModel_construct_midpoints", (DL_FUNC) &_selectiveModel_construct_midpoints, 1},
     {"_selectiveModel_rcpp_hello_world", (DL_FUNC) &_selectiveModel_rcpp_hello_world, 0},
     {"sample_truncnorm_white", (DL_FUNC) &sample_truncnorm_white, 10},
     {NULL, NULL, 0}
