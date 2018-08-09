@@ -9,8 +9,8 @@ construct_midpoints <- function(x) {
     .Call('_selectiveModel_construct_midpoints', PACKAGE = 'selectiveModel', x)
 }
 
-rowSumsC <- function(x) {
-    .Call('_selectiveModel_rowSumsC', PACKAGE = 'selectiveModel', x)
+theta_in_matrix <- function(x, mat) {
+    .Call('_selectiveModel_theta_in_matrix', PACKAGE = 'selectiveModel', x, mat)
 }
 
 rcpp_hello_world <- function() {

@@ -30,17 +30,20 @@ Rcpp::NumericVector construct_midpoints(const Rcpp::NumericVector & x) {
 }
 
 // [[Rcpp::export]]
-NumericVector rowSumsC(NumericMatrix x) {
-  int nrow = x.nrow(), ncol = x.ncol();
-  NumericVector out(nrow);
+bool theta_in_matrix(const Rcpp::NumericVector x,
+                     const Rcpp::NumericMatrix mat) {
+  int nrow = mat.nrow();
 
-  for (int i = 0; i < nrow; i++) {
-    double total = 0;
-    for (int j = 0; j < ncol; j++) {
-      total += x(i, j);
+  for(int i = 0; i < nrow; i++){
+    Rprintf("comparison\n");
+    Rf_PrintValue(wrap(mat(i,0)));
+    Rf_PrintValue(wrap(mat(i,1)));
+    Rf_PrintValue(x);
+    if(wrap(mat(i,0) <= x) && wrap(x <= mat(i,1))) {
+      Rprintf("hi\n");
+      return TRUE;
     }
-    out[i] = total;
   }
 
-  return wrap(nrow);
+  return FALSE;
 }
