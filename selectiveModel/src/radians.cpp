@@ -42,21 +42,3 @@ bool theta_in_matrix(const double x,
 
   return FALSE;
 }
-
-// [[Rcpp::export()]]
-Rcpp::List i2 (Rcpp::NumericMatrix x,
-               double t
-) {
-  int n = x.nrow() ;
-  Rcpp::NumericVector y(n) ;
-  Rcpp::List ret ;
-  for (int it = 0 ; it < n ; it++) {
-    if (x(0,it) <= t) {
-      y(it) = sqrt(pow(x(0,it) - 1.3, 4)) ;
-    } else {
-      y(it) = x(0,it) * 2 ;
-    }
-  }
-  ret["x"] = x ; ret["y"] = y ;
-  return(ret) ;
-}
