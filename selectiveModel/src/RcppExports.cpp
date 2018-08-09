@@ -28,12 +28,12 @@ BEGIN_RCPP
 END_RCPP
 }
 // theta_in_matrix
-bool theta_in_matrix(const Rcpp::NumericVector x, const Rcpp::NumericMatrix mat);
+bool theta_in_matrix(const double x, const Rcpp::NumericMatrix mat);
 RcppExport SEXP _selectiveModel_theta_in_matrix(SEXP xSEXP, SEXP matSEXP) {
 BEGIN_RCPP
     Rcpp::RObject rcpp_result_gen;
     Rcpp::RNGScope rcpp_rngScope_gen;
-    Rcpp::traits::input_parameter< const Rcpp::NumericVector >::type x(xSEXP);
+    Rcpp::traits::input_parameter< const double >::type x(xSEXP);
     Rcpp::traits::input_parameter< const Rcpp::NumericMatrix >::type mat(matSEXP);
     rcpp_result_gen = Rcpp::wrap(theta_in_matrix(x, mat));
     return rcpp_result_gen;

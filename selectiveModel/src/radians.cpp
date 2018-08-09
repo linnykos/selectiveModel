@@ -30,20 +30,33 @@ Rcpp::NumericVector construct_midpoints(const Rcpp::NumericVector & x) {
 }
 
 // [[Rcpp::export]]
-bool theta_in_matrix(const Rcpp::NumericVector x,
+bool theta_in_matrix(const double x,
                      const Rcpp::NumericMatrix mat) {
   int nrow = mat.nrow();
 
   for(int i = 0; i < nrow; i++){
-    Rprintf("comparison\n");
-    Rf_PrintValue(wrap(mat(i,0)));
-    Rf_PrintValue(wrap(mat(i,1)));
-    Rf_PrintValue(x);
-    if(wrap(mat(i,0) <= x) && wrap(x <= mat(i,1))) {
-      Rprintf("hi\n");
+    if(mat(i,0) <= x && x <= mat(i,1)) {
       return TRUE;
     }
   }
 
   return FALSE;
+}
+
+// [[Rcpp::export()]]
+Rcpp::List i2 (Rcpp::NumericMatrix x,
+               double t
+) {
+  int n = x.nrow() ;
+  Rcpp::NumericVector y(n) ;
+  Rcpp::List ret ;
+  for (int it = 0 ; it < n ; it++) {
+    if (x(0,it) <= t) {
+      y(it) = sqrt(pow(x(0,it) - 1.3, 4)) ;
+    } else {
+      y(it) = x(0,it) * 2 ;
+    }
+  }
+  ret["x"] = x ; ret["y"] = y ;
+  return(ret) ;
 }
