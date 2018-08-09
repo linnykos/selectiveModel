@@ -27,6 +27,17 @@ BEGIN_RCPP
     return rcpp_result_gen;
 END_RCPP
 }
+// rowSumsC
+NumericVector rowSumsC(NumericMatrix x);
+RcppExport SEXP _selectiveModel_rowSumsC(SEXP xSEXP) {
+BEGIN_RCPP
+    Rcpp::RObject rcpp_result_gen;
+    Rcpp::RNGScope rcpp_rngScope_gen;
+    Rcpp::traits::input_parameter< NumericMatrix >::type x(xSEXP);
+    rcpp_result_gen = Rcpp::wrap(rowSumsC(x));
+    return rcpp_result_gen;
+END_RCPP
+}
 // rcpp_hello_world
 List rcpp_hello_world();
 RcppExport SEXP _selectiveModel_rcpp_hello_world() {
@@ -37,13 +48,25 @@ BEGIN_RCPP
     return rcpp_result_gen;
 END_RCPP
 }
+// test
+NumericVector test();
+RcppExport SEXP _selectiveModel_test() {
+BEGIN_RCPP
+    Rcpp::RObject rcpp_result_gen;
+    Rcpp::RNGScope rcpp_rngScope_gen;
+    rcpp_result_gen = Rcpp::wrap(test());
+    return rcpp_result_gen;
+END_RCPP
+}
 
 RcppExport void sample_truncnorm_white(void *, void *, void *, void *, void *, void *, void *, void *, void *, void *);
 
 static const R_CallMethodDef CallEntries[] = {
     {"_selectiveModel_unique_sort_native", (DL_FUNC) &_selectiveModel_unique_sort_native, 1},
     {"_selectiveModel_construct_midpoints", (DL_FUNC) &_selectiveModel_construct_midpoints, 1},
+    {"_selectiveModel_rowSumsC", (DL_FUNC) &_selectiveModel_rowSumsC, 1},
     {"_selectiveModel_rcpp_hello_world", (DL_FUNC) &_selectiveModel_rcpp_hello_world, 0},
+    {"_selectiveModel_test", (DL_FUNC) &_selectiveModel_test, 0},
     {"sample_truncnorm_white", (DL_FUNC) &sample_truncnorm_white, 10},
     {NULL, NULL, 0}
 };

@@ -9,7 +9,15 @@ construct_midpoints <- function(x) {
     .Call('_selectiveModel_construct_midpoints', PACKAGE = 'selectiveModel', x)
 }
 
+rowSumsC <- function(x) {
+    .Call('_selectiveModel_rowSumsC', PACKAGE = 'selectiveModel', x)
+}
+
 rcpp_hello_world <- function() {
     .Call('_selectiveModel_rcpp_hello_world', PACKAGE = 'selectiveModel')
+}
+
+test <- function() {
+    .Call('_selectiveModel_test', PACKAGE = 'selectiveModel')
 }
 
