@@ -28,14 +28,36 @@ BEGIN_RCPP
 END_RCPP
 }
 // theta_in_matrix
-bool theta_in_matrix(const double x, const Rcpp::NumericMatrix mat);
+bool theta_in_matrix(const double& x, const Rcpp::NumericMatrix& mat);
 RcppExport SEXP _selectiveModel_theta_in_matrix(SEXP xSEXP, SEXP matSEXP) {
 BEGIN_RCPP
     Rcpp::RObject rcpp_result_gen;
     Rcpp::RNGScope rcpp_rngScope_gen;
-    Rcpp::traits::input_parameter< const double >::type x(xSEXP);
-    Rcpp::traits::input_parameter< const Rcpp::NumericMatrix >::type mat(matSEXP);
+    Rcpp::traits::input_parameter< const double& >::type x(xSEXP);
+    Rcpp::traits::input_parameter< const Rcpp::NumericMatrix& >::type mat(matSEXP);
     rcpp_result_gen = Rcpp::wrap(theta_in_matrix(x, mat));
+    return rcpp_result_gen;
+END_RCPP
+}
+// which_native
+Rcpp::IntegerVector which_native(const Rcpp::LogicalVector& x);
+RcppExport SEXP _selectiveModel_which_native(SEXP xSEXP) {
+BEGIN_RCPP
+    Rcpp::RObject rcpp_result_gen;
+    Rcpp::RNGScope rcpp_rngScope_gen;
+    Rcpp::traits::input_parameter< const Rcpp::LogicalVector& >::type x(xSEXP);
+    rcpp_result_gen = Rcpp::wrap(which_native(x));
+    return rcpp_result_gen;
+END_RCPP
+}
+// consecutive_true
+Rcpp::IntegerMatrix consecutive_true(const Rcpp::LogicalVector& vec);
+RcppExport SEXP _selectiveModel_consecutive_true(SEXP vecSEXP) {
+BEGIN_RCPP
+    Rcpp::RObject rcpp_result_gen;
+    Rcpp::RNGScope rcpp_rngScope_gen;
+    Rcpp::traits::input_parameter< const Rcpp::LogicalVector& >::type vec(vecSEXP);
+    rcpp_result_gen = Rcpp::wrap(consecutive_true(vec));
     return rcpp_result_gen;
 END_RCPP
 }
@@ -66,6 +88,8 @@ static const R_CallMethodDef CallEntries[] = {
     {"_selectiveModel_unique_sort_native", (DL_FUNC) &_selectiveModel_unique_sort_native, 1},
     {"_selectiveModel_construct_midpoints", (DL_FUNC) &_selectiveModel_construct_midpoints, 1},
     {"_selectiveModel_theta_in_matrix", (DL_FUNC) &_selectiveModel_theta_in_matrix, 2},
+    {"_selectiveModel_which_native", (DL_FUNC) &_selectiveModel_which_native, 1},
+    {"_selectiveModel_consecutive_true", (DL_FUNC) &_selectiveModel_consecutive_true, 1},
     {"_selectiveModel_rcpp_hello_world", (DL_FUNC) &_selectiveModel_rcpp_hello_world, 0},
     {"_selectiveModel_test", (DL_FUNC) &_selectiveModel_test, 0},
     {"sample_truncnorm_white", (DL_FUNC) &sample_truncnorm_white, 10},

@@ -13,6 +13,14 @@ theta_in_matrix <- function(x, mat) {
     .Call('_selectiveModel_theta_in_matrix', PACKAGE = 'selectiveModel', x, mat)
 }
 
+which_native <- function(x) {
+    .Call('_selectiveModel_which_native', PACKAGE = 'selectiveModel', x)
+}
+
+consecutive_true <- function(vec) {
+    .Call('_selectiveModel_consecutive_true', PACKAGE = 'selectiveModel', vec)
+}
+
 rcpp_hello_world <- function() {
     .Call('_selectiveModel_rcpp_hello_world', PACKAGE = 'selectiveModel')
 }
