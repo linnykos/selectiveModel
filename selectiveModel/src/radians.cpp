@@ -106,11 +106,7 @@ Rcpp::LogicalVector theta_in_matrix(const Rcpp::NumericVector & x,
   result[0] = FALSE;
 
   for(int i = 0; i < nrow; i++){
-    Rcpp::Rcout << "wtf";
-    Rf_PrintValue(wrap(mat(i,0) <= x));
-    Rf_PrintValue(wrap(x <= mat(i,1)));
-    if(wrap(mat(i,0) <= x) && wrap(x <= mat(i,1))) {
-      Rcpp::Rcout << "hi";
+    if((mat(i,0) <= x[0]) == TRUE && (x[0] <= mat(i,1)) == TRUE) {
       result[0] = TRUE;
       return result;
     }
@@ -119,19 +115,24 @@ Rcpp::LogicalVector theta_in_matrix(const Rcpp::NumericVector & x,
   return result;
 }
 
-// // [[Rcpp::export]]
-// Rcpp::LogicalVector theta_in_all_matrix(const Rcpp::NumericVector & x,
-//                                         const Rcpp::List & list) {
-//   int n = list.size();
-//
-//   for(int i = 0; i < n; i++){
-//     Rcpp::NumericMatrix mat = as<Rcpp::NumericMatrix>(list(i));
-//     Rcpp::LogicalVector boolean = theta_in_matrix(x, mat);
-//     if(!wrap(boolean)) return FALSE;
-//   }
-//
-//   return TRUE;
-// }
+// [[Rcpp::export]]
+Rcpp::LogicalVector theta_in_all_matrix(const Rcpp::NumericVector & x,
+                                        const Rcpp::List & list) {
+  int n = list.size();
+  Rcpp::LogicalVector result(1);
+  result[0] = TRUE;
+
+  for(int i = 0; i < n; i++){
+    Rcpp::NumericMatrix mat = as<Rcpp::NumericMatrix>(list[i]);
+    Rcpp::LogicalVector boolean = theta_in_matrix(x, mat);
+    if(!wrap(boolean)) {
+      result[0] = FALSE;
+      return result;
+    }
+  }
+
+  return result;
+}
 
 // Rcpp::NumericMatrix intersect_intervals(const Rcpp::List & list){
 //   Rcpp::NumericVector vec = unlist_native(list);
