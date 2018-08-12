@@ -17,7 +17,7 @@ Rcpp::NumericVector unique_sort_native(const Rcpp::NumericVector & x) {
 // [[Rcpp::export]]
 Rcpp::NumericVector construct_midpoints(const Rcpp::NumericVector & x) {
   int n = x.size();
-  NumericVector res = no_init(2*n-1);
+  Rcpp::NumericVector res = no_init(2*n-1);
 
   for(int i = 0; i < n-1; i++){
     res[2*i] = x[i];
@@ -29,20 +29,7 @@ Rcpp::NumericVector construct_midpoints(const Rcpp::NumericVector & x) {
   return res;
 }
 
-// [[Rcpp::export]]
-bool theta_in_matrix(const double & x,
-                     const Rcpp::NumericMatrix & mat) {
-  int nrow = mat.nrow();
-
-  for(int i = 0; i < nrow; i++){
-    if(mat(i,0) <= x && x <= mat(i,1)) {
-      return TRUE;
-    }
-  }
-
-  return FALSE;
-}
-
+// from https://stackoverflow.com/questions/23849354/equivalent-of-which-function-in-rcpp
 // [[Rcpp::export]]
 Rcpp::IntegerVector which_native(const Rcpp::LogicalVector & x) {
   int nx = x.size();
@@ -59,11 +46,11 @@ Rcpp::IntegerVector which_native(const Rcpp::LogicalVector & x) {
 // [[Rcpp::export]]
 Rcpp::IntegerMatrix consecutive_true(const Rcpp::LogicalVector & vec){
   int n = vec.size();
-  Rcpp::LogicalVector vec2 = vec;
+  Rcpp::LogicalVector vec2 = Rcpp::clone(vec);
 
   // remove singletons
   for(int i = 1; i < n-1; i++){
-    vec2(i) = (vec(i) && (vec(i-1) || vec(i+1)));
+    vec2[i] = (vec[i] && (vec[i-1] || vec[i+1]));
   }
 
   Rcpp::IntegerVector idx = which_native(vec2);
@@ -84,3 +71,70 @@ Rcpp::IntegerMatrix consecutive_true(const Rcpp::LogicalVector & vec){
   return mat;
 }
 
+// from https://stackoverflow.com/questions/30175104/how-to-effectively-combine-a-list-of-numericvectors-into-one-large-numericvector
+// [[Rcpp::export]]
+Rcpp::NumericVector unlist_native(const Rcpp::List & list) {
+  int n = list.size();
+
+  // Figure out the length of the output vector
+  int total_length = 0;
+  for (int i = 0; i < n; ++i)
+    total_length += Rf_length(list[i]);
+
+  // Allocate the vector
+  Rcpp::NumericVector output = no_init(total_length);
+
+  // Loop and fill
+  int index = 0;
+  for (int i = 0; i < n; ++i)
+  {
+    Rcpp::NumericVector el = list[i];
+    std::copy(el.begin(), el.end(), output.begin() + index);
+
+    // Update the index
+    index += el.size();
+  }
+
+  return output;
+}
+
+// [[Rcpp::export]]
+Rcpp::LogicalVector theta_in_matrix(const Rcpp::NumericVector & x,
+                                    const Rcpp::NumericMatrix & mat) {
+  int nrow = mat.nrow();
+  Rcpp::LogicalVector result(1);
+  result[0] = FALSE;
+
+  for(int i = 0; i < nrow; i++){
+    Rcpp::Rcout << "wtf";
+    Rf_PrintValue(wrap(mat(i,0) <= x));
+    Rf_PrintValue(wrap(x <= mat(i,1)));
+    if(wrap(mat(i,0) <= x) && wrap(x <= mat(i,1))) {
+      Rcpp::Rcout << "hi";
+      result[0] = TRUE;
+      return result;
+    }
+  }
+
+  return result;
+}
+
+// // [[Rcpp::export]]
+// Rcpp::LogicalVector theta_in_all_matrix(const Rcpp::NumericVector & x,
+//                                         const Rcpp::List & list) {
+//   int n = list.size();
+//
+//   for(int i = 0; i < n; i++){
+//     Rcpp::NumericMatrix mat = as<Rcpp::NumericMatrix>(list(i));
+//     Rcpp::LogicalVector boolean = theta_in_matrix(x, mat);
+//     if(!wrap(boolean)) return FALSE;
+//   }
+//
+//   return TRUE;
+// }
+
+// Rcpp::NumericMatrix intersect_intervals(const Rcpp::List & list){
+//   Rcpp::NumericVector vec = unlist_native(list);
+//   vec = unique_sort_native(vec);
+//
+// }
