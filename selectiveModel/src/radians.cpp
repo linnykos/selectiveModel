@@ -125,7 +125,7 @@ Rcpp::LogicalVector theta_in_all_matrix(const Rcpp::NumericVector & x,
   for(int i = 0; i < n; i++){
     Rcpp::NumericMatrix mat = as<Rcpp::NumericMatrix>(list[i]);
     Rcpp::LogicalVector boolean = theta_in_matrix(x, mat);
-    if(!wrap(boolean)) {
+    if(boolean[0] == FALSE) {
       result[0] = FALSE;
       return result;
     }
