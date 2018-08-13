@@ -41,8 +41,8 @@ test <- function() {
     .Call('_selectiveModel_test', PACKAGE = 'selectiveModel')
 }
 
-func1 <- function(x, list) {
-    .Call('_selectiveModel_func1', PACKAGE = 'selectiveModel', x, list)
+func_alt <- function(x) {
+    .Call('_selectiveModel_func_alt', PACKAGE = 'selectiveModel', x)
 }
 
 func2 <- function() {

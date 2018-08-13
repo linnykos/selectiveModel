@@ -115,20 +115,19 @@ BEGIN_RCPP
     return rcpp_result_gen;
 END_RCPP
 }
-// func1
-Rcpp::LogicalVector func1(const Rcpp::NumericVector& x, const Rcpp::List& list);
-RcppExport SEXP _selectiveModel_func1(SEXP xSEXP, SEXP listSEXP) {
+// func_alt
+NumericVector func_alt(double x);
+RcppExport SEXP _selectiveModel_func_alt(SEXP xSEXP) {
 BEGIN_RCPP
     Rcpp::RObject rcpp_result_gen;
     Rcpp::RNGScope rcpp_rngScope_gen;
-    Rcpp::traits::input_parameter< const Rcpp::NumericVector& >::type x(xSEXP);
-    Rcpp::traits::input_parameter< const Rcpp::List& >::type list(listSEXP);
-    rcpp_result_gen = Rcpp::wrap(func1(x, list));
+    Rcpp::traits::input_parameter< double >::type x(xSEXP);
+    rcpp_result_gen = Rcpp::wrap(func_alt(x));
     return rcpp_result_gen;
 END_RCPP
 }
 // func2
-double func2();
+NumericVector func2();
 RcppExport SEXP _selectiveModel_func2() {
 BEGIN_RCPP
     Rcpp::RObject rcpp_result_gen;
@@ -151,7 +150,7 @@ static const R_CallMethodDef CallEntries[] = {
     {"_selectiveModel_intersect_intervals", (DL_FUNC) &_selectiveModel_intersect_intervals, 1},
     {"_selectiveModel_rcpp_hello_world", (DL_FUNC) &_selectiveModel_rcpp_hello_world, 0},
     {"_selectiveModel_test", (DL_FUNC) &_selectiveModel_test, 0},
-    {"_selectiveModel_func1", (DL_FUNC) &_selectiveModel_func1, 2},
+    {"_selectiveModel_func_alt", (DL_FUNC) &_selectiveModel_func_alt, 1},
     {"_selectiveModel_func2", (DL_FUNC) &_selectiveModel_func2, 0},
     {"sample_truncnorm_white", (DL_FUNC) &sample_truncnorm_white, 10},
     {NULL, NULL, 0}
