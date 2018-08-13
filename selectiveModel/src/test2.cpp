@@ -2,7 +2,7 @@
 using namespace Rcpp;
 
 // [[Rcpp::export]]
-NumericVector func_alt(double x){
+NumericVector func_alt(double & x){
   Rcout << "yolo";
   Rcout << x;
   return wrap(x);

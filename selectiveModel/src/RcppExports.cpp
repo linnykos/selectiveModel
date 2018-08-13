@@ -61,31 +61,31 @@ BEGIN_RCPP
 END_RCPP
 }
 // theta_in_matrix
-Rcpp::LogicalVector theta_in_matrix(const Rcpp::NumericVector& x, const Rcpp::NumericMatrix& mat);
+Rcpp::LogicalVector theta_in_matrix(const double& x, const Rcpp::NumericMatrix& mat);
 RcppExport SEXP _selectiveModel_theta_in_matrix(SEXP xSEXP, SEXP matSEXP) {
 BEGIN_RCPP
     Rcpp::RObject rcpp_result_gen;
     Rcpp::RNGScope rcpp_rngScope_gen;
-    Rcpp::traits::input_parameter< const Rcpp::NumericVector& >::type x(xSEXP);
+    Rcpp::traits::input_parameter< const double& >::type x(xSEXP);
     Rcpp::traits::input_parameter< const Rcpp::NumericMatrix& >::type mat(matSEXP);
     rcpp_result_gen = Rcpp::wrap(theta_in_matrix(x, mat));
     return rcpp_result_gen;
 END_RCPP
 }
 // theta_in_all_matrix
-Rcpp::LogicalVector theta_in_all_matrix(const Rcpp::NumericVector& x, const Rcpp::List& list);
+Rcpp::LogicalVector theta_in_all_matrix(const double& x, const Rcpp::List& list);
 RcppExport SEXP _selectiveModel_theta_in_all_matrix(SEXP xSEXP, SEXP listSEXP) {
 BEGIN_RCPP
     Rcpp::RObject rcpp_result_gen;
     Rcpp::RNGScope rcpp_rngScope_gen;
-    Rcpp::traits::input_parameter< const Rcpp::NumericVector& >::type x(xSEXP);
+    Rcpp::traits::input_parameter< const double& >::type x(xSEXP);
     Rcpp::traits::input_parameter< const Rcpp::List& >::type list(listSEXP);
     rcpp_result_gen = Rcpp::wrap(theta_in_all_matrix(x, list));
     return rcpp_result_gen;
 END_RCPP
 }
 // intersect_intervals
-Rcpp::LogicalVector intersect_intervals(const Rcpp::List& list);
+Rcpp::NumericMatrix intersect_intervals(const Rcpp::List& list);
 RcppExport SEXP _selectiveModel_intersect_intervals(SEXP listSEXP) {
 BEGIN_RCPP
     Rcpp::RObject rcpp_result_gen;
@@ -116,12 +116,12 @@ BEGIN_RCPP
 END_RCPP
 }
 // func_alt
-NumericVector func_alt(double x);
+NumericVector func_alt(double& x);
 RcppExport SEXP _selectiveModel_func_alt(SEXP xSEXP) {
 BEGIN_RCPP
     Rcpp::RObject rcpp_result_gen;
     Rcpp::RNGScope rcpp_rngScope_gen;
-    Rcpp::traits::input_parameter< double >::type x(xSEXP);
+    Rcpp::traits::input_parameter< double& >::type x(xSEXP);
     rcpp_result_gen = Rcpp::wrap(func_alt(x));
     return rcpp_result_gen;
 END_RCPP
