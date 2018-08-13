@@ -16,7 +16,7 @@ res <- .intersect_two_intervals(mat1, mat2)
 res <- .intersect_two_intervals(res, mat3)
 
 lis <- list(mat1, mat2, mat3)
-# zz = intersect_intervals(lis)
-zz = func2()
+zz = intersect_intervals(lis)
+intersect_intervals(lis[1:2])
 
 func2()

@@ -156,8 +156,8 @@ Rcpp::NumericMatrix intersect_intervals(const Rcpp::List & list){
   Rcpp::NumericMatrix result(nrow, 2);
 
   for(int i = 0; i < nrow; i++){
-    result(i,0) = vec2[idx(i,0)];
-    result(i,1) = vec2[idx(i,1)];
+    result(i,0) = vec2[idx(i,0)-1];
+    result(i,1) = vec2[idx(i,1)-1];
   }
 
   return result;
