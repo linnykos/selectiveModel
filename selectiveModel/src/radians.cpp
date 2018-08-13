@@ -118,6 +118,9 @@ Rcpp::LogicalVector theta_in_matrix(const Rcpp::NumericVector & x,
 // [[Rcpp::export]]
 Rcpp::LogicalVector theta_in_all_matrix(const Rcpp::NumericVector & x,
                                         const Rcpp::List & list) {
+  Rcout << "yolo";
+  Rf_PrintValue(x);
+
   int n = list.size();
   Rcpp::LogicalVector result(1);
   result[0] = TRUE;
@@ -134,8 +137,42 @@ Rcpp::LogicalVector theta_in_all_matrix(const Rcpp::NumericVector & x,
   return result;
 }
 
-// Rcpp::NumericMatrix intersect_intervals(const Rcpp::List & list){
-//   Rcpp::NumericVector vec = unlist_native(list);
-//   vec = unique_sort_native(vec);
-//
-// }
+// [[Rcpp::export]]
+Rcpp::LogicalVector intersect_intervals(const Rcpp::List & list){
+
+  NumericVector vec(2);
+  vec[0] = 1;
+  vec[1] = 1;
+  // Rf_PrintValue(vec);
+  // NumericVector vec2 = vec[0];
+  Rcpp::LogicalVector tmp = theta_in_all_matrix(vec[0], list);
+
+  return tmp;
+
+  // Rcpp::NumericVector vec = unlist_native(list);
+  // vec = unique_sort_native(vec);
+  //
+  // Rcpp::NumericVector vec2 = construct_midpoints(vec);
+  // int n = vec2.size();
+  // Rcpp::LogicalVector boolean(n);
+  //
+  // for(int i = 0; i < n; i++){
+  //   Rcout << i;
+  //   Rcpp::LogicalVector tmp = theta_in_all_matrix(vec2[i], list);
+  //
+  //   Rf_PrintValue(tmp);
+  //
+  //   boolean[i] = tmp[0];
+  // }
+  //
+  // Rcpp::IntegerMatrix idx = consecutive_true(boolean);
+  // int nrow = idx.nrow();
+  // Rcpp::NumericMatrix result(nrow, 2);
+  //
+  // for(int i = 0; i < nrow; i++){
+  //   result(i,0) = vec2[idx(i,0)];
+  //   result(i,1) = vec2[idx(i,1)];
+  // }
+  //
+  // return result;
+}

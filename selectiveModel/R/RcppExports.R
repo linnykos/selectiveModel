@@ -29,11 +29,23 @@ theta_in_all_matrix <- function(x, list) {
     .Call('_selectiveModel_theta_in_all_matrix', PACKAGE = 'selectiveModel', x, list)
 }
 
+intersect_intervals <- function(list) {
+    .Call('_selectiveModel_intersect_intervals', PACKAGE = 'selectiveModel', list)
+}
+
 rcpp_hello_world <- function() {
     .Call('_selectiveModel_rcpp_hello_world', PACKAGE = 'selectiveModel')
 }
 
 test <- function() {
     .Call('_selectiveModel_test', PACKAGE = 'selectiveModel')
+}
+
+func1 <- function(x, list) {
+    .Call('_selectiveModel_func1', PACKAGE = 'selectiveModel', x, list)
+}
+
+func2 <- function() {
+    .Call('_selectiveModel_func2', PACKAGE = 'selectiveModel')
 }
 
