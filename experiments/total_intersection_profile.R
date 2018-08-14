@@ -73,7 +73,7 @@
 
 # start simulation setup
 trials <- 1000
-results <- rep(NA, 3)
+results <- rep(NA, 4)
 
 generate_random_list <- function(i){
   set.seed(10*i)
@@ -104,4 +104,11 @@ results[3] <- system.time({
     intersect_intervals(lis)
   }
 })[3]
+results[4] <- system.time({
+  for(i in 1:trials){
+    lis <- generate_random_list(i)
+    intersect_intervals_simult(lis)
+  }
+})[3]
+
 

@@ -136,17 +136,17 @@ Rcpp::LogicalVector theta_in_all_matrix(const double & x,
 }
 
 // [[Rcpp::export]]
-Rcpp::NumericMatrix intersect_intervals(const Rcpp::List & list){
+Rcpp::NumericMatrix intersect_intervals_simult(const Rcpp::List & list){
 
   Rcpp::NumericVector vec = unlist_native(list);
   vec = unique_sort_native(vec);
 
-  Rcpp::NumericVector vec2 = construct_midpoints(vec);
-  int n = vec2.size();
+  vec = construct_midpoints(vec);
+  int n = vec.size();
   Rcpp::LogicalVector boolean(n);
 
   for(int i = 0; i < n; i++){
-    Rcpp::LogicalVector tmp = theta_in_all_matrix(vec2[i], list);
+    Rcpp::LogicalVector tmp = theta_in_all_matrix(vec[i], list);
 
     boolean[i] = tmp[0];
   }
@@ -156,9 +156,62 @@ Rcpp::NumericMatrix intersect_intervals(const Rcpp::List & list){
   Rcpp::NumericMatrix result(nrow, 2);
 
   for(int i = 0; i < nrow; i++){
-    result(i,0) = vec2[idx(i,0)-1];
-    result(i,1) = vec2[idx(i,1)-1];
+    result(i,0) = vec[idx(i,0)-1];
+    result(i,1) = vec[idx(i,1)-1];
   }
 
   return result;
 }
+
+// [[Rcpp::export]]
+Rcpp::NumericMatrix intersect_intervals_two(const Rcpp::NumericMatrix mat1,
+                                            const Rcpp::NumericMatrix mat2){
+  int size1 = mat1.length();
+  int size2 = mat2.length();
+
+  Rcpp::NumericVector vec(size1 + size2);
+  std::copy(mat1.begin(), mat1.end(), vec.begin());
+  std::copy(mat2.begin(), mat2.end(), vec.begin() + size1);
+  vec = unique_sort_native(vec);
+
+  vec = construct_midpoints(vec);
+  int n = vec.size();
+  Rcpp::LogicalVector boolean(n);
+
+  for(int i = 0; i < n; i++){
+    Rcpp::LogicalVector tmp1 = theta_in_matrix(vec[i], mat1);
+    Rcpp::LogicalVector tmp2 = theta_in_matrix(vec[i], mat1);
+
+    boolean[i] = (tmp1[0] && tmp2[0]);
+  }
+
+  Rcpp::IntegerMatrix idx = consecutive_true(boolean);
+  int nrow = idx.nrow();
+  Rcpp::NumericMatrix result(nrow, 2);
+
+  for(int i = 0; i < nrow; i++){
+    result(i,0) = vec[idx(i,0)-1];
+    result(i,1) = vec[idx(i,1)-1];
+  }
+
+  return result;
+}
+
+// [[Rcpp::export]]
+Rcpp::NumericMatrix intersect_intervals(const Rcpp::List & list){
+  int n = list.length();
+  Rcpp::NumericMatrix mat1 = as<Rcpp::NumericMatrix>(list[0]);
+  Rcpp::NumericMatrix mat2 = as<Rcpp::NumericMatrix>(list[1]);
+
+  mat1 = intersect_intervals_two(mat1, mat2);
+
+  if(n > 2){
+    for(int i = 2; i < n; i++){
+      mat2 = as<Rcpp::NumericMatrix>(list[i]);
+      mat1 = intersect_intervals_two(mat1, mat2);
+    }
+  }
+
+  return mat1;
+}
+

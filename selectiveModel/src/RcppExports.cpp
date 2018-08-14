@@ -84,6 +84,29 @@ BEGIN_RCPP
     return rcpp_result_gen;
 END_RCPP
 }
+// intersect_intervals_simult
+Rcpp::NumericMatrix intersect_intervals_simult(const Rcpp::List& list);
+RcppExport SEXP _selectiveModel_intersect_intervals_simult(SEXP listSEXP) {
+BEGIN_RCPP
+    Rcpp::RObject rcpp_result_gen;
+    Rcpp::RNGScope rcpp_rngScope_gen;
+    Rcpp::traits::input_parameter< const Rcpp::List& >::type list(listSEXP);
+    rcpp_result_gen = Rcpp::wrap(intersect_intervals_simult(list));
+    return rcpp_result_gen;
+END_RCPP
+}
+// intersect_intervals_two
+Rcpp::NumericMatrix intersect_intervals_two(const Rcpp::NumericMatrix mat1, const Rcpp::NumericMatrix mat2);
+RcppExport SEXP _selectiveModel_intersect_intervals_two(SEXP mat1SEXP, SEXP mat2SEXP) {
+BEGIN_RCPP
+    Rcpp::RObject rcpp_result_gen;
+    Rcpp::RNGScope rcpp_rngScope_gen;
+    Rcpp::traits::input_parameter< const Rcpp::NumericMatrix >::type mat1(mat1SEXP);
+    Rcpp::traits::input_parameter< const Rcpp::NumericMatrix >::type mat2(mat2SEXP);
+    rcpp_result_gen = Rcpp::wrap(intersect_intervals_two(mat1, mat2));
+    return rcpp_result_gen;
+END_RCPP
+}
 // intersect_intervals
 Rcpp::NumericMatrix intersect_intervals(const Rcpp::List& list);
 RcppExport SEXP _selectiveModel_intersect_intervals(SEXP listSEXP) {
@@ -133,6 +156,8 @@ static const R_CallMethodDef CallEntries[] = {
     {"_selectiveModel_unlist_native", (DL_FUNC) &_selectiveModel_unlist_native, 1},
     {"_selectiveModel_theta_in_matrix", (DL_FUNC) &_selectiveModel_theta_in_matrix, 2},
     {"_selectiveModel_theta_in_all_matrix", (DL_FUNC) &_selectiveModel_theta_in_all_matrix, 2},
+    {"_selectiveModel_intersect_intervals_simult", (DL_FUNC) &_selectiveModel_intersect_intervals_simult, 1},
+    {"_selectiveModel_intersect_intervals_two", (DL_FUNC) &_selectiveModel_intersect_intervals_two, 2},
     {"_selectiveModel_intersect_intervals", (DL_FUNC) &_selectiveModel_intersect_intervals, 1},
     {"_selectiveModel_gibbs_step", (DL_FUNC) &_selectiveModel_gibbs_step, 4},
     {"_selectiveModel_sample_truncnorm_white", (DL_FUNC) &_selectiveModel_sample_truncnorm_white, 6},
