@@ -180,7 +180,7 @@ Rcpp::NumericMatrix intersect_intervals_two(const Rcpp::NumericMatrix mat1,
 
   for(int i = 0; i < n; i++){
     Rcpp::LogicalVector tmp1 = theta_in_matrix(vec[i], mat1);
-    Rcpp::LogicalVector tmp2 = theta_in_matrix(vec[i], mat1);
+    Rcpp::LogicalVector tmp2 = theta_in_matrix(vec[i], mat2);
 
     boolean[i] = (tmp1[0] && tmp2[0]);
   }
