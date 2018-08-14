@@ -1,6 +1,7 @@
 #include <Rcpp.h>
 using namespace Rcpp;
 
+// code modified from https://github.com/selective-inference/R-software/blob/master/forLater/maxZ/funs.constraints.R
 // [[Rcpp::export]]
 void gibbs_step(NumericVector & state, const NumericVector & direction,
                 NumericVector & U, const NumericVector & alpha){
@@ -112,8 +113,6 @@ NumericMatrix sample_truncnorm_white(NumericVector & state, NumericVector & U,
                             const NumericMatrix & directions, const NumericMatrix & alphas,
                             const int & burnin, const int & ndraw){
   int which_direction;
-
-  int nconstraint = U.length();
   int ndirection = directions.ncol();
   int nstate = state.length();
 

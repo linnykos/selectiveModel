@@ -244,7 +244,7 @@
 #' Intersect a polyhedron with a line
 #'
 #' Computes one endpoint by solving the following optimization problem:
-#' max a s.t. polyhedra$gamma * (point + a*direction) >= polyhedra$u.
+#' max a s.t. \code{polyhedra$gamma * (point + a*direction) >= polyhedra$u}.
 #' Since the linear program forces all variables to be non-negative, additional
 #' transformations are needed. The other endpoint is solved by a minimization problem.
 #'
