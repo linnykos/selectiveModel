@@ -95,6 +95,35 @@ BEGIN_RCPP
     return rcpp_result_gen;
 END_RCPP
 }
+// gibbs_step
+void gibbs_step(NumericVector& state, const NumericVector& direction, NumericVector& U, const NumericVector& alpha);
+RcppExport SEXP _selectiveModel_gibbs_step(SEXP stateSEXP, SEXP directionSEXP, SEXP USEXP, SEXP alphaSEXP) {
+BEGIN_RCPP
+    Rcpp::RNGScope rcpp_rngScope_gen;
+    Rcpp::traits::input_parameter< NumericVector& >::type state(stateSEXP);
+    Rcpp::traits::input_parameter< const NumericVector& >::type direction(directionSEXP);
+    Rcpp::traits::input_parameter< NumericVector& >::type U(USEXP);
+    Rcpp::traits::input_parameter< const NumericVector& >::type alpha(alphaSEXP);
+    gibbs_step(state, direction, U, alpha);
+    return R_NilValue;
+END_RCPP
+}
+// sample_truncnorm_white
+NumericMatrix sample_truncnorm_white(NumericVector& state, NumericVector& U, const NumericMatrix& directions, const NumericMatrix& alphas, const int& burnin, const int& ndraw);
+RcppExport SEXP _selectiveModel_sample_truncnorm_white(SEXP stateSEXP, SEXP USEXP, SEXP directionsSEXP, SEXP alphasSEXP, SEXP burninSEXP, SEXP ndrawSEXP) {
+BEGIN_RCPP
+    Rcpp::RObject rcpp_result_gen;
+    Rcpp::RNGScope rcpp_rngScope_gen;
+    Rcpp::traits::input_parameter< NumericVector& >::type state(stateSEXP);
+    Rcpp::traits::input_parameter< NumericVector& >::type U(USEXP);
+    Rcpp::traits::input_parameter< const NumericMatrix& >::type directions(directionsSEXP);
+    Rcpp::traits::input_parameter< const NumericMatrix& >::type alphas(alphasSEXP);
+    Rcpp::traits::input_parameter< const int& >::type burnin(burninSEXP);
+    Rcpp::traits::input_parameter< const int& >::type ndraw(ndrawSEXP);
+    rcpp_result_gen = Rcpp::wrap(sample_truncnorm_white(state, U, directions, alphas, burnin, ndraw));
+    return rcpp_result_gen;
+END_RCPP
+}
 
 static const R_CallMethodDef CallEntries[] = {
     {"_selectiveModel_unique_sort_native", (DL_FUNC) &_selectiveModel_unique_sort_native, 1},
@@ -105,6 +134,8 @@ static const R_CallMethodDef CallEntries[] = {
     {"_selectiveModel_theta_in_matrix", (DL_FUNC) &_selectiveModel_theta_in_matrix, 2},
     {"_selectiveModel_theta_in_all_matrix", (DL_FUNC) &_selectiveModel_theta_in_all_matrix, 2},
     {"_selectiveModel_intersect_intervals", (DL_FUNC) &_selectiveModel_intersect_intervals, 1},
+    {"_selectiveModel_gibbs_step", (DL_FUNC) &_selectiveModel_gibbs_step, 4},
+    {"_selectiveModel_sample_truncnorm_white", (DL_FUNC) &_selectiveModel_sample_truncnorm_white, 6},
     {NULL, NULL, 0}
 };
 

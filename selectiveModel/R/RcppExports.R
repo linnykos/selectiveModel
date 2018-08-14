@@ -33,3 +33,11 @@ intersect_intervals <- function(list) {
     .Call('_selectiveModel_intersect_intervals', PACKAGE = 'selectiveModel', list)
 }
 
+gibbs_step <- function(state, direction, U, alpha) {
+    invisible(.Call('_selectiveModel_gibbs_step', PACKAGE = 'selectiveModel', state, direction, U, alpha))
+}
+
+sample_truncnorm_white <- function(state, U, directions, alphas, burnin, ndraw) {
+    .Call('_selectiveModel_sample_truncnorm_white', PACKAGE = 'selectiveModel', state, U, directions, alphas, burnin, ndraw)
+}
+
