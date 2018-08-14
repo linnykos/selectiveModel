@@ -1,5 +1,4 @@
 ## code modified from https://github.com/selective-inference/R-software/blob/master/forLater/maxZ/funs.constraints.R
-
 .sampler_hit_run_line <- function(start_y, gaussian, segments, polyhedra, num_samp = 8000,
                                   burn_in = 2000){
 
@@ -19,20 +18,8 @@
   #flip the slack to accommodate our setting
   slack <- -new_polyhedra$gamma %*% start_z + new_polyhedra$u
 
-  z_sample <- matrix(rep(0, n * num_samp), nrow = n, ncol = num_samp)
-
-  # result <- .C("sample_truncnorm_white",
-  #             as.numeric(start_z),
-  #             as.numeric(slack),
-  #             as.numeric(t(directions)),
-  #             as.numeric(alphas),
-  #             output=z_sample,
-  #             as.integer(nrow(new_polyhedra$gamma)),
-  #             as.integer(nrow(directions)),
-  #             as.integer(length(start_z)),
-  #             as.integer(burn_in),
-  #             as.integer(num_samp))
-  z_sample <- result$output
+  z_sample <- sample_truncnorm_white(start_z, slack, t(directions),
+                                   alphas, burn_in, num_samp)
 
   apply(z_sample, 2, function(x){
     setting_1$backward_translation(setting_2$backward_translation(x))
