@@ -33,14 +33,6 @@ intersect_intervals_simult <- function(list) {
     .Call('_selectiveModel_intersect_intervals_simult', PACKAGE = 'selectiveModel', list)
 }
 
-intersect_intervals_two <- function(mat1, mat2) {
-    .Call('_selectiveModel_intersect_intervals_two', PACKAGE = 'selectiveModel', mat1, mat2)
-}
-
-intersect_intervals <- function(list) {
-    .Call('_selectiveModel_intersect_intervals', PACKAGE = 'selectiveModel', list)
-}
-
 gibbs_step <- function(state, direction, U, alpha) {
     invisible(.Call('_selectiveModel_gibbs_step', PACKAGE = 'selectiveModel', state, direction, U, alpha))
 }

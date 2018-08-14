@@ -33,7 +33,7 @@
     }
   })
 
-  interval <- .intersect_intervals(interval_list)
+  interval <- intersect_intervals_simult(interval_list)
   stopifnot(all(interval[,1] < interval[,2]))
 
   interval
@@ -191,106 +191,6 @@
   stopifnot(all(as.numeric(t(mat)) == sort(as.numeric(t(mat)))))
   stopifnot(all(abs(mat) <= pi/2))
   mat
-}
-
-#' Intersect intervals
-#'
-#' \code{lis} is a list of matrices created by \code{.interval}.
-#'
-#' Returns a matrix with 2 columns, where each row represents a
-#' closed, connected interval of radians. The union of the rows represents
-#' the intersection of all the intervals.
-#'
-#' This function errors if there is no intersection.
-#'
-#' @param lis list of matrices
-#'
-#' @return matrix
-.intersect_intervals <- function(lis){
-  Reduce(.intersect_two_intervals, lis)
-}
-
-#' Intersect two intervals
-#'
-#' Both \code{mat1} and \code{mat2} are outputs of \code{.interval}. This
-#' finds all the radian intervals that lie in their intersection, and returns
-#' it as another matrix that is similar in layout to those outputted by
-#' \code{.interval}.
-#'
-#' This function errors if there is no intersection.
-#'
-#' @param mat1 matrix
-#' @param mat2 matrix
-#'
-#' @return matrix
-.intersect_two_intervals <- function(mat1, mat2){
-  vec <- sort(unique(c(as.numeric(mat1), as.numeric(mat2))))
-  vec <- sort(c(vec, .interpolate(vec)))
-
-  bool_vec <- sapply(vec, function(x){
-    all(.theta_in_interval(x, mat1), .theta_in_interval(x, mat2))
-  })
-
-  idx_mat <- .consecutive_true(bool_vec)
-
-  mat <- matrix(vec[idx_mat], ncol = 2)
-  mat <- mat[order(mat[,1]),,drop = F]
-
-  stopifnot(all(as.numeric(t(mat)) == sort(as.numeric(t(mat)))))
-  mat
-}
-
-#' Produce a vector with midpoints
-#'
-#' @param vec vector
-#'
-#' @return vector
-.interpolate <- function(vec){
-  n <- length(vec)
-  sapply(2:n, function(x){
-    mean(vec[(x-1):x])
-  })
-}
-
-#' Is theta in an interval
-#'
-#' The \code{mat} is an output of \code{.interval}.
-#'
-#' @param theta radian
-#' @param mat matrix
-#'
-#' @return boolean
-.theta_in_interval <- function(theta, mat){
-  stopifnot(abs(theta) <= pi/2)
-
-  vec <- any(apply(mat, 1, function(x){
-    x[1] <= theta & theta <= x[2]
-  }))
-}
-
-#' Finding consecutive sets of TRUE's in a vector
-#'
-#' Returns a 2-column matrix where each row represents a separate pair (start
-#' and end index) of consecutive TRUE's. This function ignores indices
-#' for TRUE that are singleton.
-#'
-#' @param vec vector
-#'
-#' @return 2-column matrix
-.consecutive_true <- function(vec){
-  idx <- which(vec)
-  if(length(idx) == 0) stop("No intersection")
-  breakpoint <- which(sapply(2:length(idx), function(x){idx[x]-idx[x-1] != 1}))
-
-  breakpoint <- c(0, breakpoint, length(idx))
-  mat <- t(sapply(2:length(breakpoint), function(x){
-    c(idx[breakpoint[x-1]+1], idx[breakpoint[x]])
-  }))
-
-  #remove singletons
-  idx <- which(mat[,1] != mat[,2])
-  if(length(idx) == 0) stop("No intersection")
-  mat[idx,]
 }
 
 #' Convert euclidean points on circle into radians
