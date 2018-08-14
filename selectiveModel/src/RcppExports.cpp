@@ -95,49 +95,6 @@ BEGIN_RCPP
     return rcpp_result_gen;
 END_RCPP
 }
-// rcpp_hello_world
-List rcpp_hello_world();
-RcppExport SEXP _selectiveModel_rcpp_hello_world() {
-BEGIN_RCPP
-    Rcpp::RObject rcpp_result_gen;
-    Rcpp::RNGScope rcpp_rngScope_gen;
-    rcpp_result_gen = Rcpp::wrap(rcpp_hello_world());
-    return rcpp_result_gen;
-END_RCPP
-}
-// test
-NumericVector test();
-RcppExport SEXP _selectiveModel_test() {
-BEGIN_RCPP
-    Rcpp::RObject rcpp_result_gen;
-    Rcpp::RNGScope rcpp_rngScope_gen;
-    rcpp_result_gen = Rcpp::wrap(test());
-    return rcpp_result_gen;
-END_RCPP
-}
-// func_alt
-NumericVector func_alt(double& x);
-RcppExport SEXP _selectiveModel_func_alt(SEXP xSEXP) {
-BEGIN_RCPP
-    Rcpp::RObject rcpp_result_gen;
-    Rcpp::RNGScope rcpp_rngScope_gen;
-    Rcpp::traits::input_parameter< double& >::type x(xSEXP);
-    rcpp_result_gen = Rcpp::wrap(func_alt(x));
-    return rcpp_result_gen;
-END_RCPP
-}
-// func2
-NumericVector func2();
-RcppExport SEXP _selectiveModel_func2() {
-BEGIN_RCPP
-    Rcpp::RObject rcpp_result_gen;
-    Rcpp::RNGScope rcpp_rngScope_gen;
-    rcpp_result_gen = Rcpp::wrap(func2());
-    return rcpp_result_gen;
-END_RCPP
-}
-
-RcppExport void sample_truncnorm_white(void *, void *, void *, void *, void *, void *, void *, void *, void *, void *);
 
 static const R_CallMethodDef CallEntries[] = {
     {"_selectiveModel_unique_sort_native", (DL_FUNC) &_selectiveModel_unique_sort_native, 1},
@@ -148,11 +105,6 @@ static const R_CallMethodDef CallEntries[] = {
     {"_selectiveModel_theta_in_matrix", (DL_FUNC) &_selectiveModel_theta_in_matrix, 2},
     {"_selectiveModel_theta_in_all_matrix", (DL_FUNC) &_selectiveModel_theta_in_all_matrix, 2},
     {"_selectiveModel_intersect_intervals", (DL_FUNC) &_selectiveModel_intersect_intervals, 1},
-    {"_selectiveModel_rcpp_hello_world", (DL_FUNC) &_selectiveModel_rcpp_hello_world, 0},
-    {"_selectiveModel_test", (DL_FUNC) &_selectiveModel_test, 0},
-    {"_selectiveModel_func_alt", (DL_FUNC) &_selectiveModel_func_alt, 1},
-    {"_selectiveModel_func2", (DL_FUNC) &_selectiveModel_func2, 0},
-    {"sample_truncnorm_white", (DL_FUNC) &sample_truncnorm_white, 10},
     {NULL, NULL, 0}
 };
 

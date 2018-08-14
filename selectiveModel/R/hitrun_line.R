@@ -1,6 +1,5 @@
 ## code modified from https://github.com/selective-inference/R-software/blob/master/forLater/maxZ/funs.constraints.R
 
-#' @useDynLib selectiveModel sample_truncnorm_white
 .sampler_hit_run_line <- function(start_y, gaussian, segments, polyhedra, num_samp = 8000,
                                   burn_in = 2000){
 
@@ -22,17 +21,17 @@
 
   z_sample <- matrix(rep(0, n * num_samp), nrow = n, ncol = num_samp)
 
-  result <- .C("sample_truncnorm_white",
-              as.numeric(start_z),
-              as.numeric(slack),
-              as.numeric(t(directions)),
-              as.numeric(alphas),
-              output=z_sample,
-              as.integer(nrow(new_polyhedra$gamma)),
-              as.integer(nrow(directions)),
-              as.integer(length(start_z)),
-              as.integer(burn_in),
-              as.integer(num_samp))
+  # result <- .C("sample_truncnorm_white",
+  #             as.numeric(start_z),
+  #             as.numeric(slack),
+  #             as.numeric(t(directions)),
+  #             as.numeric(alphas),
+  #             output=z_sample,
+  #             as.integer(nrow(new_polyhedra$gamma)),
+  #             as.integer(nrow(directions)),
+  #             as.integer(length(start_z)),
+  #             as.integer(burn_in),
+  #             as.integer(num_samp))
   z_sample <- result$output
 
   apply(z_sample, 2, function(x){

@@ -33,19 +33,3 @@ intersect_intervals <- function(list) {
     .Call('_selectiveModel_intersect_intervals', PACKAGE = 'selectiveModel', list)
 }
 
-rcpp_hello_world <- function() {
-    .Call('_selectiveModel_rcpp_hello_world', PACKAGE = 'selectiveModel')
-}
-
-test <- function() {
-    .Call('_selectiveModel_test', PACKAGE = 'selectiveModel')
-}
-
-func_alt <- function(x) {
-    .Call('_selectiveModel_func_alt', PACKAGE = 'selectiveModel', x)
-}
-
-func2 <- function() {
-    .Call('_selectiveModel_func2', PACKAGE = 'selectiveModel')
-}
-
