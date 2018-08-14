@@ -1,11 +1,11 @@
 rm(list=ls())
 library(selectiveModel)
-trials <- 1000
+trials <- 500
 
 func <- function(i){
   print(i)
   set.seed(i)
-  y <- rnorm(20)
+  y <- rnorm(6)
   fit_method <- function(y){binSegInf::binSeg_fixedSteps(y, 1)}
 
   res <- selected_model_inference(y, fit_method,
@@ -16,14 +16,14 @@ func <- function(i){
   res$pval
 }
 
-doMC::registerDoMC(cores = 14)
-res <- foreach::"%dopar%"(foreach::foreach(trial = 1:trials), func(trial))
-res <- unlist(res)
-# res <- rep(NA, trials)
-# for(i in 1:trials){
-#   if(i %% floor(trials/10) == 0) cat('*')
-#   res[i] <- func(i)
-# }
+# doMC::registerDoMC(cores = 14)
+# res <- foreach::"%dopar%"(foreach::foreach(trial = 1:trials), func(trial))
+# res <- unlist(res)
+res <- rep(NA, trials)
+for(i in 1:trials){
+  if(i %% floor(trials/10) == 0) cat('*')
+  res[i] <- func(i)
+}
 
 plot(sort(res), seq(0, 1, length.out = length(res)), asp = T, pch = 16)
 lines(c(0,1), c(0,1), col = "red", lwd = 1)
