@@ -86,18 +86,18 @@ generate_random_list <- function(i){
   })
 }
 
-results[1] <- system.time({
-  for(i in 1:trials){
-    lis <- generate_random_list(i)
-    .intersect_intervals(lis)
-  }
-})[3]
-results[2] <- system.time({
-  for(i in 1:trials){
-    lis <- generate_random_list(i)
-    .intersect_intervals_simult(lis)
-  }
-})[3]
+# results[1] <- system.time({
+#   for(i in 1:trials){
+#     lis <- generate_random_list(i)
+#     .intersect_intervals(lis)
+#   }
+# })[3]
+# results[2] <- system.time({
+#   for(i in 1:trials){
+#     lis <- generate_random_list(i)
+#     .intersect_intervals_simult(lis)
+#   }
+# })[3]
 results[3] <- system.time({
   for(i in 1:trials){
     lis <- generate_random_list(i)
