@@ -100,3 +100,59 @@ test_that(".sampler_hit_run_radial are all in polyhedra", {
 
   expect_true(all(bool_vec))
 })
+
+#####################
+
+## .remove_rows is correct
+
+test_that(".remove_rows works", {
+  set.seed(15)
+  y <- rnorm(10)
+  obj <- binSegInf::binSeg_fixedSteps(y, 2)
+  poly <- binSegInf::polyhedra(obj)
+
+  res <- .remove_rows(poly, .l2norm(y))
+
+  expect_true(class(res) == "polyhedra")
+  expect_true(ncol(res$gamma) == ncol(poly$gamma))
+  expect_true(length(res$u) == nrow(res$gamma))
+  expect_true(length(res$u) <= length(poly$gamma))
+})
+
+test_that(".remove_rows actually removes rows", {
+  mat <- diag(1/1:10)
+  vec <- rep(1, 10)
+  poly <- binSegInf::polyhedra(mat, vec)
+
+  res <- .remove_rows(poly, 5)
+
+  expect_true(ncol(res$gamma) == ncol(poly$gamma))
+  expect_true(length(res$u) < length(poly$gamma))
+})
+
+test_that(".remove_rows removes a subset of rows when the radius shrinks", {
+  set.seed(15)
+  y <- rnorm(10)
+  obj <- binSegInf::binSeg_fixedSteps(y, 2)
+  poly <- binSegInf::polyhedra(obj)
+  poly$u <- rnorm(length(poly$u))
+
+  res1 <- .remove_rows(poly, .l2norm(y))
+  res2 <- .remove_rows(poly, .l2norm(y)/10)
+
+  expect_true(nrow(res1$gamma) >= nrow(res2$gamma))
+  expect_true(all(res2$u %in% res1$u))
+})
+
+test_that(".remove_rows with radius of 0 removes all rows", {
+  set.seed(15)
+  y <- rnorm(10)
+  obj <- binSegInf::binSeg_fixedSteps(y, 2)
+  poly <- binSegInf::polyhedra(obj)
+
+  res <- .remove_rows(poly, 0)
+  len <- length(which(abs(poly$u) < 1e-6))
+
+  expect_true(nrow(res$gamma) == len)
+  expect_true(length(res$u) == len)
+})
