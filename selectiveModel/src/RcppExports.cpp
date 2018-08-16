@@ -5,6 +5,17 @@
 
 using namespace Rcpp;
 
+// c_l2norm
+double c_l2norm(const Rcpp::NumericVector& vec);
+RcppExport SEXP _selectiveModel_c_l2norm(SEXP vecSEXP) {
+BEGIN_RCPP
+    Rcpp::RObject rcpp_result_gen;
+    Rcpp::RNGScope rcpp_rngScope_gen;
+    Rcpp::traits::input_parameter< const Rcpp::NumericVector& >::type vec(vecSEXP);
+    rcpp_result_gen = Rcpp::wrap(c_l2norm(vec));
+    return rcpp_result_gen;
+END_RCPP
+}
 // c_unique_sort_native
 Rcpp::NumericVector c_unique_sort_native(const Rcpp::NumericVector& x);
 RcppExport SEXP _selectiveModel_c_unique_sort_native(SEXP xSEXP) {
@@ -125,9 +136,11 @@ BEGIN_RCPP
 END_RCPP
 }
 
+RcppExport SEXP _rcpp_module_boot_planemodule();
 RcppExport SEXP _rcpp_module_boot_locationmodule();
 
 static const R_CallMethodDef CallEntries[] = {
+    {"_selectiveModel_c_l2norm", (DL_FUNC) &_selectiveModel_c_l2norm, 1},
     {"_selectiveModel_c_unique_sort_native", (DL_FUNC) &_selectiveModel_c_unique_sort_native, 1},
     {"_selectiveModel_c_construct_midpoints", (DL_FUNC) &_selectiveModel_c_construct_midpoints, 1},
     {"_selectiveModel_c_which_native", (DL_FUNC) &_selectiveModel_c_which_native, 1},
@@ -138,6 +151,7 @@ static const R_CallMethodDef CallEntries[] = {
     {"_selectiveModel_c_intersect_intervals", (DL_FUNC) &_selectiveModel_c_intersect_intervals, 1},
     {"_selectiveModel_c_gibbs_step", (DL_FUNC) &_selectiveModel_c_gibbs_step, 4},
     {"_selectiveModel_c_sample_truncnorm_white", (DL_FUNC) &_selectiveModel_c_sample_truncnorm_white, 6},
+    {"_rcpp_module_boot_planemodule", (DL_FUNC) &_rcpp_module_boot_planemodule, 0},
     {"_rcpp_module_boot_locationmodule", (DL_FUNC) &_rcpp_module_boot_locationmodule, 0},
     {NULL, NULL, 0}
 };
