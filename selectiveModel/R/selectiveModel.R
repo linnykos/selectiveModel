@@ -44,11 +44,11 @@ selected_model_inference <- function(y, fit_method,
   #fit the model, fit polyhedra, and compute test statistic on the observed model
   n <- length(y)
   fit <- fit_method(y)
-  polyhedra <- binSegInf::polyhedra(fit)
+  polyhedra <- binseginf::polyhedra(fit)
   test_stat <- test_func(y, fit, jump = ignore_jump, ...)
 
   #prepare sampler
-  segments <- .segments(n, binSegInf::jumps(fit), ignore_jump = ignore_jump)
+  segments <- .segments(n, binseginf::jumps(fit), ignore_jump = ignore_jump)
   param <- .fill_in_arguments(param)
 
   #pass to sampler

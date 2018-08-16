@@ -8,7 +8,7 @@
 #' @export
 next_jump.bsFs <- function(obj, y, ...){
   num_steps <- obj$numSteps
-  binSegInf::binSeg_fixedSteps(y, num_steps+1)
+  binseginf::binSeg_fixedSteps(y, num_steps+1)
 }
 
 #' Compute distance of next jump
@@ -48,7 +48,7 @@ next_jump.bsFs <- function(obj, y, ...){
 #' @export
 next_jump_statistic <- function(y, fit, ...){
   next_fit <- next_jump(fit, y)
-  .jump_contrast(y, binSegInf::jumps(fit), binSegInf::jumps(next_fit))
+  .jump_contrast(y, binseginf::jumps(fit), binseginf::jumps(next_fit))
 }
 
 #' Compute the height of a specific jump
@@ -67,7 +67,7 @@ next_jump_statistic <- function(y, fit, ...){
 segment_difference <- function(y, fit, jump = 1, ...){
   stopifnot(jump %% 1 == 0, jump > 0)
 
-  jumps <- sort(binSegInf::jumps(fit))
+  jumps <- sort(binseginf::jumps(fit))
   stopifnot(jump <= length(jumps))
   jump_idx <- jumps[jump]
   stopifnot(jump_idx < length(y))

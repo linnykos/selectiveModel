@@ -63,7 +63,7 @@
   u <- polyhedra$u - gamma[,(n-k+1):n,drop = F] %*% mean_val
   gamma <- gamma[,1:(n-k),drop = F]
 
-  binSegInf::polyhedra(gamma, u)
+  binseginf::polyhedra(gamma, u)
 }
 
 .whiten <- function(gaussian, polyhedra){
@@ -101,7 +101,7 @@
   gamma <- gamma[idx,,drop = F]
   u <- u[idx]
 
-  binSegInf::polyhedra(gamma, u)
+  binseginf::polyhedra(gamma, u)
 }
 
 .generate_directions <- function(n){

@@ -5,9 +5,9 @@ context("Test rejection sampling")
 test_that(".sampler_rejection_radial works", {
   set.seed(100)
   y <- rnorm(5)
-  obj <- binSegInf::binSeg_fixedSteps(y, 1)
-  poly <- binSegInf::polyhedra(obj)
-  segments <- .segments(length(y), jump_vec = binSegInf::jumps(obj))
+  obj <- binseginf::binSeg_fixedSteps(y, 1)
+  poly <- binseginf::polyhedra(obj)
+  segments <- .segments(length(y), jump_vec = binseginf::jumps(obj))
 
   res <- .sampler_rejection_radial(y, segments, poly, num_samp = 10)
 
@@ -19,9 +19,9 @@ test_that(".sampler_rejection_radial works", {
 test_that(".sampler_rejection_radial preserves segment means", {
   set.seed(50)
   y <- rnorm(5)
-  obj <- binSegInf::binSeg_fixedSteps(y, 1)
-  poly <- binSegInf::polyhedra(obj)
-  segments <- .segments(length(y), jump_vec = binSegInf::jumps(obj))
+  obj <- binseginf::binSeg_fixedSteps(y, 1)
+  poly <- binseginf::polyhedra(obj)
+  segments <- .segments(length(y), jump_vec = binseginf::jumps(obj))
   seg_mean <- .segment_means(y, segments)
 
   res <- .sampler_rejection_radial(y, segments, poly, num_samp = 25)
@@ -37,9 +37,9 @@ test_that(".sampler_rejection_radial preserves segment means", {
 test_that(".sampler_rejection_radial preserves l2norm", {
   set.seed(100)
   y <- rnorm(5)
-  obj <- binSegInf::binSeg_fixedSteps(y, 1)
-  poly <- binSegInf::polyhedra(obj)
-  segments <- .segments(length(y), jump_vec = binSegInf::jumps(obj))
+  obj <- binseginf::binSeg_fixedSteps(y, 1)
+  poly <- binseginf::polyhedra(obj)
+  segments <- .segments(length(y), jump_vec = binseginf::jumps(obj))
 
   res <- .sampler_rejection_radial(y, segments, poly, num_samp = 25)
 
@@ -53,9 +53,9 @@ test_that(".sampler_rejection_radial preserves l2norm", {
 test_that(".sampler_rejection_radial are all in polyhedra", {
   set.seed(120)
   y <- rnorm(5)
-  obj <- binSegInf::binSeg_fixedSteps(y, 1)
-  poly <- binSegInf::polyhedra(obj)
-  segments <- .segments(length(y), jump_vec = binSegInf::jumps(obj))
+  obj <- binseginf::binSeg_fixedSteps(y, 1)
+  poly <- binseginf::polyhedra(obj)
+  segments <- .segments(length(y), jump_vec = binseginf::jumps(obj))
 
   res <- .sampler_rejection_radial(y, segments, poly, num_samp = 25)
 

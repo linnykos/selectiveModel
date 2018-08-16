@@ -410,8 +410,8 @@ test_that(".closest_point_to_origin works for this test case", {
 test_that(".intersect_polyhedron_line works", {
   set.seed(15)
   y <- rnorm(10)
-  obj <- binSegInf::binSeg_fixedSteps(y, 1)
-  poly <- binSegInf::polyhedra(obj)
+  obj <- binseginf::binSeg_fixedSteps(y, 1)
+  poly <- binseginf::polyhedra(obj)
   line <- .line(y, rep(1, 10))
 
   res <- .intersect_polyhedron_line(poly, line)
@@ -424,8 +424,8 @@ test_that(".intersect_polyhedron_line works", {
 test_that(".intersect_polyhedron_line can return two non-Infinite boundaries", {
   set.seed(15)
   y <- c(rep(0,5), rep(5,5)) + rnorm(10)
-  obj <- binSegInf::binSeg_fixedSteps(y, 4)
-  poly <- binSegInf::polyhedra(obj)
+  obj <- binseginf::binSeg_fixedSteps(y, 4)
+  poly <- binseginf::polyhedra(obj)
   line <- .line(y, rnorm(10))
 
   res <- .intersect_polyhedron_line(poly, line)
@@ -436,8 +436,8 @@ test_that(".intersect_polyhedron_line can return two non-Infinite boundaries", {
 test_that(".intersection_polyhedron_line returns a correct interval", {
   set.seed(10)
   y <- c(rep(0,5), rep(5,5)) + rnorm(10)
-  obj <- binSegInf::binSeg_fixedSteps(y, 4)
-  poly <- binSegInf::polyhedra(obj)
+  obj <- binseginf::binSeg_fixedSteps(y, 4)
+  poly <- binseginf::polyhedra(obj)
   line <- .line(y, rnorm(10))
 
   res <- .intersect_polyhedron_line(poly, line)
@@ -458,12 +458,12 @@ test_that(".intersection_polyhedron_line gives shorter intervals as more jumps a
   y <- 1:10 + rnorm(10)
   line <- .line(y, rnorm(10))
 
-  obj1 <- binSegInf::binSeg_fixedSteps(y, 1)
-  poly1 <- binSegInf::polyhedra(obj1)
+  obj1 <- binseginf::binSeg_fixedSteps(y, 1)
+  poly1 <- binseginf::polyhedra(obj1)
   res1 <- .intersect_polyhedron_line(poly1, line)
 
-  obj2 <- binSegInf::binSeg_fixedSteps(y, 5)
-  poly2 <- binSegInf::polyhedra(obj2)
+  obj2 <- binseginf::binSeg_fixedSteps(y, 5)
+  poly2 <- binseginf::polyhedra(obj2)
   res2 <- .intersect_polyhedron_line(poly2, line)
 
   expect_true(res1[1] <= res2[1])
@@ -493,9 +493,9 @@ test_that(".intersection_polyhedron_line works on harder case", {
 test_that(".intersection_polyhedron_line solution remains the same after rotation", {
   set.seed(5)
   y <- rnorm(10)
-  obj <- binSegInf::binSeg_fixedSteps(y, 2)
-  polyhedra <- binSegInf::polyhedra(obj)
-  segments <- .segments(length(y), jump_vec = binSegInf::jumps(obj))
+  obj <- binseginf::binSeg_fixedSteps(y, 2)
+  polyhedra <- binseginf::polyhedra(obj)
+  segments <- .segments(length(y), jump_vec = binseginf::jumps(obj))
   gaussian <- .gaussian(rep(0,10), diag(10))
 
   n <- length(y)

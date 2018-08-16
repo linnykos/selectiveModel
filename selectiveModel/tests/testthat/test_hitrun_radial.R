@@ -5,9 +5,9 @@ context("Test hit and run, Radial")
 test_that(".hit_run_next_point_radial works", {
   set.seed(15)
   y <- rnorm(10)
-  obj <- binSegInf::binSeg_fixedSteps(y, 2)
-  poly <- binSegInf::polyhedra(obj)
-  segments <- .segments(length(y), jump_vec = binSegInf::jumps(obj))
+  obj <- binseginf::binSeg_fixedSteps(y, 2)
+  poly <- binseginf::polyhedra(obj)
+  segments <- .segments(length(y), jump_vec = binseginf::jumps(obj))
 
   res <- .hit_run_next_point_radial(y, segments, poly)
 
@@ -19,9 +19,9 @@ test_that(".hit_run_next_point_radial works", {
 test_that(".hit_run_next_point_radial gives a sample with the correct properties", {
   set.seed(10)
   y <- rnorm(10)
-  obj <- binSegInf::binSeg_fixedSteps(y, 2)
-  poly <- binSegInf::polyhedra(obj)
-  segments <- .segments(length(y), jump_vec = binSegInf::jumps(obj))
+  obj <- binseginf::binSeg_fixedSteps(y, 2)
+  poly <- binseginf::polyhedra(obj)
+  segments <- .segments(length(y), jump_vec = binseginf::jumps(obj))
 
   res <- .hit_run_next_point_radial(y, segments, poly)
 
@@ -37,9 +37,9 @@ test_that(".hit_run_next_point_radial gives a sample with the correct properties
 test_that(".sampler_hit_run_radial works", {
   set.seed(50)
   y <- rnorm(10)
-  obj <- binSegInf::binSeg_fixedSteps(y, 2)
-  poly <- binSegInf::polyhedra(obj)
-  segments <- .segments(length(y), jump_vec = binSegInf::jumps(obj))
+  obj <- binseginf::binSeg_fixedSteps(y, 2)
+  poly <- binseginf::polyhedra(obj)
+  segments <- .segments(length(y), jump_vec = binseginf::jumps(obj))
 
   res <- .sampler_hit_run_radial(y, segments, poly, num_samp = 25, burn_in = 10)
 
@@ -51,9 +51,9 @@ test_that(".sampler_hit_run_radial works", {
 test_that(".sampler_hit_run_radial preserves segment means", {
   set.seed(10)
   y <- rnorm(10)
-  obj <- binSegInf::binSeg_fixedSteps(y, 2)
-  poly <- binSegInf::polyhedra(obj)
-  segments <- .segments(length(y), jump_vec = binSegInf::jumps(obj))
+  obj <- binseginf::binSeg_fixedSteps(y, 2)
+  poly <- binseginf::polyhedra(obj)
+  segments <- .segments(length(y), jump_vec = binseginf::jumps(obj))
   seg_mean <- .segment_means(y, segments)
 
   res <- .sampler_hit_run_radial(y, segments, poly, num_samp = 25, burn_in = 10)
@@ -69,9 +69,9 @@ test_that(".sampler_hit_run_radial preserves segment means", {
 test_that(".sampler_hit_run_radial preserves l2norm", {
   set.seed(30)
   y <- rnorm(10)
-  obj <- binSegInf::binSeg_fixedSteps(y, 2)
-  poly <- binSegInf::polyhedra(obj)
-  segments <- .segments(length(y), jump_vec = binSegInf::jumps(obj))
+  obj <- binseginf::binSeg_fixedSteps(y, 2)
+  poly <- binseginf::polyhedra(obj)
+  segments <- .segments(length(y), jump_vec = binseginf::jumps(obj))
   norm1 <- .l2norm(y)
 
   res <- .sampler_hit_run_radial(y, segments, poly, num_samp = 25, burn_in = 10)
@@ -87,9 +87,9 @@ test_that(".sampler_hit_run_radial preserves l2norm", {
 test_that(".sampler_hit_run_radial are all in polyhedra", {
   set.seed(10)
   y <- rnorm(10)
-  obj <- binSegInf::binSeg_fixedSteps(y, 2)
-  poly <- binSegInf::polyhedra(obj)
-  segments <- .segments(length(y), jump_vec = binSegInf::jumps(obj))
+  obj <- binseginf::binSeg_fixedSteps(y, 2)
+  poly <- binseginf::polyhedra(obj)
+  segments <- .segments(length(y), jump_vec = binseginf::jumps(obj))
   seg_mean <- .segment_means(y, segments)
 
   res <- .sampler_hit_run_radial(y, segments, poly, num_samp = 25, burn_in = 10)
@@ -108,8 +108,8 @@ test_that(".sampler_hit_run_radial are all in polyhedra", {
 test_that(".remove_rows works", {
   set.seed(15)
   y <- rnorm(10)
-  obj <- binSegInf::binSeg_fixedSteps(y, 2)
-  poly <- binSegInf::polyhedra(obj)
+  obj <- binseginf::binSeg_fixedSteps(y, 2)
+  poly <- binseginf::polyhedra(obj)
 
   res <- .remove_rows(poly, .l2norm(y))
 
@@ -122,7 +122,7 @@ test_that(".remove_rows works", {
 test_that(".remove_rows actually removes rows", {
   mat <- diag(1/1:10)
   vec <- rep(1, 10)
-  poly <- binSegInf::polyhedra(mat, vec)
+  poly <- binseginf::polyhedra(mat, vec)
 
   res <- .remove_rows(poly, 5)
 
@@ -133,8 +133,8 @@ test_that(".remove_rows actually removes rows", {
 test_that(".remove_rows removes a subset of rows when the radius shrinks", {
   set.seed(15)
   y <- rnorm(10)
-  obj <- binSegInf::binSeg_fixedSteps(y, 2)
-  poly <- binSegInf::polyhedra(obj)
+  obj <- binseginf::binSeg_fixedSteps(y, 2)
+  poly <- binseginf::polyhedra(obj)
   poly$u <- rnorm(length(poly$u))
 
   res1 <- .remove_rows(poly, .l2norm(y))
@@ -147,8 +147,8 @@ test_that(".remove_rows removes a subset of rows when the radius shrinks", {
 test_that(".remove_rows with radius of 0 removes all rows", {
   set.seed(15)
   y <- rnorm(10)
-  obj <- binSegInf::binSeg_fixedSteps(y, 2)
-  poly <- binSegInf::polyhedra(obj)
+  obj <- binseginf::binSeg_fixedSteps(y, 2)
+  poly <- binseginf::polyhedra(obj)
 
   res <- .remove_rows(poly, 0)
   len <- length(which(abs(poly$u) < 1e-6))

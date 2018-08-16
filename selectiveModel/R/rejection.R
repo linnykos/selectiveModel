@@ -45,8 +45,8 @@
       stopifnot(sum(abs(seg_means - .segment_means(y_new, segments))) < 1e-6)
       stopifnot(abs(.l2norm(y_new) - major_radius) < 1e-6)
 
-      obj <- binSegInf::binSeg_fixedSteps(y_new, 1)
-      #print(binSegInf::jump_sign(obj))
+      obj <- binseginf::binSeg_fixedSteps(y_new, 1)
+      #print(binseginf::jump_sign(obj))
 
       if(all(polyhedra$gamma %*% y_new >= polyhedra$u)) {
         #print("score")
@@ -76,8 +76,4 @@
   stopifnot(all(.try_polyhedra(y_mat, polyhedra)))
 
   y_mat
-}
-
-.sampler_rejection_line <- function(){
-
 }

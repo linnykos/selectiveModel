@@ -5,7 +5,7 @@ context("Test test statistics")
 test_that("next_jump.bsFs works", {
   set.seed(10)
   y <- c(rep(0, 10), rep(1, 10)) + 0.01*rnorm(20)
-  fit <- binSegInf::binSeg_fixedSteps(y, 1)
+  fit <- binseginf::binSeg_fixedSteps(y, 1)
 
   res <- next_jump(fit, y)
 
@@ -15,12 +15,12 @@ test_that("next_jump.bsFs works", {
 test_that("next_jump.bsFs gives a model with one more jump", {
   set.seed(10)
   y <- c(rep(0, 10), rep(1, 10)) + 0.01*rnorm(20)
-  fit <- binSegInf::binSeg_fixedSteps(y, 1)
+  fit <- binseginf::binSeg_fixedSteps(y, 1)
 
   res <- next_jump(fit, y)
 
-  jump_before <- binSegInf::jumps(fit)
-  jump_after <- binSegInf::jumps(res)
+  jump_before <- binseginf::jumps(fit)
+  jump_after <- binseginf::jumps(res)
 
   expect_true(sum(!jump_after %in% jump_before) == 1)
 })
@@ -32,10 +32,10 @@ test_that("next_jump.bsFs gives a model with one more jump", {
 test_that(".jump_contrast works", {
   set.seed(10)
   y <- c(rep(0, 10), rep(1, 10)) + 0.01*rnorm(20)
-  fit1 <- binSegInf::binSeg_fixedSteps(y, 1)
+  fit1 <- binseginf::binSeg_fixedSteps(y, 1)
   fit2 <- next_jump(fit1, y)
 
-  res <- .jump_contrast(y, binSegInf::jumps(fit1), binSegInf::jumps(fit2))
+  res <- .jump_contrast(y, binseginf::jumps(fit1), binseginf::jumps(fit2))
 
   expect_true(is.numeric(res))
   expect_true(!is.matrix(res))
@@ -45,10 +45,10 @@ test_that(".jump_contrast works", {
 test_that(".jump_contrast computes the correct value", {
   set.seed(10)
   y <- c(rep(0, 5), rep(1, 5), rep(10, 10))
-  fit1 <- binSegInf::binSeg_fixedSteps(y, 1)
+  fit1 <- binseginf::binSeg_fixedSteps(y, 1)
   fit2 <- next_jump(fit1, y)
 
-  res <- .jump_contrast(y, binSegInf::jumps(fit1), binSegInf::jumps(fit2))
+  res <- .jump_contrast(y, binseginf::jumps(fit1), binseginf::jumps(fit2))
 
   expect_true(res == 1)
 })
@@ -60,7 +60,7 @@ test_that(".jump_contrast computes the correct value", {
 test_that("next_jump_statistic works", {
   set.seed(10)
   y <- c(rep(0, 10), rep(1, 10)) + 0.01*rnorm(20)
-  fit <- binSegInf::binSeg_fixedSteps(y, 1)
+  fit <- binseginf::binSeg_fixedSteps(y, 1)
 
   res <- next_jump_statistic(y, fit)
 
@@ -76,7 +76,7 @@ test_that("next_jump_statistic works", {
 test_that("segment_difference works", {
   set.seed(10)
   y <- c(rep(0, 10), rep(1, 10)) + rnorm(20)
-  fit <- binSegInf::binSeg_fixedSteps(y, 1)
+  fit <- binseginf::binSeg_fixedSteps(y, 1)
 
   res <- segment_difference(y, fit, 1)
 
@@ -88,8 +88,8 @@ test_that("segment_difference works", {
 test_that("segment_difference calculates correctly", {
   set.seed(5)
   y <- c(rep(0, 10), rep(1, 5), rep(0, 5)) + rnorm(20)
-  fit <- binSegInf::binSeg_fixedSteps(y, 2)
-  jumps <- binSegInf::jumps(fit)
+  fit <- binseginf::binSeg_fixedSteps(y, 2)
+  jumps <- binseginf::jumps(fit)
 
   res1 <- segment_difference(y, fit, 1)
   val1 <- mean(y[(jumps[1]+1):jumps[2]]) - mean(y[1:jumps[1]])

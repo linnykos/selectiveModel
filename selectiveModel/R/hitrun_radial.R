@@ -75,5 +75,5 @@
   })
 
   idx <- which(bool)
-  binSegInf::polyhedra(polyhedra$gamma[idx,,drop = F], polyhedra$u[idx])
+  binseginf::polyhedra(polyhedra$gamma[idx,,drop = F], polyhedra$u[idx])
 }
