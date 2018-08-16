@@ -125,7 +125,7 @@ BEGIN_RCPP
 END_RCPP
 }
 
-RcppExport SEXP _rcpp_module_boot_mod_test();
+RcppExport SEXP _rcpp_module_boot_locationmodule();
 
 static const R_CallMethodDef CallEntries[] = {
     {"_selectiveModel_c_unique_sort_native", (DL_FUNC) &_selectiveModel_c_unique_sort_native, 1},
@@ -138,7 +138,7 @@ static const R_CallMethodDef CallEntries[] = {
     {"_selectiveModel_c_intersect_intervals", (DL_FUNC) &_selectiveModel_c_intersect_intervals, 1},
     {"_selectiveModel_c_gibbs_step", (DL_FUNC) &_selectiveModel_c_gibbs_step, 4},
     {"_selectiveModel_c_sample_truncnorm_white", (DL_FUNC) &_selectiveModel_c_sample_truncnorm_white, 6},
-    {"_rcpp_module_boot_mod_test", (DL_FUNC) &_rcpp_module_boot_mod_test, 0},
+    {"_rcpp_module_boot_locationmodule", (DL_FUNC) &_rcpp_module_boot_locationmodule, 0},
     {NULL, NULL, 0}
 };
 

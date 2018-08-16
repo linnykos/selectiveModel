@@ -1,27 +1,32 @@
 #include <Rcpp.h>
 using namespace Rcpp;
 
-class Test {
+class Location{
 public:
-  Test(int x): x_(x) {}
-  int getValue() { return x_; }
-  void addValue(int y) { x_ += y; }
-  void merge(const Test& rhs) { x_ += rhs.x_; }
-private:
-  int x_;
+  Location();
+  Location(int, int);
+  int x;
+  int y;
+  void print();
 };
 
-using namespace Rcpp;
 
-RCPP_EXPOSED_CLASS(Test)
-  RCPP_MODULE(mod_test) {
+//constructors
+Location::Location() :x(0), y(0) { }
+Location::Location(int xi, int yi) :x(xi), y(yi) { }
 
-    class_<Test>("Test")
+//print function
+void Location::print(){
+  Rcpp::Rcout << "x = " << x << std::endl;
+  Rcpp::Rcout << "y = " << y << std::endl;
+}
 
-    .constructor<int>("sets initial value")
-
-    .method("getValue", &Test::getValue, "Returns the value")
-    .method("addValue", &Test::addValue, "Adds a value")
-    .method("merge", &Test::merge, "Merges another Test into this object")
-    ;
-  }
+RCPP_MODULE(locationmodule){
+  Rcpp::class_<Location>( "Location" )
+  .constructor("documentation for default constructor")
+  .constructor<int,int>("documentation for constructor")
+  .field( "x", &Location::x, "documentation for x")
+  .field( "y", &Location::y, "documentation for y")
+  .method( "print", &Location::print, "documentation for print")
+  ;
+}
