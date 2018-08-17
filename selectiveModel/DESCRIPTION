@@ -16,9 +16,9 @@ Imports:
     doMC,
     lpSolve,
     Matrix,
-    Rcpp (>= 0.12.17),
-    RcppArmadillo
+    Rcpp (>= 0.12.18)
 Suggests:
     testthat
 RoxygenNote: 6.0.1
-LinkingTo: Rcpp, RcppArmadillo
+RcppModules: module
+LinkingTo: Rcpp
