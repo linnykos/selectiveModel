@@ -1,1 +1,1 @@
-loadModule("planemodule", TRUE)
+Rcpp::loadModule("planemodule", TRUE)

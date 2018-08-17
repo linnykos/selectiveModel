@@ -1,1 +1,0 @@
-loadModule("locationmodule", TRUE)

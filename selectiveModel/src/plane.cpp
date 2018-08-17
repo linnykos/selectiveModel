@@ -1,3 +1,4 @@
+#include <RcppArmadillo.h>
 #include <Rcpp.h>
 using namespace Rcpp;
 
@@ -12,7 +13,7 @@ public:
   Plane(Rcpp::NumericVector, Rcpp::NumericVector);
   Rcpp::NumericVector a;
   Rcpp::NumericVector b;
-  void c_intersect_basis(Rcpp::NumericVector, Rcpp::NumericVector);
+  // void c_intersect_basis(Rcpp::NumericVector, Rcpp::NumericVector);
   void print();
 };
 
