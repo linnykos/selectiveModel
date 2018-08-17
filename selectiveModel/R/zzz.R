@@ -1,1 +1,1 @@
-# Rcpp::loadModule("module", TRUE)
+Rcpp::loadModule("module", TRUE)

@@ -7,7 +7,3 @@ export(next_jump)
 export(next_jump_statistic)
 export(segment_difference)
 export(selected_model_inference)
-
-
-useDynLib(selectiveModel)
-importFrom(Rcpp, evalCpp)

@@ -45,8 +45,6 @@ void Plane::print(){
 }
 
 RCPP_MODULE(module){
-  using namespace Rcpp;
-
   Rcpp::class_<Plane>( "Plane" )
   .constructor<Rcpp::NumericVector, Rcpp::NumericVector>("documentation for constructor")
   .field( "a", &Plane::a, "documentation for plane")

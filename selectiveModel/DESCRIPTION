@@ -16,7 +16,8 @@ Imports:
     doMC,
     lpSolve,
     Matrix,
-    Rcpp (>= 0.12.18)
+    Rcpp (>= 0.12.18),
+    methods
 Suggests:
     testthat
 RoxygenNote: 6.0.1
