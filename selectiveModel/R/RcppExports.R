@@ -2,46 +2,46 @@
 # Generator token: 10BE3573-1514-4C36-9D1C-5A225CD40393
 
 c_l2norm <- function(vec) {
-    .Call('_selectiveModel_c_l2norm', PACKAGE = 'selectiveModel', vec)
+    .Call(`_selectiveModel_c_l2norm`, vec)
 }
 
 c_unique_sort_native <- function(x) {
-    .Call('_selectiveModel_c_unique_sort_native', PACKAGE = 'selectiveModel', x)
+    .Call(`_selectiveModel_c_unique_sort_native`, x)
 }
 
 c_construct_midpoints <- function(x) {
-    .Call('_selectiveModel_c_construct_midpoints', PACKAGE = 'selectiveModel', x)
+    .Call(`_selectiveModel_c_construct_midpoints`, x)
 }
 
 c_which_native <- function(x) {
-    .Call('_selectiveModel_c_which_native', PACKAGE = 'selectiveModel', x)
+    .Call(`_selectiveModel_c_which_native`, x)
 }
 
 c_consecutive_true <- function(vec) {
-    .Call('_selectiveModel_c_consecutive_true', PACKAGE = 'selectiveModel', vec)
+    .Call(`_selectiveModel_c_consecutive_true`, vec)
 }
 
 c_unlist_native <- function(list) {
-    .Call('_selectiveModel_c_unlist_native', PACKAGE = 'selectiveModel', list)
+    .Call(`_selectiveModel_c_unlist_native`, list)
 }
 
 c_theta_in_matrix <- function(x, mat) {
-    .Call('_selectiveModel_c_theta_in_matrix', PACKAGE = 'selectiveModel', x, mat)
+    .Call(`_selectiveModel_c_theta_in_matrix`, x, mat)
 }
 
 c_theta_in_all_matrix <- function(x, list) {
-    .Call('_selectiveModel_c_theta_in_all_matrix', PACKAGE = 'selectiveModel', x, list)
+    .Call(`_selectiveModel_c_theta_in_all_matrix`, x, list)
 }
 
 c_intersect_intervals <- function(list) {
-    .Call('_selectiveModel_c_intersect_intervals', PACKAGE = 'selectiveModel', list)
+    .Call(`_selectiveModel_c_intersect_intervals`, list)
 }
 
 c_gibbs_step <- function(state, direction, U, alpha) {
-    invisible(.Call('_selectiveModel_c_gibbs_step', PACKAGE = 'selectiveModel', state, direction, U, alpha))
+    invisible(.Call(`_selectiveModel_c_gibbs_step`, state, direction, U, alpha))
 }
 
 c_sample_truncnorm_white <- function(state, U, directions, alphas, burnin, ndraw) {
-    .Call('_selectiveModel_c_sample_truncnorm_white', PACKAGE = 'selectiveModel', state, U, directions, alphas, burnin, ndraw)
+    .Call(`_selectiveModel_c_sample_truncnorm_white`, state, U, directions, alphas, burnin, ndraw)
 }
 
