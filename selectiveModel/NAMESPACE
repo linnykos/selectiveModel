@@ -1,3 +1,4 @@
 useDynLib(selectiveModel, .registration=TRUE)
 exportPattern("^[[:alpha:]]+")
 import(Rcpp)
+S3method(next_jump,bsFs)
