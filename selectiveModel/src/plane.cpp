@@ -1,5 +1,4 @@
-#include <Rcpp.h>
-using namespace Rcpp;
+#include "plane.h"
 
 // [[Rcpp::export]]
 double c_l2norm(const Rcpp::NumericVector & vec){
@@ -7,20 +6,17 @@ double c_l2norm(const Rcpp::NumericVector & vec){
   return val;
 }
 
-class Plane{
-public:
-  Plane(Rcpp::NumericVector, Rcpp::NumericVector);
-  Rcpp::NumericVector a;
-  Rcpp::NumericVector b;
-  void c_intersect_basis(const Rcpp::NumericVector, const Rcpp::NumericVector, Rcpp::NumericVector);
-  void print();
-};
-
 // constructor
 Plane::Plane(Rcpp::NumericVector a_, Rcpp::NumericVector b_) {
-  double l2norm = c_l2norm(a_);
-  a = a_/l2norm;
-  b = b_/l2norm;
+  a = a_;
+  b = b_;
+  c_normalize();
+}
+
+void Plane::c_normalize() {
+  double l2norm = c_l2norm(a);
+  a = a/l2norm;
+  b = b/l2norm;
 }
 
 void Plane::c_intersect_basis(const Rcpp::NumericVector y,
@@ -37,6 +33,36 @@ void Plane::c_intersect_basis(const Rcpp::NumericVector y,
 
   a = vec;
   b = b - intercept;
+  c_normalize();
+}
+
+Rcpp::NumericVector Plane::c_point_on_plane(){
+  int d = a.length();
+  Rcpp::NumericVector vec(d);
+  std::fill(vec.begin(), vec.end(), 1);
+
+  Rcpp::LogicalVector boolean = (a != 0);
+  Rcpp::IntegerVector idx = c_which_native(boolean);
+  idx = idx[0] - 1;
+
+  Rcpp::Rcout << "idx = " << idx[0] << std::endl;
+
+  double tmp = 0;
+  Rcpp::NumericVector tmp2;
+  double sum = 0;
+  for(int i = 0; i < d; i++){
+    if(Rcpp::as<int>(idx) != i){
+      tmp2 = a[i]*vec[i];
+      sum = Rcpp::as<double>(tmp2);
+      tmp += sum;
+    }
+  }
+
+  Rcpp::NumericVector a_intercept = a[idx];
+  tmp = (Rcpp::as<double>(b) - tmp)/(Rcpp::as<double>(a_intercept));
+  vec[idx] = tmp;
+
+  return(vec);
 }
 
 void Plane::print(){
@@ -51,8 +77,9 @@ RCPP_MODULE(module){
   .field( "b", &Plane::b, "documentation for plane")
   .method( "print", &Plane::print, "documentation for print")
   .method( "c_intersect_basis", &Plane::c_intersect_basis, "documentation")
+  .method( "c_point_on_plane", &Plane::c_point_on_plane, "documentation")
   ;
 }
 
 // in R:
-// zz = new(Plane, 1:5, 2); zz$print(); zz$c_intersect_basis(c(1:5)/2, 6:10, 11:15)
+// zz = new(Plane, 1:5, 2); zz$print(); zz$c_intersect_basis(c(1:5)/2, 6:10, 11:15); zz$print(); zz$c_point_on_plane();

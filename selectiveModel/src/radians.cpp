@@ -1,5 +1,4 @@
-#include <Rcpp.h>
-using namespace Rcpp;
+#include "radians.h"
 
 // [[Rcpp::export]]
 Rcpp::NumericVector c_unique_sort_native(const Rcpp::NumericVector & x) {
@@ -17,7 +16,7 @@ Rcpp::NumericVector c_unique_sort_native(const Rcpp::NumericVector & x) {
 // [[Rcpp::export]]
 Rcpp::NumericVector c_construct_midpoints(const Rcpp::NumericVector & x) {
   int n = x.size();
-  Rcpp::NumericVector res = no_init(2*n-1);
+  Rcpp::NumericVector res = Rcpp::no_init(2*n-1);
 
   for(int i = 0; i < n-1; i++){
     res[2*i] = x[i];
@@ -40,7 +39,7 @@ Rcpp::IntegerVector c_which_native(const Rcpp::LogicalVector & x) {
     if (x[i]) y.push_back(i+1);
   }
 
-  return wrap(y);
+  return Rcpp::wrap(y);
 }
 
 // [[Rcpp::export]]
@@ -82,7 +81,7 @@ Rcpp::NumericVector c_unlist_native(const Rcpp::List & list) {
     total_length += Rf_length(list[i]);
 
   // Allocate the vector
-  Rcpp::NumericVector output = no_init(total_length);
+  Rcpp::NumericVector output = Rcpp::no_init(total_length);
 
   // Loop and fill
   int index = 0;
@@ -105,8 +104,10 @@ Rcpp::LogicalVector c_theta_in_matrix(const double & x,
   Rcpp::LogicalVector result(1);
   result[0] = FALSE;
 
+  Rcpp::NumericVector mat0; Rcpp::NumericVector mat1;
   for(int i = 0; i < nrow; i++){
-    if((double) mat(i,0) <= x && x <= (double) mat(i,1)) {
+    mat0 = mat(i,0); mat1 = mat(i,1);
+    if(Rcpp::as<double>(mat0) <= x && x <= Rcpp::as<double>(mat1)) {
       result[0] = TRUE;
       return result;
     }
@@ -124,7 +125,7 @@ Rcpp::LogicalVector c_theta_in_all_matrix(const double & x,
   result[0] = TRUE;
 
   for(int i = 0; i < n; i++){
-    Rcpp::NumericMatrix mat = as<Rcpp::NumericMatrix>(list[i]);
+    Rcpp::NumericMatrix mat = Rcpp::as<Rcpp::NumericMatrix>(list[i]);
     Rcpp::LogicalVector boolean = c_theta_in_matrix(x, mat);
     if(boolean[0] == FALSE) {
       result[0] = FALSE;
