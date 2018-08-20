@@ -28,7 +28,7 @@ void Plane::c_intersect_basis(const Rcpp::NumericVector y,
   for(int i = 0; i < len; i++){
     vec[0] += a[i] * v[i];
     vec[1] += a[i] * w[i];
-    intercept[1] += a[i] * y[i];
+    intercept[0] += a[i] * y[i];
   }
 
   a = vec;
@@ -44,8 +44,6 @@ Rcpp::NumericVector Plane::c_point_on_plane(){
   Rcpp::LogicalVector boolean = (a != 0);
   Rcpp::IntegerVector idx = c_which_native(boolean);
   idx = idx[0] - 1;
-
-  Rcpp::Rcout << "idx = " << idx[0] << std::endl;
 
   double tmp = 0;
   Rcpp::NumericVector tmp2;
@@ -65,6 +63,23 @@ Rcpp::NumericVector Plane::c_point_on_plane(){
   return(vec);
 }
 
+double Plane::c_distance_point_to_plane(const Rcpp::NumericVector point){
+  Rcpp::NumericVector x = c_point_on_plane();
+  int len = a.length();
+  double tmp = 0;
+  Rcpp::NumericVector tmp2;
+  double sum = 0;
+
+  for(int i = 0; i < len; i++){
+    tmp2 = a[i] * (point[i] - x[i]);
+    sum = Rcpp::as<double>(tmp2);
+    tmp += sum;
+  }
+
+  tmp = abs(tmp/c_l2norm(a));
+  return(tmp);
+}
+
 void Plane::print(){
   Rcpp::Rcout << "a = " << a << std::endl;
   Rcpp::Rcout << "b = " << b << std::endl;
@@ -78,8 +93,9 @@ RCPP_MODULE(module){
   .method( "print", &Plane::print, "documentation for print")
   .method( "c_intersect_basis", &Plane::c_intersect_basis, "documentation")
   .method( "c_point_on_plane", &Plane::c_point_on_plane, "documentation")
+  .method( "c_distance_point_to_plane", &Plane::c_distance_point_to_plane, "documentation")
   ;
 }
 
 // in R:
-// zz = new(Plane, 1:5, 2); zz$print(); zz$c_intersect_basis(c(1:5)/2, 6:10, 11:15); zz$print(); zz$c_point_on_plane();
+// zz = new(Plane, 1:5, 2); zz$print(); zz$c_intersect_basis(c(1:5)/2, 6:10, 11:15); zz$print(); zz$c_point_on_plane(); zz$c_distance_point_to_plane(c(0,0))

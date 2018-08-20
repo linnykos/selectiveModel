@@ -12,6 +12,7 @@ public:
   void c_normalize();
   void c_intersect_basis(const Rcpp::NumericVector, const Rcpp::NumericVector, Rcpp::NumericVector);
   Rcpp::NumericVector c_point_on_plane();
+  double c_distance_point_to_plane(const Rcpp::NumericVector);
   void print();
 };
 
