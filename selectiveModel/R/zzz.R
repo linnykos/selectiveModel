@@ -4,6 +4,7 @@ Rcpp::loadModule("module", TRUE)
 #'
 #' @docType methods
 #' @name Rcpp_Plane
+#' @aliases Rcpp_Plane-class
 #' @rdname Rcpp_Plane
 #' @export
 NULL

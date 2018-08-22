@@ -3,6 +3,7 @@
 \docType{methods}
 \name{Rcpp_Plane}
 \alias{Rcpp_Plane}
+\alias{Rcpp_Plane-class}
 \title{Some unneeded documentation}
 \description{
 Some unneeded documentation
