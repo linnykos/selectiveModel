@@ -6,6 +6,12 @@ double c_l2norm(const Rcpp::NumericVector & vec){
   return val;
 }
 
+//constructor
+Circle::Circle(Rcpp::NumericVector center_, Rcpp::NumericVector radius_){
+  center = center_;
+  radius = radius_;
+}
+
 // constructor
 Plane::Plane(Rcpp::NumericVector a_, Rcpp::NumericVector b_) {
   a = a_;
@@ -76,7 +82,7 @@ double Plane::c_distance_point_to_plane(const Rcpp::NumericVector point){
     tmp += sum;
   }
 
-  tmp = abs(tmp/c_l2norm(a));
+  tmp = fabs(tmp/c_l2norm(a));
   return(tmp);
 }
 
@@ -95,7 +101,8 @@ RCPP_MODULE(module){
   .method( "c_point_on_plane", &Plane::c_point_on_plane, "documentation")
   .method( "c_distance_point_to_plane", &Plane::c_distance_point_to_plane, "documentation")
   ;
-}
 
-// in R:
-// zz = new(Plane, 1:5, 2); zz$print(); zz$c_intersect_basis(c(1:5)/2, 6:10, 11:15); zz$print(); zz$c_point_on_plane(); zz$c_distance_point_to_plane(c(0,0))
+  Rcpp::class_<Circle>( "Circle" )
+    .constructor<Rcpp::NumericVector, Rcpp::NumericVector>("documentation for constructor")
+  ;
+}

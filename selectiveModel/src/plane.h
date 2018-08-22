@@ -4,6 +4,13 @@
 #include <Rcpp.h>
 #include "radians.h"
 
+class Circle{
+public:
+  Circle(Rcpp::NumericVector, Rcpp::NumericVector);
+  Rcpp::NumericVector radius;
+  Rcpp::NumericVector center;
+};
+
 class Plane{
 public:
   Plane(Rcpp::NumericVector, Rcpp::NumericVector);
