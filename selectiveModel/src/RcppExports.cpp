@@ -16,6 +16,19 @@ BEGIN_RCPP
     return rcpp_result_gen;
 END_RCPP
 }
+// c_quadratic
+Rcpp::NumericVector c_quadratic(double a, double b, double c);
+RcppExport SEXP _selectiveModel_c_quadratic(SEXP aSEXP, SEXP bSEXP, SEXP cSEXP) {
+BEGIN_RCPP
+    Rcpp::RObject rcpp_result_gen;
+    Rcpp::RNGScope rcpp_rngScope_gen;
+    Rcpp::traits::input_parameter< double >::type a(aSEXP);
+    Rcpp::traits::input_parameter< double >::type b(bSEXP);
+    Rcpp::traits::input_parameter< double >::type c(cSEXP);
+    rcpp_result_gen = Rcpp::wrap(c_quadratic(a, b, c));
+    return rcpp_result_gen;
+END_RCPP
+}
 // c_unique_sort_native
 Rcpp::NumericVector c_unique_sort_native(const Rcpp::NumericVector& x);
 RcppExport SEXP _selectiveModel_c_unique_sort_native(SEXP xSEXP) {
@@ -154,6 +167,7 @@ RcppExport SEXP _rcpp_module_boot_module();
 
 static const R_CallMethodDef CallEntries[] = {
     {"_selectiveModel_c_l2norm", (DL_FUNC) &_selectiveModel_c_l2norm, 1},
+    {"_selectiveModel_c_quadratic", (DL_FUNC) &_selectiveModel_c_quadratic, 3},
     {"_selectiveModel_c_unique_sort_native", (DL_FUNC) &_selectiveModel_c_unique_sort_native, 1},
     {"_selectiveModel_c_construct_midpoints", (DL_FUNC) &_selectiveModel_c_construct_midpoints, 1},
     {"_selectiveModel_c_which_native", (DL_FUNC) &_selectiveModel_c_which_native, 1},

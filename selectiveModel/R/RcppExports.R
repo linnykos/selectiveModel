@@ -5,6 +5,10 @@ c_l2norm <- function(vec) {
     .Call(`_selectiveModel_c_l2norm`, vec)
 }
 
+c_quadratic <- function(a, b, c) {
+    .Call(`_selectiveModel_c_quadratic`, a, b, c)
+}
+
 c_unique_sort_native <- function(x) {
     .Call(`_selectiveModel_c_unique_sort_native`, x)
 }
