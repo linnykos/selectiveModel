@@ -135,18 +135,18 @@ Rcpp::NumericMatrix Plane::c_intersect_circle(const Circle & circle){
   } else {
     Rcpp::Rcout << "here" << std::endl;
     Rcpp::Rcout << "plane.a inside = " << a << std::endl;
-    Rcpp::NumericVector tmp_one(1);
-    std::copy(a.begin(), a.begin(), tmp_one.begin());
-    Rcpp::Rcout << "tmp1 = " << tmp_one << std::endl;
-    double a1 = Rcpp::as<double>(tmp_one);
-    tmp_one = a[1];
+    Rcpp::NumericVector tmp1 = Rcpp::no_init(1);
+    tmp1 = a[0];
+    Rcpp::Rcout << "tmp1 = " << tmp1 << std::endl;
+    double a1 = Rcpp::as<double>(tmp1);
+    tmp1 = a[1];
     Rcpp::Rcout << "asdfasdfasdf" << std::endl;
-    double a2 = Rcpp::as<double>(tmp_one);
-    tmp_one = circle.center[0];
+    double a2 = Rcpp::as<double>(tmp1);
+    tmp1 = circle.center[0];
     Rcpp::Rcout << "14123" << std::endl;
-    double c1 = Rcpp::as<double>(tmp_one);
-    tmp_one = circle.center[1];
-    double c2 = Rcpp::as<double>(tmp_one);
+    double c1 = Rcpp::as<double>(tmp1);
+    tmp1 = circle.center[1];
+    double c2 = Rcpp::as<double>(tmp1);
     Rcpp::Rcout << "a1 = " << a1 << std::endl;
     Rcpp::Rcout << "a2 = " << a2 << std::endl;
     Rcpp::Rcout << "c1 = " << c1 << std::endl;
@@ -168,15 +168,15 @@ Rcpp::NumericMatrix Plane::c_intersect_circle(const Circle & circle){
     Rcpp::Rcout << "x = " << x << std::endl;
     Rcpp::Rcout << "y = " << y << std::endl;
 
-    tmp_one = x[0];
-    double x_double = Rcpp::as<double>(tmp_one);
+    tmp1 = x[0];
+    double x_double = Rcpp::as<double>(tmp1);
     y[0] = (plane_b - a1*x_double)/a2;
 
     Rcpp::Rcout << "x = " << x << std::endl;
     Rcpp::Rcout << "y = " << y << std::endl;
 
-    tmp_one = x[1];
-    x_double = Rcpp::as<double>(tmp_one);
+    tmp1 = x[1];
+    x_double = Rcpp::as<double>(tmp1);
     Rcpp::LogicalVector tmp_bool = Rcpp::NumericVector::is_na(x[1]);
     if(!Rcpp::as<bool>(tmp_bool)){
       y[1] = (plane_b - a1*x_double)/a2;
