@@ -7,7 +7,7 @@ double c_l2norm(const Rcpp::NumericVector & vec){
 }
 
 //constructor
-Circle::Circle(Rcpp::NumericVector center_, Rcpp::NumericVector radius_){
+Circle::Circle(Rcpp::NumericVector center_, double radius_){
   center = center_;
   radius = radius_;
 }
@@ -25,9 +25,9 @@ void Plane::c_normalize() {
   b = b/l2norm;
 }
 
-void Plane::c_intersect_basis(const Rcpp::NumericVector y,
-                              const Rcpp::NumericVector v,
-                              const Rcpp::NumericVector w){
+void Plane::c_intersect_basis(const Rcpp::NumericVector & y,
+                              const Rcpp::NumericVector & v,
+                              const Rcpp::NumericVector & w){
   Rcpp::NumericVector vec = Rcpp::NumericVector::create(0, 0);
   Rcpp::NumericVector intercept = Rcpp::NumericVector::create(0);
   int len = y.length();
@@ -69,7 +69,7 @@ Rcpp::NumericVector Plane::c_point_on_plane(){
   return(vec);
 }
 
-double Plane::c_distance_point_to_plane(const Rcpp::NumericVector point){
+double Plane::c_distance_point_to_plane(const Rcpp::NumericVector & point){
   Rcpp::NumericVector x = c_point_on_plane();
   int len = a.length();
   double tmp = 0;
@@ -86,12 +86,41 @@ double Plane::c_distance_point_to_plane(const Rcpp::NumericVector point){
   return(tmp);
 }
 
+Rcpp::NumericMatrix Plane::c_intersect_circle(const Circle & circle){
+  Rcpp::Rcout << "yolo" << std::endl;
+  double dis = c_distance_point_to_plane(circle.center);
+  Rcpp::Rcout << "dis = " << dis << std::endl;
+  double tol = 1e-6;
+  Rcpp::Rcout << "circle.radius = " << circle.radius << std::endl;
+
+  Rcpp::NumericMatrix mat(2,2);
+
+  if(dis > circle.radius + tol){
+    std::fill(mat.begin(), mat.end(), Rcpp::NumericVector::get_na()) ;
+    return(mat);
+  }
+
+  return(mat);
+}
+
 void Plane::print(){
   Rcpp::Rcout << "a = " << a << std::endl;
   Rcpp::Rcout << "b = " << b << std::endl;
+
+  Circle circle(a, 1);
+  Rcpp::Rcout << "circle.center outside = " << circle.center << std::endl;
+  Rcpp::Rcout << "circle.radius outside = " << circle.radius << std::endl;
+  Rcpp::NumericMatrix mat = c_intersect_circle(circle);
+  Rcpp::Rcout << "mat = " << mat << std::endl;
 }
 
 RCPP_MODULE(module){
+  Rcpp::class_<Circle>( "Circle" )
+  .constructor<Rcpp::NumericVector, double>("documentation for constructor")
+  .field( "center", &Circle::center, "documentation for circle")
+  .field( "radius", &Circle::radius, "documentation for circle")
+  ;
+
   Rcpp::class_<Plane>( "Plane" )
   .constructor<Rcpp::NumericVector, Rcpp::NumericVector>("documentation for constructor")
   .field( "a", &Plane::a, "documentation for plane")
@@ -100,9 +129,6 @@ RCPP_MODULE(module){
   .method( "c_intersect_basis", &Plane::c_intersect_basis, "documentation")
   .method( "c_point_on_plane", &Plane::c_point_on_plane, "documentation")
   .method( "c_distance_point_to_plane", &Plane::c_distance_point_to_plane, "documentation")
-  ;
-
-  Rcpp::class_<Circle>( "Circle" )
-    .constructor<Rcpp::NumericVector, Rcpp::NumericVector>("documentation for constructor")
+  .method( "c_intersect_circle", &Plane::c_intersect_circle, "documentation")
   ;
 }

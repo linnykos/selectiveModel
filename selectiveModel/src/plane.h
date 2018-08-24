@@ -6,20 +6,22 @@
 
 class Circle{
 public:
-  Circle(Rcpp::NumericVector, Rcpp::NumericVector);
-  Rcpp::NumericVector radius;
+  Circle(Rcpp::NumericVector center_ = 0, double radius_ = 0);
   Rcpp::NumericVector center;
+  double radius;
 };
 
 class Plane{
 public:
-  Plane(Rcpp::NumericVector, Rcpp::NumericVector);
+  Plane(Rcpp::NumericVector a_ = 0, Rcpp::NumericVector b_ = 0);
   Rcpp::NumericVector a;
   Rcpp::NumericVector b;
   void c_normalize();
-  void c_intersect_basis(const Rcpp::NumericVector, const Rcpp::NumericVector, Rcpp::NumericVector);
+  void c_intersect_basis(const Rcpp::NumericVector &, const Rcpp::NumericVector &,
+                         const Rcpp::NumericVector &);
   Rcpp::NumericVector c_point_on_plane();
-  double c_distance_point_to_plane(const Rcpp::NumericVector);
+  double c_distance_point_to_plane(const Rcpp::NumericVector &);
+  Rcpp::NumericMatrix c_intersect_circle(const Circle &);
   void print();
 };
 

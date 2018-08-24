@@ -106,6 +106,20 @@ BEGIN_RCPP
     return rcpp_result_gen;
 END_RCPP
 }
+// c_intersect_circle_tester
+Rcpp::NumericMatrix c_intersect_circle_tester(Rcpp::NumericVector a, Rcpp::NumericVector b, Rcpp::NumericVector center, double radius);
+RcppExport SEXP _selectiveModel_c_intersect_circle_tester(SEXP aSEXP, SEXP bSEXP, SEXP centerSEXP, SEXP radiusSEXP) {
+BEGIN_RCPP
+    Rcpp::RObject rcpp_result_gen;
+    Rcpp::RNGScope rcpp_rngScope_gen;
+    Rcpp::traits::input_parameter< Rcpp::NumericVector >::type a(aSEXP);
+    Rcpp::traits::input_parameter< Rcpp::NumericVector >::type b(bSEXP);
+    Rcpp::traits::input_parameter< Rcpp::NumericVector >::type center(centerSEXP);
+    Rcpp::traits::input_parameter< double >::type radius(radiusSEXP);
+    rcpp_result_gen = Rcpp::wrap(c_intersect_circle_tester(a, b, center, radius));
+    return rcpp_result_gen;
+END_RCPP
+}
 // c_gibbs_step
 void c_gibbs_step(NumericVector& state, const NumericVector& direction, NumericVector& U, const NumericVector& alpha);
 RcppExport SEXP _selectiveModel_c_gibbs_step(SEXP stateSEXP, SEXP directionSEXP, SEXP USEXP, SEXP alphaSEXP) {
@@ -148,6 +162,7 @@ static const R_CallMethodDef CallEntries[] = {
     {"_selectiveModel_c_theta_in_matrix", (DL_FUNC) &_selectiveModel_c_theta_in_matrix, 2},
     {"_selectiveModel_c_theta_in_all_matrix", (DL_FUNC) &_selectiveModel_c_theta_in_all_matrix, 2},
     {"_selectiveModel_c_intersect_intervals", (DL_FUNC) &_selectiveModel_c_intersect_intervals, 1},
+    {"_selectiveModel_c_intersect_circle_tester", (DL_FUNC) &_selectiveModel_c_intersect_circle_tester, 4},
     {"_selectiveModel_c_gibbs_step", (DL_FUNC) &_selectiveModel_c_gibbs_step, 4},
     {"_selectiveModel_c_sample_truncnorm_white", (DL_FUNC) &_selectiveModel_c_sample_truncnorm_white, 6},
     {"_rcpp_module_boot_module", (DL_FUNC) &_rcpp_module_boot_module, 0},
