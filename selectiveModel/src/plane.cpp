@@ -10,7 +10,7 @@ double c_l2norm(const Rcpp::NumericVector & vec){
 Rcpp::NumericVector c_quadratic(double a, double b, double c){
   double term = pow(b, 2) - 4*a*c;
   double tol = 1e-6;
-  Rcpp::NumericVector value(2);
+  Rcpp::NumericVector value = Rcpp::no_init(2);
   std::fill(value.begin(), value.end(), Rcpp::NumericVector::get_na());
 
   if(fabs(term) < tol){
@@ -62,7 +62,7 @@ void Plane::c_intersect_basis(const Rcpp::NumericVector & y,
 
 Rcpp::NumericVector Plane::c_point_on_plane(){
   int d = a.length();
-  Rcpp::NumericVector vec(d);
+  Rcpp::NumericVector vec = Rcpp::no_init(d);
   std::fill(vec.begin(), vec.end(), 1);
 
   Rcpp::LogicalVector boolean = (a != 0);
@@ -70,7 +70,7 @@ Rcpp::NumericVector Plane::c_point_on_plane(){
   idx = idx[0] - 1;
 
   double tmp = 0;
-  Rcpp::NumericVector tmp2;
+  Rcpp::NumericVector tmp2 = Rcpp::no_init(1);;
   double sum = 0;
   for(int i = 0; i < d; i++){
     if(Rcpp::as<int>(idx) != i){
@@ -91,7 +91,7 @@ double Plane::c_distance_point_to_plane(const Rcpp::NumericVector & point){
   Rcpp::NumericVector x = c_point_on_plane();
   int len = a.length();
   double tmp = 0;
-  Rcpp::NumericVector tmp2;
+  Rcpp::NumericVector tmp2 = Rcpp::no_init(1);
   double sum = 0;
 
   for(int i = 0; i < len; i++){
@@ -108,11 +108,11 @@ Rcpp::NumericMatrix Plane::c_intersect_circle(const Circle & circle){
   double dis = c_distance_point_to_plane(circle.center);
   double tol = 1e-6;
 
-  Rcpp::NumericMatrix mat(2,2);
+  Rcpp::NumericMatrix mat = Rcpp::no_init(2,2);
   std::fill(mat.begin(), mat.end(), Rcpp::NumericVector::get_na());
 
-  Rcpp::NumericVector x(2);
-  Rcpp::NumericVector y(2);
+  Rcpp::NumericVector x = Rcpp::no_init(2);
+  Rcpp::NumericVector y = Rcpp::no_init(2);
   std::fill(x.begin(), x.end(), Rcpp::NumericVector::get_na());
   std::fill(y.begin(), y.end(), Rcpp::NumericVector::get_na());
 
@@ -133,47 +133,28 @@ Rcpp::NumericMatrix Plane::c_intersect_circle(const Circle & circle){
     y[1] = circle.center[0] + sqrt(pow(circle.radius, 2) - pow(tmp2, 2));
 
   } else {
-    Rcpp::Rcout << "here" << std::endl;
-    Rcpp::Rcout << "plane.a inside = " << a << std::endl;
     Rcpp::NumericVector tmp1 = Rcpp::no_init(1);
     tmp1 = a[0];
-    Rcpp::Rcout << "tmp1 = " << tmp1 << std::endl;
     double a1 = Rcpp::as<double>(tmp1);
     tmp1 = a[1];
-    Rcpp::Rcout << "asdfasdfasdf" << std::endl;
     double a2 = Rcpp::as<double>(tmp1);
     tmp1 = circle.center[0];
-    Rcpp::Rcout << "14123" << std::endl;
     double c1 = Rcpp::as<double>(tmp1);
     tmp1 = circle.center[1];
     double c2 = Rcpp::as<double>(tmp1);
-    Rcpp::Rcout << "a1 = " << a1 << std::endl;
-    Rcpp::Rcout << "a2 = " << a2 << std::endl;
-    Rcpp::Rcout << "c1 = " << c1 << std::endl;
-    Rcpp::Rcout << "c2 = " << c2 << std::endl;
 
     double a_ = 1 + pow(a1/a2, 2);
     double tmp = Rcpp::as<double>(b);
     double b_ = -2*(a1/a2)*(tmp/a2 - c2) - 2*c1;
     double c_ = -pow(circle.radius, 2) + pow(tmp/a2 - c2, 2) + pow(c1, 2);
 
-    Rcpp::Rcout << "a_ = " << a_ << std::endl;
-    Rcpp::Rcout << "b_ = " << b_ << std::endl;
-    Rcpp::Rcout << "c_ = " << c_ << std::endl;
-
     Rcpp::NumericVector x = c_quadratic(a_, b_, c_);
     Rcpp::NumericVector y(2);
     double plane_b = Rcpp::as<double>(b);
 
-    Rcpp::Rcout << "x = " << x << std::endl;
-    Rcpp::Rcout << "y = " << y << std::endl;
-
     tmp1 = x[0];
     double x_double = Rcpp::as<double>(tmp1);
     y[0] = (plane_b - a1*x_double)/a2;
-
-    Rcpp::Rcout << "x = " << x << std::endl;
-    Rcpp::Rcout << "y = " << y << std::endl;
 
     tmp1 = x[1];
     x_double = Rcpp::as<double>(tmp1);
@@ -181,9 +162,6 @@ Rcpp::NumericMatrix Plane::c_intersect_circle(const Circle & circle){
     if(!Rcpp::as<bool>(tmp_bool)){
       y[1] = (plane_b - a1*x_double)/a2;
     }
-
-    Rcpp::Rcout << "x = " << x << std::endl;
-    Rcpp::Rcout << "y = " << y << std::endl;
 
     double tol2 = 1e-9;
     mat(0,0) = x[0];
@@ -193,7 +171,7 @@ Rcpp::NumericMatrix Plane::c_intersect_circle(const Circle & circle){
     Rcpp::LogicalVector tmp_bool_y = fabs(y[0] - y[1]) > tol2;
 
     if(!Rcpp::as<bool>(tmp_bool) & Rcpp::as<bool>(tmp_bool_x) & Rcpp::as<bool>(tmp_bool_y)){
-      mat(1,0) = x[1];
+      mat(0,1) = x[1];
       mat(1,1) = y[1];
     }
   }
