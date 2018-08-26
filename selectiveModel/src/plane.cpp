@@ -7,7 +7,9 @@ double c_l2norm(const Rcpp::NumericVector & vec){
 }
 
 // [[Rcpp::export]]
-Rcpp::NumericVector c_quadratic(double a, double b, double c){
+Rcpp::NumericVector c_quadratic(const double & a,
+                                const double & b,
+                                const double & c){
   double term = pow(b, 2) - 4*a*c;
   double tol = 1e-6;
   Rcpp::NumericVector value = Rcpp::no_init(2);
@@ -21,7 +23,35 @@ Rcpp::NumericVector c_quadratic(double a, double b, double c){
     value[1] = (-b+sqrt(term))/(2*a);
   }
 
-  return(value);
+  return value;
+}
+
+double c_euclidean_to_radian(const Circle & circle,
+                             const Rcpp::NumericVector & point){
+Rcpp::NumericVector tmp = Rcpp::no_init(1);
+  tmp = point[0];
+  double point1 = Rcpp::as<double>(tmp);
+  tmp = point[1];
+  double point2 = Rcpp::as<double>(tmp);
+  tmp = circle.center[0];
+  double circle1 = Rcpp::as<double>(tmp);
+  tmp = circle.center[1];
+  double circle2 = Rcpp::as<double>(tmp);
+
+  if(fabs(pow(point1 - circle1, 2) + pow(point2 - circle2, 2)) -
+     pow(circle.radius, 2) > 1e-6) {
+    throw std::invalid_argument("point not on circle");
+  }
+  assert(check <= 1e-3);
+  double val;
+
+  if(point2 != 0){
+    val = atan(point1/point2);
+  } else {
+    val = atan(-circle2/circle1);
+  }
+
+  return val;
 }
 
 //constructor
@@ -88,7 +118,7 @@ Rcpp::NumericVector Plane::c_point_on_plane(){
   tmp = (Rcpp::as<double>(b) - tmp)/(Rcpp::as<double>(a_intercept));
   vec[idx] = tmp;
 
-  return(vec);
+  return vec;
 }
 
 double Plane::c_distance_point_to_plane(const Rcpp::NumericVector & point){
@@ -105,7 +135,7 @@ double Plane::c_distance_point_to_plane(const Rcpp::NumericVector & point){
   }
 
   tmp = fabs(tmp/c_l2norm(a));
-  return(tmp);
+  return tmp;
 }
 
 Rcpp::NumericMatrix Plane::c_intersect_circle(const Circle & circle){
@@ -189,7 +219,7 @@ Rcpp::NumericMatrix Plane::c_intersect_circle(const Circle & circle){
     mat(1,1) = y[1];
   }
 
-  return(mat);
+  return mat;
 }
 
 void Plane::print(){

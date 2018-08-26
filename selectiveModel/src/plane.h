@@ -2,6 +2,7 @@
 #define _PLANE_H
 
 #include <Rcpp.h>
+#include <math.h>
 #include "radians.h"
 
 class Circle{
@@ -24,5 +25,12 @@ public:
   Rcpp::NumericMatrix c_intersect_circle(const Circle &);
   void print();
 };
+
+double c_l2norm(const Rcpp::NumericVector & vec);
+Rcpp::NumericVector c_quadratic(const double & a,
+                                const double & b,
+                                const double & c);
+double c_euclidean_to_radian(const Circle & circle,
+                             const Rcpp::NumericVector & point);
 
 #endif

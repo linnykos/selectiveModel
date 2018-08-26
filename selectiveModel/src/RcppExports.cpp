@@ -17,14 +17,14 @@ BEGIN_RCPP
 END_RCPP
 }
 // c_quadratic
-Rcpp::NumericVector c_quadratic(double a, double b, double c);
+Rcpp::NumericVector c_quadratic(const double& a, const double& b, const double& c);
 RcppExport SEXP _selectiveModel_c_quadratic(SEXP aSEXP, SEXP bSEXP, SEXP cSEXP) {
 BEGIN_RCPP
     Rcpp::RObject rcpp_result_gen;
     Rcpp::RNGScope rcpp_rngScope_gen;
-    Rcpp::traits::input_parameter< double >::type a(aSEXP);
-    Rcpp::traits::input_parameter< double >::type b(bSEXP);
-    Rcpp::traits::input_parameter< double >::type c(cSEXP);
+    Rcpp::traits::input_parameter< const double& >::type a(aSEXP);
+    Rcpp::traits::input_parameter< const double& >::type b(bSEXP);
+    Rcpp::traits::input_parameter< const double& >::type c(cSEXP);
     rcpp_result_gen = Rcpp::wrap(c_quadratic(a, b, c));
     return rcpp_result_gen;
 END_RCPP
@@ -133,6 +133,19 @@ BEGIN_RCPP
     return rcpp_result_gen;
 END_RCPP
 }
+// c_euclidean_to_radian_tester
+double c_euclidean_to_radian_tester(Rcpp::NumericVector center, double radius, Rcpp::NumericVector point);
+RcppExport SEXP _selectiveModel_c_euclidean_to_radian_tester(SEXP centerSEXP, SEXP radiusSEXP, SEXP pointSEXP) {
+BEGIN_RCPP
+    Rcpp::RObject rcpp_result_gen;
+    Rcpp::RNGScope rcpp_rngScope_gen;
+    Rcpp::traits::input_parameter< Rcpp::NumericVector >::type center(centerSEXP);
+    Rcpp::traits::input_parameter< double >::type radius(radiusSEXP);
+    Rcpp::traits::input_parameter< Rcpp::NumericVector >::type point(pointSEXP);
+    rcpp_result_gen = Rcpp::wrap(c_euclidean_to_radian_tester(center, radius, point));
+    return rcpp_result_gen;
+END_RCPP
+}
 // c_gibbs_step
 void c_gibbs_step(NumericVector& state, const NumericVector& direction, NumericVector& U, const NumericVector& alpha);
 RcppExport SEXP _selectiveModel_c_gibbs_step(SEXP stateSEXP, SEXP directionSEXP, SEXP USEXP, SEXP alphaSEXP) {
@@ -177,6 +190,7 @@ static const R_CallMethodDef CallEntries[] = {
     {"_selectiveModel_c_theta_in_all_matrix", (DL_FUNC) &_selectiveModel_c_theta_in_all_matrix, 2},
     {"_selectiveModel_c_intersect_intervals", (DL_FUNC) &_selectiveModel_c_intersect_intervals, 1},
     {"_selectiveModel_c_intersect_circle_tester", (DL_FUNC) &_selectiveModel_c_intersect_circle_tester, 4},
+    {"_selectiveModel_c_euclidean_to_radian_tester", (DL_FUNC) &_selectiveModel_c_euclidean_to_radian_tester, 3},
     {"_selectiveModel_c_gibbs_step", (DL_FUNC) &_selectiveModel_c_gibbs_step, 4},
     {"_selectiveModel_c_sample_truncnorm_white", (DL_FUNC) &_selectiveModel_c_sample_truncnorm_white, 6},
     {"_rcpp_module_boot_module", (DL_FUNC) &_rcpp_module_boot_module, 0},

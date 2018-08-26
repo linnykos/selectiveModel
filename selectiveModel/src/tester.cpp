@@ -11,7 +11,13 @@ Rcpp::NumericMatrix c_intersect_circle_tester(Rcpp::NumericVector a,
   return mat;
 }
 
-// c_intersect_circle_tester(c(1,1), 1, c(0,0), 2)
-// c_intersect_circle_tester(c(1,1), c(1), c(0,0), c(2))
-// c_intersect_circle_tester(c(0,1), 1, c(0,0), 2)
-// c_intersect_circle_tester(c(1,1), 1, c(0,0), sqrt(2))
+// [[Rcpp::export]]
+double c_euclidean_to_radian_tester(Rcpp::NumericVector center,
+                                              double radius,
+                                              Rcpp::NumericVector point){
+  Circle circle(center, radius);
+  double val = c_euclidean_to_radian(circle, point);
+  return val;
+}
+
+// c_euclidean_to_radian_tester(c(1,1), sqrt(2), c(1, 1+sqrt(2)))
