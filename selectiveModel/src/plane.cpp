@@ -40,9 +40,8 @@ Rcpp::NumericVector tmp = Rcpp::no_init(1);
 
   if(fabs(pow(point1 - circle1, 2) + pow(point2 - circle2, 2)) -
      pow(circle.radius, 2) > 1e-6) {
-    throw std::invalid_argument("point not on circle");
+    throw std::runtime_error("point not on circle");
   }
-  assert(check <= 1e-3);
   double val;
 
   if(point2 != 0){
@@ -51,6 +50,22 @@ Rcpp::NumericVector tmp = Rcpp::no_init(1);
     val = atan(-circle2/circle1);
   }
 
+  return val;
+}
+
+double c_initial_theta(const Rcpp::NumericVector & y,
+                       const Rcpp::NumericVector & v,
+                       const Rcpp::NumericVector & w){
+  double top = 0;
+  double bottom = 0;
+  int len = y.length();
+
+  for(int i = 0; i < len; i++){
+    top += y[i] * w[i];
+    bottom += y[i] * v[i];
+  }
+
+  double val = atan(-top/bottom);
   return val;
 }
 
