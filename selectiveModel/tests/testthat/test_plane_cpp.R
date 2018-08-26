@@ -69,6 +69,69 @@ context("Test plane Rcpp")
   .l2norm(plane$a%*%(point - x))/.l2norm(plane$a)
 }
 
+.quadratic <- function(a, b, c, tol = 1e-8){
+  stopifnot(is.numeric(a), is.numeric(b), is.numeric(c))
+  stopifnot(length(c(a,b,c)) == 3)
+
+  term <- b^2 - 4*a*c
+  if(term < 0) return(NA)
+  if(abs(term) < tol) return(-b/(2*a))
+
+  sort(c((-b-sqrt(term))/(2*a), (-b+sqrt(term))/(2*a)))
+}
+
+.intersect_circle_line <- function(plane, circle, tol = 1e-6, tol2 = 1e-9,
+                                   full = F){
+  stopifnot(length(plane$a) == 2, length(which(plane$a != 0)) > 0)
+  stopifnot(nrow(plane$a) == 1)
+
+  dis <- .distance_point_to_plane(circle$center, plane)
+  if(dis > circle$radius + tol) {
+    if(full) {
+      return(matrix(NA, 2, 2))
+    } else {
+      return(NA)
+    }
+  }
+
+  if(abs(plane$a[2]) < tol){
+    #treat plane$a[2] as zero
+    x <- plane$b/plane$a[1]
+    y <- circle$center[2] + c(-1, 1) * sqrt(circle$radius^2 - (x - circle$center[1])^2)
+    mat <- rbind(x, y)
+
+  } else if(abs(plane$a[1]) < tol) {
+    #treat plane$a[1] as zero
+    y <- plane$b/plane$a[2]
+    x <- circle$center[1] + c(-1, 1) * sqrt(circle$radius^2 - (y - circle$center[2])^2)
+    mat <- rbind(x, y)
+
+  } else {
+    a1 <- plane$a[1]; a2 <- plane$a[2]
+    c1 <- circle$center[1]; c2 <- circle$center[2]
+
+    a <- 1 + (a1/a2)^2
+    b <- -2*(a1/a2)*(plane$b/a2 - c2) -2*c1
+    c <- -circle$radius^2 + (plane$b/a2 - c2)^2 + c1^2
+
+    x <- .quadratic(a, b, c)
+    stopifnot(all(!is.na(x)))
+    y <- (plane$b - a1*x)/a2
+
+    if((length(x) == 1 || abs(x[1]-x[2]) < tol2) && (length(y) == 1 || abs(y[1]-y[2]) < tol2)){
+      mat <- matrix(c(x[1], y[1]), nrow = 2)
+      if(full) mat <- rbind(mat, NA)
+    } else {
+      mat <- rbind(x, y)
+    }
+  }
+
+  colnames(mat) <- NULL
+  rownames(mat) <- NULL
+
+  mat
+}
+
 #########################
 
 test_that("Plane can be generated properly", {
@@ -143,6 +206,184 @@ test_that("c_distance_point_to_plane works properly", {
   })
 
   expect_true(all(bool))
+})
+
+#################
+
+test_that("c_intersect_circle works properly", {
+  trials <- 100
+
+  bool <- sapply(1:trials, function(x){
+    set.seed(10*x)
+    a <- rnorm(2); b <- 1
+    plane <- .plane(a, b)
+    center <- rnorm(2); radius <- 5
+    circle <- .circle(center, radius)
+    dis <- .distance_point_to_plane(center, plane)
+
+    if(dis >= radius){
+      return(TRUE)
+    } else {
+      res1 <- .intersect_circle_line(plane, circle, full = T)
+
+      res2 <- .c_intersect_circle_tester(a, b, center, radius)
+
+      sum(abs(res1 - res2)) < 1e-6
+    }
+  })
+
+  expect_true(all(bool))
+})
+
+test_that("c_intersect_circle works", {
+  res <- .c_intersect_circle_tester(c(0,1), 0, c(0,0), 1)
+
+  expect_true(is.matrix(res))
+  expect_true(is.numeric(res))
+  expect_true(all(dim(res) == c(2,2)))
+})
+
+test_that("c_intersect_circle gives a proper point", {
+  trials <- 100
+  bool_vec <- sapply(1:trials, function(x){
+    set.seed(x)
+    a <- rnorm(2)
+    points <- .c_intersect_circle_tester(a, 0, c(0,0), 1)
+
+    #check to see points are in circle
+    res1 <- apply(points, 2, function(x){sum(abs(sqrt(x[1]^2+x[2]^2) - 1)) < 1e-6})
+
+    #check to see points are on plane
+    res2 <- apply(points, 2, function(x){abs(a%*%x) < 1e-6})
+
+    all(c(res1, res2))
+  })
+
+  expect_true(all(bool_vec))
+})
+
+test_that("c_intersect_circle gives a proper point with b", {
+  trials <- 100
+  radius <- 100
+  b <- 3
+  bool_vec <- sapply(1:trials, function(x){
+    set.seed(x)
+    a <- rnorm(2)
+    points <- .c_intersect_circle_tester(a, b, c(0,0), radius)
+
+    #check to see points are in circle
+    res1 <- apply(points, 2, function(x){sum(abs(sqrt(x[1]^2+x[2]^2) - radius)) < 1e-6})
+
+    #check to see points are on plane
+    res2 <- apply(points, 2, function(x){abs(a%*%x - b) < 1e-6})
+
+    all(c(res1, res2))
+  })
+
+  expect_true(all(bool_vec))
+})
+
+test_that("c_intersect_circle gives a proper point with small values of a[1]", {
+  trials <- 100
+  radius <- 100
+  b <- 2
+  bool_vec <- sapply(1:trials, function(x){
+    set.seed(x)
+    a <- c(0, rnorm(1))
+    points <- .c_intersect_circle_tester(a, b, c(0,0), radius*b)
+
+    if(!is.matrix(points)) points <- as.matrix(points, nrow = 1)
+
+    #check to see points are in circle
+    res1 <- apply(points, 2, function(x){sum(abs(sqrt(x[1]^2+x[2]^2) - b*radius)) < 1e-6})
+
+    #check to see points are on plane
+    res2 <- apply(points, 2, function(x){abs(a%*%x - b) < 1e-6})
+
+    all(c(res1, res2))
+  })
+
+  expect_true(all(bool_vec))
+})
+
+test_that(".intersect_circle_line gives two points with small values of a[1] always gives 2 points", {
+  trials <- 100
+  radius <- 100
+  b <- 2
+  bool_vec <- sapply(1:trials, function(x){
+    set.seed(x)
+    a_vec <- c(0, rnorm(1))
+    points <- .c_intersect_circle_tester(a_vec, b, c(0,0), radius*b)
+
+    ncol(points) == 2
+  })
+
+  expect_true(all(bool_vec))
+})
+
+test_that(".intersect_circle_line gives a proper point with small values of a[1] and offcenter circle", {
+  trials <- 100
+  radius <- 100
+  b <- 2
+  bool_vec <- sapply(1:trials, function(x){
+    set.seed(x)
+    a <- c(0, rnorm(1))
+    center <- c(1,2)
+    points <- .c_intersect_circle_tester(a, b, center, radius*b)
+
+    if(!is.matrix(points)) points <- as.matrix(points, nrow = 1)
+
+    #check to see points are in circle
+    res1 <- apply(points, 2, function(x){sum(abs(sqrt((x[1]-center[1])^2+(x[2]-center[2])^2) - radius*b)) < 1e-6})
+
+    #check to see points are on plane
+    res2 <- apply(points, 2, function(x){abs(a%*%x - b) < 1e-6})
+
+    all(c(res1, res2))
+  })
+
+  expect_true(all(bool_vec))
+})
+
+test_that(".intersect_circle_line gives a proper point with small values of a[2] and offcenter circle", {
+  trials <- 100
+  radius <- 100
+  b <- 2
+  bool_vec <- sapply(1:trials, function(x){
+    set.seed(x)
+    a <- c(rnorm(1), 0)
+    center <- c(1,2)
+    points <- .c_intersect_circle_tester(a, b, center, radius*b)
+
+    if(!is.matrix(points)) points <- as.matrix(points, nrow = 1)
+
+    #check to see points are in circle
+    res1 <- apply(points, 2, function(x){sum(abs(sqrt((x[1]-center[1])^2+(x[2]-center[2])^2) - radius*b)) < 1e-6})
+
+    #check to see points are on plane
+    res2 <- apply(points, 2, function(x){abs(a%*%x - b) < 1e-6})
+
+    all(c(res1, res2))
+  })
+
+  expect_true(all(bool_vec))
+})
+
+test_that(".intersect_circle_line can give NA", {
+  res <- .c_intersect_circle_tester(c(1, -1), 10, c(0,0), 1)
+
+  expect_true(all(dim(res) == c(2,2)))
+  expect_true(all(is.na(res)))
+})
+
+test_that(".intersect_circle_line can give one point", {
+  res <- .c_intersect_circle_tester(c(1, 0), 1, c(0,0), 1)
+
+  expect_true(is.matrix(res))
+  expect_true(is.numeric(res))
+  expect_true(all(dim(res) == c(2,2)))
+  expect_true(all(is.na(res[,2])))
+  expect_true(all(res[,1] == c(1,0)))
 })
 
 

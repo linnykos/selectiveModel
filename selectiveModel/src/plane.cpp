@@ -26,14 +26,18 @@ Rcpp::NumericVector c_quadratic(double a, double b, double c){
 
 //constructor
 Circle::Circle(Rcpp::NumericVector center_, double radius_){
-  center = center_;
+  center = Rcpp::NumericVector(2);
+  std::copy(center_.begin(), center_.end(), center.begin());
   radius = radius_;
 }
 
 // constructor
 Plane::Plane(Rcpp::NumericVector a_, Rcpp::NumericVector b_) {
-  a = a_;
-  b = b_;
+  int len = a_.length();
+  a = Rcpp::NumericVector(len);
+  std::copy(a_.begin(), a_.end(), a.begin());
+  b = Rcpp::NumericVector(1);
+  std::copy(b_.begin(), b_.end(), b.begin());
   c_normalize();
 }
 
@@ -107,6 +111,8 @@ double Plane::c_distance_point_to_plane(const Rcpp::NumericVector & point){
 Rcpp::NumericMatrix Plane::c_intersect_circle(const Circle & circle){
   double dis = c_distance_point_to_plane(circle.center);
   double tol = 1e-6;
+  Rcpp::LogicalVector tmp_bool = Rcpp::no_init(1);
+  tmp_bool[0] = FALSE;
 
   Rcpp::NumericMatrix mat = Rcpp::no_init(2,2);
   std::fill(mat.begin(), mat.end(), Rcpp::NumericVector::get_na());
@@ -120,17 +126,25 @@ Rcpp::NumericMatrix Plane::c_intersect_circle(const Circle & circle){
 
   if(fabs(a[1]) < tol){
     x[0] = b[0]/a[0];
-    Rcpp::NumericVector tmp1 = circle.center[0];
-    double tmp2 = Rcpp::as<double>(x) - Rcpp::as<double>(tmp1);
-    y[0] = circle.center[1] - sqrt(pow(circle.radius, 2) - pow(tmp2, 2));
-    y[1] = circle.center[1] + sqrt(pow(circle.radius, 2) - pow(tmp2, 2));
+    x[1] = x[0];
+    Rcpp::NumericVector tmp1 = Rcpp::no_init(1);
+    tmp1 = circle.center[0];
+    Rcpp::NumericVector tmp2 = Rcpp::no_init(1);
+    tmp2 = x[0];
+    double tmp3 = Rcpp::as<double>(tmp2) - Rcpp::as<double>(tmp1);
+    y[0] = circle.center[1] - sqrt(pow(circle.radius, 2) - pow(tmp3, 2));
+    y[1] = circle.center[1] + sqrt(pow(circle.radius, 2) - pow(tmp3, 2));
 
   } else if (fabs(a[0]) < tol){
-    x[0] = b[0]/a[1];
-    Rcpp::NumericVector tmp1 = circle.center[1];
-    double tmp2 = Rcpp::as<double>(x) - Rcpp::as<double>(tmp1);
-    y[0] = circle.center[0] - sqrt(pow(circle.radius, 2) - pow(tmp2, 2));
-    y[1] = circle.center[0] + sqrt(pow(circle.radius, 2) - pow(tmp2, 2));
+    y[0] = b[0]/a[1];
+    y[1] = y[0];
+    Rcpp::NumericVector tmp1 = Rcpp::no_init(1);
+    tmp1 = circle.center[1];
+    Rcpp::NumericVector tmp2 = Rcpp::no_init(1);
+    tmp2 = y[0];
+    double tmp3 = Rcpp::as<double>(tmp2) - Rcpp::as<double>(tmp1);
+    x[0] = circle.center[0] - sqrt(pow(circle.radius, 2) - pow(tmp3, 2));
+    x[1] = circle.center[0] + sqrt(pow(circle.radius, 2) - pow(tmp3, 2));
 
   } else {
     Rcpp::NumericVector tmp1 = Rcpp::no_init(1);
@@ -148,8 +162,7 @@ Rcpp::NumericMatrix Plane::c_intersect_circle(const Circle & circle){
     double b_ = -2*(a1/a2)*(tmp/a2 - c2) - 2*c1;
     double c_ = -pow(circle.radius, 2) + pow(tmp/a2 - c2, 2) + pow(c1, 2);
 
-    Rcpp::NumericVector x = c_quadratic(a_, b_, c_);
-    Rcpp::NumericVector y(2);
+    x = c_quadratic(a_, b_, c_);
     double plane_b = Rcpp::as<double>(b);
 
     tmp1 = x[0];
@@ -158,22 +171,22 @@ Rcpp::NumericMatrix Plane::c_intersect_circle(const Circle & circle){
 
     tmp1 = x[1];
     x_double = Rcpp::as<double>(tmp1);
-    Rcpp::LogicalVector tmp_bool = Rcpp::NumericVector::is_na(x[1]);
+    tmp_bool = Rcpp::NumericVector::is_na(x[1]);
     if(!Rcpp::as<bool>(tmp_bool)){
       y[1] = (plane_b - a1*x_double)/a2;
     }
+  }
 
-    double tol2 = 1e-9;
-    mat(0,0) = x[0];
-    mat(1,0) = y[0];
+  double tol2 = 1e-9;
+  mat(0,0) = x[0];
+  mat(1,0) = y[0];
 
-    Rcpp::LogicalVector tmp_bool_x = fabs(x[0] - x[1]) > tol2;
-    Rcpp::LogicalVector tmp_bool_y = fabs(y[0] - y[1]) > tol2;
+  Rcpp::LogicalVector tmp_bool_x = fabs(x[0] - x[1]) > tol2;
+  Rcpp::LogicalVector tmp_bool_y = fabs(y[0] - y[1]) > tol2;
 
-    if(!Rcpp::as<bool>(tmp_bool) & Rcpp::as<bool>(tmp_bool_x) & Rcpp::as<bool>(tmp_bool_y)){
-      mat(0,1) = x[1];
-      mat(1,1) = y[1];
-    }
+  if(!Rcpp::as<bool>(tmp_bool) & (Rcpp::as<bool>(tmp_bool_x) | Rcpp::as<bool>(tmp_bool_y))){
+    mat(0,1) = x[1];
+    mat(1,1) = y[1];
   }
 
   return(mat);

@@ -101,7 +101,7 @@ Rcpp::NumericVector c_unlist_native(const Rcpp::List & list) {
 Rcpp::LogicalVector c_theta_in_matrix(const double & x,
                                     const Rcpp::NumericMatrix & mat) {
   int nrow = mat.nrow();
-  Rcpp::LogicalVector result(1);
+  Rcpp::LogicalVector result = Rcpp::no_init(1);
   result[0] = FALSE;
 
   Rcpp::NumericVector mat0; Rcpp::NumericVector mat1;
@@ -121,7 +121,7 @@ Rcpp::LogicalVector c_theta_in_all_matrix(const double & x,
                                         const Rcpp::List & list) {
 
   int n = list.size();
-  Rcpp::LogicalVector result(1);
+  Rcpp::LogicalVector result = Rcpp::no_init(1);
   result[0] = TRUE;
 
   for(int i = 0; i < n; i++){
@@ -154,7 +154,7 @@ Rcpp::NumericMatrix c_intersect_intervals(const Rcpp::List & list){
 
   Rcpp::IntegerMatrix idx = c_consecutive_true(boolean);
   int nrow = idx.nrow();
-  Rcpp::NumericMatrix result(nrow, 2);
+  Rcpp::NumericMatrix result = Rcpp::no_init(nrow, 2);
 
   for(int i = 0; i < nrow; i++){
     result(i,0) = vec[idx(i,0)-1];

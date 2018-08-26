@@ -13,3 +13,5 @@ Rcpp::NumericMatrix c_intersect_circle_tester(Rcpp::NumericVector a,
 
 // c_intersect_circle_tester(c(1,1), 1, c(0,0), 2)
 // c_intersect_circle_tester(c(1,1), c(1), c(0,0), c(2))
+// c_intersect_circle_tester(c(0,1), 1, c(0,0), 2)
+// c_intersect_circle_tester(c(1,1), 1, c(0,0), sqrt(2))

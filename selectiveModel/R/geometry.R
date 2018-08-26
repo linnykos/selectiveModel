@@ -185,7 +185,9 @@
   } else {
     mat <- rbind(x, y)
   }
+
   colnames(mat) <- NULL
+  rownames(mat) <- NULL
 
   mat
 }
