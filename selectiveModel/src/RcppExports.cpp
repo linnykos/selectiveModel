@@ -5,6 +5,17 @@
 
 using namespace Rcpp;
 
+// c_partition_interval
+Rcpp::NumericMatrix c_partition_interval(const Rcpp::NumericVector& interval);
+RcppExport SEXP _selectiveModel_c_partition_interval(SEXP intervalSEXP) {
+BEGIN_RCPP
+    Rcpp::RObject rcpp_result_gen;
+    Rcpp::RNGScope rcpp_rngScope_gen;
+    Rcpp::traits::input_parameter< const Rcpp::NumericVector& >::type interval(intervalSEXP);
+    rcpp_result_gen = Rcpp::wrap(c_partition_interval(interval));
+    return rcpp_result_gen;
+END_RCPP
+}
 // c_l2norm
 double c_l2norm(const Rcpp::NumericVector& vec);
 RcppExport SEXP _selectiveModel_c_l2norm(SEXP vecSEXP) {
@@ -179,6 +190,7 @@ END_RCPP
 RcppExport SEXP _rcpp_module_boot_module();
 
 static const R_CallMethodDef CallEntries[] = {
+    {"_selectiveModel_c_partition_interval", (DL_FUNC) &_selectiveModel_c_partition_interval, 1},
     {"_selectiveModel_c_l2norm", (DL_FUNC) &_selectiveModel_c_l2norm, 1},
     {"_selectiveModel_c_quadratic", (DL_FUNC) &_selectiveModel_c_quadratic, 3},
     {"_selectiveModel_c_unique_sort_native", (DL_FUNC) &_selectiveModel_c_unique_sort_native, 1},

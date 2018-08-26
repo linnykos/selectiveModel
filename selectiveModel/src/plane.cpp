@@ -26,49 +26,6 @@ Rcpp::NumericVector c_quadratic(const double & a,
   return value;
 }
 
-double c_euclidean_to_radian(const Circle & circle,
-                             const Rcpp::NumericVector & point){
-Rcpp::NumericVector tmp = Rcpp::no_init(1);
-  tmp = point[0];
-  double point1 = Rcpp::as<double>(tmp);
-  tmp = point[1];
-  double point2 = Rcpp::as<double>(tmp);
-  tmp = circle.center[0];
-  double circle1 = Rcpp::as<double>(tmp);
-  tmp = circle.center[1];
-  double circle2 = Rcpp::as<double>(tmp);
-
-  if(fabs(pow(point1 - circle1, 2) + pow(point2 - circle2, 2)) -
-     pow(circle.radius, 2) > 1e-6) {
-    throw std::runtime_error("point not on circle");
-  }
-  double val;
-
-  if(point2 != 0){
-    val = atan(point1/point2);
-  } else {
-    val = atan(-circle2/circle1);
-  }
-
-  return val;
-}
-
-double c_initial_theta(const Rcpp::NumericVector & y,
-                       const Rcpp::NumericVector & v,
-                       const Rcpp::NumericVector & w){
-  double top = 0;
-  double bottom = 0;
-  int len = y.length();
-
-  for(int i = 0; i < len; i++){
-    top += y[i] * w[i];
-    bottom += y[i] * v[i];
-  }
-
-  double val = atan(-top/bottom);
-  return val;
-}
-
 //constructor
 Circle::Circle(Rcpp::NumericVector center_, double radius_){
   center = Rcpp::NumericVector(2);

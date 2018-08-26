@@ -1,4 +1,4 @@
-#include "plane.h"
+#include "interval.h"
 
 // [[Rcpp::export]]
 Rcpp::NumericMatrix c_intersect_circle_tester(Rcpp::NumericVector a,

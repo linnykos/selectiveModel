@@ -169,14 +169,23 @@
 
   vec <- seq(-2*pi, 2*pi, by = pi/2)
   vec <- c(a, vec[intersect(which(vec >= a), which(vec <= b))], b)
+
+  print(vec)
+
   lis <- lapply(1:(length(vec)-1), function(x){c(vec[c(x,x+1)])})
 
+  print(lis)
+
   idx <- sapply(lis, function(x){mid <- mean(x); sign(mid)*ceiling(abs(mid)/(pi/2))})
+
+  print(idx)
 
   lis <- lapply(1:length(lis), function(x){
     if(abs(idx[x]) <= 1) return(lis[[x]])
     lis[[x]] - sign(idx[x])*pi
   })
+
+  print(lis)
 
   if(length(lis) == 1){
     mat <- matrix(lis[[1]], ncol = 2)
@@ -185,8 +194,12 @@
     mat <- mat[order(mat[,1]),]
   }
 
+  print(mat)
+
   idx <- which(mat[,2]-mat[,1] > tol)
   mat <- mat[idx,,drop = F]
+
+  print(mat)
 
   stopifnot(all(as.numeric(t(mat)) == sort(as.numeric(t(mat)))))
   stopifnot(all(abs(mat) <= pi/2))
