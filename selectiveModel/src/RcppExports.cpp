@@ -196,6 +196,20 @@ BEGIN_RCPP
     return rcpp_result_gen;
 END_RCPP
 }
+// c_intersect_basis_tester
+void c_intersect_basis_tester(Rcpp::NumericVector a, Rcpp::NumericVector b, Rcpp::NumericVector y, Rcpp::NumericVector v, Rcpp::NumericVector w);
+RcppExport SEXP _selectiveModel_c_intersect_basis_tester(SEXP aSEXP, SEXP bSEXP, SEXP ySEXP, SEXP vSEXP, SEXP wSEXP) {
+BEGIN_RCPP
+    Rcpp::RNGScope rcpp_rngScope_gen;
+    Rcpp::traits::input_parameter< Rcpp::NumericVector >::type a(aSEXP);
+    Rcpp::traits::input_parameter< Rcpp::NumericVector >::type b(bSEXP);
+    Rcpp::traits::input_parameter< Rcpp::NumericVector >::type y(ySEXP);
+    Rcpp::traits::input_parameter< Rcpp::NumericVector >::type v(vSEXP);
+    Rcpp::traits::input_parameter< Rcpp::NumericVector >::type w(wSEXP);
+    c_intersect_basis_tester(a, b, y, v, w);
+    return R_NilValue;
+END_RCPP
+}
 // c_euclidean_to_radian_tester
 double c_euclidean_to_radian_tester(Rcpp::NumericVector center, double radius, Rcpp::NumericVector point);
 RcppExport SEXP _selectiveModel_c_euclidean_to_radian_tester(SEXP centerSEXP, SEXP radiusSEXP, SEXP pointSEXP) {
@@ -258,6 +272,7 @@ static const R_CallMethodDef CallEntries[] = {
     {"_selectiveModel_c_theta_in_all_matrix", (DL_FUNC) &_selectiveModel_c_theta_in_all_matrix, 2},
     {"_selectiveModel_c_intersect_intervals", (DL_FUNC) &_selectiveModel_c_intersect_intervals, 1},
     {"_selectiveModel_c_intersect_circle_tester", (DL_FUNC) &_selectiveModel_c_intersect_circle_tester, 4},
+    {"_selectiveModel_c_intersect_basis_tester", (DL_FUNC) &_selectiveModel_c_intersect_basis_tester, 5},
     {"_selectiveModel_c_euclidean_to_radian_tester", (DL_FUNC) &_selectiveModel_c_euclidean_to_radian_tester, 3},
     {"_selectiveModel_c_gibbs_step", (DL_FUNC) &_selectiveModel_c_gibbs_step, 4},
     {"_selectiveModel_c_sample_truncnorm_white", (DL_FUNC) &_selectiveModel_c_sample_truncnorm_white, 6},

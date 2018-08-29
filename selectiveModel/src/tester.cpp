@@ -12,6 +12,17 @@ Rcpp::NumericMatrix c_intersect_circle_tester(Rcpp::NumericVector a,
 }
 
 // [[Rcpp::export]]
+void c_intersect_basis_tester(Rcpp::NumericVector a,
+                                              Rcpp::NumericVector b,
+                                              Rcpp::NumericVector y,
+                                              Rcpp::NumericVector v,
+                                              Rcpp::NumericVector w){
+  Plane plane(a, b);
+  plane.c_intersect_basis(y, v, w);
+  plane.print();
+}
+
+// [[Rcpp::export]]
 double c_euclidean_to_radian_tester(Rcpp::NumericVector center,
                                               double radius,
                                               Rcpp::NumericVector point){

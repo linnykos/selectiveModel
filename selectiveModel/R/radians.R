@@ -14,23 +14,7 @@
   stopifnot(abs(.l2norm(v) - 1) < 1e-4,  abs(.l2norm(w) - 1) < 1e-4, abs(v%*%w) < 1e-4)
 
   interval_list <- lapply(1:nrow(polyhedra$gamma), function(x){
-    plane <- .plane(polyhedra$gamma[x,], polyhedra$u[x])
-    plane <- .intersect_plane_basis(plane, y, v, w)
-    if(any(is.na(plane))) return(matrix(c(-pi/2, pi/2), ncol = 2))
-    center <- c(-y%*%v, -y%*%w)
-    radius <- sqrt(sum(center^2))
-    circle <- .circle(center, radius)
-    dis <- .distance_point_to_plane(center, plane)
-
-    if(dis >= radius){
-      matrix(c(-pi/2, pi/2), ncol = 2)
-    } else {
-      mat <- .intersect_circle_line(plane, circle)
-      stopifnot(nrow(mat) == 2)
-      vec <- apply(mat, 2, .euclidean_to_radian, circle = circle)
-      init_theta <- .initial_theta(y, v, w)
-      .interval(vec, init_theta)
-    }
+    .c_form_interval(polyhedra$gamma[x,], polyhedra$u[x], y, v, w)
   })
 
   interval <- .c_intersect_intervals(interval_list)

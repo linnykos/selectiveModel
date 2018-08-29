@@ -61,9 +61,14 @@ void Plane::c_intersect_basis(const Rcpp::NumericVector & y,
     intercept[0] += a[i] * y[i];
   }
 
-  a = vec;
-  b = b - intercept;
-  c_normalize();
+  if(is_true(any(abs(vec) > 1e-6))){
+    a = vec;
+    b = b - intercept;
+    c_normalize();
+  } else {
+    std::fill(a.begin(), a.end(), Rcpp::NumericVector::get_na());
+    std::fill(b.begin(), b.end(), Rcpp::NumericVector::get_na());
+  }
 }
 
 Rcpp::NumericVector Plane::c_point_on_plane(){
