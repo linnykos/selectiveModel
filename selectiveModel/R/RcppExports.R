@@ -13,6 +13,10 @@
     .Call(`_selectiveModel_c_partition_interval`, interval)
 }
 
+.c_interval <- function(endpoints, initial_theta) {
+    .Call(`_selectiveModel_c_interval`, endpoints, initial_theta)
+}
+
 .c_l2norm <- function(vec) {
     .Call(`_selectiveModel_c_l2norm`, vec)
 }

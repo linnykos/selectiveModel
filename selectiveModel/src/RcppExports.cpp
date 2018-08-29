@@ -41,6 +41,18 @@ BEGIN_RCPP
     return rcpp_result_gen;
 END_RCPP
 }
+// c_interval
+Rcpp::NumericMatrix c_interval(const Rcpp::NumericVector& endpoints, const double& initial_theta);
+RcppExport SEXP _selectiveModel_c_interval(SEXP endpointsSEXP, SEXP initial_thetaSEXP) {
+BEGIN_RCPP
+    Rcpp::RObject rcpp_result_gen;
+    Rcpp::RNGScope rcpp_rngScope_gen;
+    Rcpp::traits::input_parameter< const Rcpp::NumericVector& >::type endpoints(endpointsSEXP);
+    Rcpp::traits::input_parameter< const double& >::type initial_theta(initial_thetaSEXP);
+    rcpp_result_gen = Rcpp::wrap(c_interval(endpoints, initial_theta));
+    return rcpp_result_gen;
+END_RCPP
+}
 // c_l2norm
 double c_l2norm(const Rcpp::NumericVector& vec);
 RcppExport SEXP _selectiveModel_c_l2norm(SEXP vecSEXP) {
@@ -218,6 +230,7 @@ static const R_CallMethodDef CallEntries[] = {
     {"_selectiveModel_c_initial_theta", (DL_FUNC) &_selectiveModel_c_initial_theta, 3},
     {"_selectiveModel_c_basic_interval", (DL_FUNC) &_selectiveModel_c_basic_interval, 2},
     {"_selectiveModel_c_partition_interval", (DL_FUNC) &_selectiveModel_c_partition_interval, 1},
+    {"_selectiveModel_c_interval", (DL_FUNC) &_selectiveModel_c_interval, 2},
     {"_selectiveModel_c_l2norm", (DL_FUNC) &_selectiveModel_c_l2norm, 1},
     {"_selectiveModel_c_quadratic", (DL_FUNC) &_selectiveModel_c_quadratic, 3},
     {"_selectiveModel_c_unique_sort_native", (DL_FUNC) &_selectiveModel_c_unique_sort_native, 1},

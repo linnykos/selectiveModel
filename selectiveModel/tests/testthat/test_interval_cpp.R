@@ -278,3 +278,29 @@ test_that(".initial_theta gives the proper theta", {
   expect_true(sum(abs(y - res)) < 1e-6)
 })
 
+#################
+
+## c_interval is correct
+
+test_that("c_interval gives the correct answer", {
+  trials <- 1000
+
+  bool <- sapply(1:trials, function(x){
+    set.seed(11*x)
+    rad <- runif(3, min = 0, max = 2*pi)
+    center <- rep(1/sqrt(2), 2)
+    point_mat <- sapply(rad, function(x){
+      c(cos(x), sin(x)) + center
+    })
+    circ <- .circle(center, 1)
+    rad_vec <- apply(point_mat, 2, .euclidean_to_radian, circle = circ)
+    res1 <- .interval(rad_vec[1:2], rad_vec[3])
+
+    res2 <- .c_interval(rad_vec[1:2], rad_vec[3])
+
+    all(res1 == res2)
+  })
+
+  expect_true(all(bool))
+})
+

@@ -75,17 +75,15 @@ Rcpp::NumericVector c_basic_interval(const Rcpp::NumericVector & endpoints,
     throw std::runtime_error("endpoint out of range");
   }
 
-  if(Rcpp::as<double>(tmp1) > Rcpp::as<double>(tmp2)){
-    Rcpp::IntegerVector idx = Rcpp::IntegerVector::create(1, 0);
-    endpoints_copy = endpoints_copy[idx];
-  }
+  endpoints_copy.sort(false);
 
-  tmp1 = endpoints_copy[0]; tmp2 = endpoints_copy[1];
+  tmp1 = endpoints_copy[0];
+  tmp2 = endpoints_copy[1];
+
   if(Rcpp::as<double>(tmp1) > theta | theta > Rcpp::as<double>(tmp2)){
-    endpoints_copy[0] = endpoints_copy[1];
-    endpoints_copy[1] = Rcpp::as<double>(tmp2) + c_pi();
+    endpoints_copy[0] = Rcpp::as<double>(tmp2);
+    endpoints_copy[1] = Rcpp::as<double>(tmp1) + c_pi();
   }
-
   return endpoints_copy;
 }
 
@@ -162,6 +160,15 @@ Rcpp::NumericMatrix c_partition_interval(const Rcpp::NumericVector & interval){
   }
 
   return mat2;
+}
+
+// [[Rcpp::export]]
+Rcpp::NumericMatrix c_interval(const Rcpp::NumericVector & endpoints,
+                               const double & initial_theta){
+  Rcpp::NumericVector interval = c_basic_interval(endpoints, initial_theta);
+  Rcpp::NumericMatrix mat = c_partition_interval(interval);
+
+  return mat;
 }
 
 // c_partition_interval(c(pi/3, 3*pi/4))
