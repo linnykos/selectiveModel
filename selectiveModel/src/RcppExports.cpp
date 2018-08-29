@@ -53,6 +53,21 @@ BEGIN_RCPP
     return rcpp_result_gen;
 END_RCPP
 }
+// c_form_interval
+Rcpp::NumericMatrix c_form_interval(const Rcpp::NumericVector& a, const Rcpp::NumericVector& b, const Rcpp::NumericVector& y, const Rcpp::NumericVector& v, const Rcpp::NumericVector& w);
+RcppExport SEXP _selectiveModel_c_form_interval(SEXP aSEXP, SEXP bSEXP, SEXP ySEXP, SEXP vSEXP, SEXP wSEXP) {
+BEGIN_RCPP
+    Rcpp::RObject rcpp_result_gen;
+    Rcpp::RNGScope rcpp_rngScope_gen;
+    Rcpp::traits::input_parameter< const Rcpp::NumericVector& >::type a(aSEXP);
+    Rcpp::traits::input_parameter< const Rcpp::NumericVector& >::type b(bSEXP);
+    Rcpp::traits::input_parameter< const Rcpp::NumericVector& >::type y(ySEXP);
+    Rcpp::traits::input_parameter< const Rcpp::NumericVector& >::type v(vSEXP);
+    Rcpp::traits::input_parameter< const Rcpp::NumericVector& >::type w(wSEXP);
+    rcpp_result_gen = Rcpp::wrap(c_form_interval(a, b, y, v, w));
+    return rcpp_result_gen;
+END_RCPP
+}
 // c_l2norm
 double c_l2norm(const Rcpp::NumericVector& vec);
 RcppExport SEXP _selectiveModel_c_l2norm(SEXP vecSEXP) {
@@ -231,6 +246,7 @@ static const R_CallMethodDef CallEntries[] = {
     {"_selectiveModel_c_basic_interval", (DL_FUNC) &_selectiveModel_c_basic_interval, 2},
     {"_selectiveModel_c_partition_interval", (DL_FUNC) &_selectiveModel_c_partition_interval, 1},
     {"_selectiveModel_c_interval", (DL_FUNC) &_selectiveModel_c_interval, 2},
+    {"_selectiveModel_c_form_interval", (DL_FUNC) &_selectiveModel_c_form_interval, 5},
     {"_selectiveModel_c_l2norm", (DL_FUNC) &_selectiveModel_c_l2norm, 1},
     {"_selectiveModel_c_quadratic", (DL_FUNC) &_selectiveModel_c_quadratic, 3},
     {"_selectiveModel_c_unique_sort_native", (DL_FUNC) &_selectiveModel_c_unique_sort_native, 1},

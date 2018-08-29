@@ -17,6 +17,10 @@
     .Call(`_selectiveModel_c_interval`, endpoints, initial_theta)
 }
 
+.c_form_interval <- function(a, b, y, v, w) {
+    .Call(`_selectiveModel_c_form_interval`, a, b, y, v, w)
+}
+
 .c_l2norm <- function(vec) {
     .Call(`_selectiveModel_c_l2norm`, vec)
 }

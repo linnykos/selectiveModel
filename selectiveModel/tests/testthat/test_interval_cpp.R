@@ -74,6 +74,14 @@ context("Test interval c++")
   y + .radius(theta, y, v, w)*(sin(theta)*v + cos(theta)*w)
 }
 
+.projection <- function(vec1, vec2, tol = 1e-6){
+  stopifnot(length(vec1) == length(vec2))
+
+  d <- length(vec1)
+  vec2 <- vec2/.l2norm(vec2)
+  as.numeric((diag(d) - vec2%*%t(vec2))%*%vec1)
+}
+
 ####################################
 
 ## c_euclidean_to_radian is correct
@@ -303,4 +311,68 @@ test_that("c_interval gives the correct answer", {
 
   expect_true(all(bool))
 })
+
+###################
+
+## c_form_interval is correct
+
+test_that("c_form_interval works on one particular case", {
+  set.seed(10)
+  y <- rnorm(10)
+  obj <- binseginf::binSeg_fixedSteps(y, 2)
+  poly <- binseginf::polyhedra(obj)
+
+  v <- rnorm(10); w <- rnorm(10)
+  v <- v/.l2norm(v)
+  w <- .projection(w, v); w <- w/.l2norm(w)
+
+  res <- .c_form_interval(poly$gamma[1,], poly$u[1], y, v, w)
+
+  expect_true(is.matrix(res))
+  expect_true(ncol(res) == 2)
+})
+
+test_that("c_form_interval is correct", {
+  set.seed(10)
+  y <- rnorm(10)
+  obj <- binseginf::binSeg_fixedSteps(y, 2)
+  poly <- binseginf::polyhedra(obj)
+
+  v <- rnorm(10); w <- rnorm(10)
+  v <- v/.l2norm(v)
+  w <- .projection(w, v); w <- w/.l2norm(w)
+
+  res_list1 <- sapply(1:length(poly$u), function(x){
+    plane <- .plane(poly$gamma[x,], poly$u[x])
+    plane <- .intersect_plane_basis(plane, y, v, w)
+    if(any(is.na(plane))) return(matrix(c(-pi/2, pi/2), ncol = 2))
+    center <- c(-y%*%v, -y%*%w)
+    radius <- sqrt(sum(center^2))
+    circle <- .circle(center, radius)
+    dis <- .distance_point_to_plane(center, plane)
+
+    if(dis >= radius){
+      matrix(c(-pi/2, pi/2), ncol = 2)
+    } else {
+      mat <- .intersect_circle_line(plane, circle)
+      stopifnot(nrow(mat) == 2)
+      vec <- apply(mat, 2, .euclidean_to_radian, circle = circle)
+      init_theta <- .initial_theta(y, v, w)
+      .interval(vec, init_theta)
+    }
+  })
+
+  res_list2 <- sapply(1:length(poly$u), function(x){
+    .c_form_interval(poly$gamma[x,], poly$u[x], y, v, w)
+  })
+
+  expect_true(length(res_list1) == length(res_list2))
+
+  bool <- sapply(1:length(res_list1), function(x){
+    sum(abs(res_list1[[x]] - res_list2[[x]])) < 1e-6
+  })
+
+  expect_true(all(bool))
+})
+
 

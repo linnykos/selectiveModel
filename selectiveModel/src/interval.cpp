@@ -171,6 +171,43 @@ Rcpp::NumericMatrix c_interval(const Rcpp::NumericVector & endpoints,
   return mat;
 }
 
+// [[Rcpp::export]]
+Rcpp::NumericMatrix c_form_interval(const Rcpp::NumericVector & a,
+                                    const Rcpp::NumericVector & b,
+                                    const Rcpp::NumericVector & y,
+                                    const Rcpp::NumericVector & v,
+                                    const Rcpp::NumericVector & w){
+  Plane plane = Plane(a, b);
+  plane.c_intersect_basis(y, v, w);
+  Rcpp::NumericVector center = Rcpp::no_init(2);
+  std::fill(center.begin(), center.end(), 0);
+  int n = y.length();
+  for(int i = 0; i < n; i++){
+    center[0] -= y[i]*v[i];
+    center[1] -= y[i]*w[i];
+  }
+  double radius = c_l2norm(center);
+  Circle circle = Circle(center, radius);
+  double dis = plane.c_distance_point_to_plane(center);
+
+  Rcpp::NumericMatrix mat;
+  if(dis >= radius){
+    mat = Rcpp::no_init(1,2);
+    mat(0,0) = -c_pi()/2;
+    mat(0,1) = c_pi()/2;
+  } else {
+    Rcpp::NumericMatrix mat2 = plane.c_intersect_circle(circle);
+    Rcpp::NumericVector endpoints = Rcpp::no_init(2);
+    endpoints[0] = c_euclidean_to_radian(circle, mat2(Rcpp::_,0));
+    endpoints[1] = c_euclidean_to_radian(circle, mat2(Rcpp::_,1));
+    double init_theta = c_initial_theta(y, v, w);
+    mat = c_interval(endpoints, init_theta);
+  }
+
+  return mat;
+}
+
+
 // c_partition_interval(c(pi/3, 3*pi/4))
 
 
