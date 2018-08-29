@@ -66,7 +66,7 @@
 }
 
 .c_intersect_basis_tester <- function(a, b, y, v, w) {
-    invisible(.Call(`_selectiveModel_c_intersect_basis_tester`, a, b, y, v, w))
+    .Call(`_selectiveModel_c_intersect_basis_tester`, a, b, y, v, w)
 }
 
 .c_euclidean_to_radian_tester <- function(center, radius, point) {

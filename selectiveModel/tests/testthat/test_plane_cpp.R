@@ -386,4 +386,32 @@ test_that(".intersect_circle_line can give one point", {
   expect_true(all(res[,1] == c(1,0)))
 })
 
+#############
+
+## c_intersect_basis is correct
+
+test_that("c_intersect_basis is correct", {
+  trials <- 100
+  bool <- sapply(1:trials, function(x){
+    set.seed(10*x)
+    a <- rnorm(10); b <- rnorm(1);
+    y <- rnorm(10); v <- rnorm(10); w <- rnorm(10)
+
+    plane <- .plane(a, b)
+    res1 <- .intersect_plane_basis(plane, y, v, w)
+    res2 <- .c_intersect_basis_tester(a, b, y, v, w)
+
+    sum(abs(res1$a - res2$a)) < 1e-6 & abs(res1$b - res2$b) < 1e-6
+  })
+
+  expect_true(all(bool))
+})
+
+test_that("c_intersect_basis can give NA", {
+  res <- .c_intersect_basis_tester(c(1,0,0), 1, 1:3, c(0,1,0), c(0,0,1))
+
+  expect_true(all(is.na(res$a)))
+  expect_true(is.na(res$b))
+})
+
 

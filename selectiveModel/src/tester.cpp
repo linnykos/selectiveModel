@@ -12,14 +12,16 @@ Rcpp::NumericMatrix c_intersect_circle_tester(Rcpp::NumericVector a,
 }
 
 // [[Rcpp::export]]
-void c_intersect_basis_tester(Rcpp::NumericVector a,
+Rcpp::List c_intersect_basis_tester(Rcpp::NumericVector a,
                                               Rcpp::NumericVector b,
                                               Rcpp::NumericVector y,
                                               Rcpp::NumericVector v,
                                               Rcpp::NumericVector w){
   Plane plane(a, b);
   plane.c_intersect_basis(y, v, w);
-  plane.print();
+
+  return Rcpp::List::create(Rcpp::Named("a") = plane.a,
+                            Rcpp::Named("b") = plane.b);
 }
 
 // [[Rcpp::export]]

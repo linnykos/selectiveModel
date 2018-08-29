@@ -197,17 +197,18 @@ BEGIN_RCPP
 END_RCPP
 }
 // c_intersect_basis_tester
-void c_intersect_basis_tester(Rcpp::NumericVector a, Rcpp::NumericVector b, Rcpp::NumericVector y, Rcpp::NumericVector v, Rcpp::NumericVector w);
+Rcpp::List c_intersect_basis_tester(Rcpp::NumericVector a, Rcpp::NumericVector b, Rcpp::NumericVector y, Rcpp::NumericVector v, Rcpp::NumericVector w);
 RcppExport SEXP _selectiveModel_c_intersect_basis_tester(SEXP aSEXP, SEXP bSEXP, SEXP ySEXP, SEXP vSEXP, SEXP wSEXP) {
 BEGIN_RCPP
+    Rcpp::RObject rcpp_result_gen;
     Rcpp::RNGScope rcpp_rngScope_gen;
     Rcpp::traits::input_parameter< Rcpp::NumericVector >::type a(aSEXP);
     Rcpp::traits::input_parameter< Rcpp::NumericVector >::type b(bSEXP);
     Rcpp::traits::input_parameter< Rcpp::NumericVector >::type y(ySEXP);
     Rcpp::traits::input_parameter< Rcpp::NumericVector >::type v(vSEXP);
     Rcpp::traits::input_parameter< Rcpp::NumericVector >::type w(wSEXP);
-    c_intersect_basis_tester(a, b, y, v, w);
-    return R_NilValue;
+    rcpp_result_gen = Rcpp::wrap(c_intersect_basis_tester(a, b, y, v, w));
+    return rcpp_result_gen;
 END_RCPP
 }
 // c_euclidean_to_radian_tester
