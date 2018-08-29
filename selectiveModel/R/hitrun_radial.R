@@ -18,8 +18,6 @@
   num_col <- burn_in + num_samp*lapse
   y_mat <- matrix(NA, nrow = length(y), ncol = num_samp)
   seq_idx <- burn_in + (1:num_samp)*lapse
-  polyhedra <- .remove_rows(polyhedra, .l2norm(y))
-
   prev_y <- y
 
   for(i in 1:num_col){
@@ -64,16 +62,4 @@
   stopifnot(.try_polyhedra(y_new, polyhedra))
 
   y_new
-}
-
-.remove_rows <- function(polyhedra, radius, tol = 1e-6){
-  bool <- sapply(1:length(polyhedra$u), function(x){
-    plane <- .plane(polyhedra$gamma[x,], polyhedra$u[x])
-    n <- ncol(polyhedra$gamma)
-    dis <- .distance_point_to_plane(rep(0, n), plane)
-    dis <= radius + tol
-  })
-
-  idx <- which(bool)
-  binseginf::polyhedra(polyhedra$gamma[idx,,drop = F], polyhedra$u[idx])
 }
