@@ -179,6 +179,15 @@ Rcpp::NumericMatrix c_form_interval(const Rcpp::NumericVector & a,
                                     const Rcpp::NumericVector & w){
   Plane plane = Plane(a, b);
   plane.c_intersect_basis(y, v, w);
+
+  Rcpp::NumericMatrix mat;
+  if(is_true(any(is_na(plane.a)))){
+    mat = Rcpp::no_init(1,2);
+    mat(0,0) = -c_pi()/2;
+    mat(0,1) = c_pi()/2;
+    return mat;
+  }
+
   Rcpp::NumericVector center = Rcpp::no_init(2);
   std::fill(center.begin(), center.end(), 0);
   int n = y.length();
@@ -190,7 +199,6 @@ Rcpp::NumericMatrix c_form_interval(const Rcpp::NumericVector & a,
   Circle circle = Circle(center, radius);
   double dis = plane.c_distance_point_to_plane(center);
 
-  Rcpp::NumericMatrix mat;
   if(dis >= radius){
     mat = Rcpp::no_init(1,2);
     mat(0,0) = -c_pi()/2;

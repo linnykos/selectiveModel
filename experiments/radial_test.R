@@ -59,7 +59,7 @@ res_list1 <- sapply(1:length(poly$u), function(x){
 })
 
 ### BRANCH INTO C-CODE
-# interval_list <- lapply(1:nrow(polyhedra$gamma), function(x){
-#   print(x)
-#   .c_form_interval(polyhedra$gamma[x,], polyhedra$u[x], y, v, w)
-# })
+interval_list <- lapply(1:nrow(polyhedra$gamma), function(x){
+  print(x)
+  c_form_interval(polyhedra$gamma[x,], polyhedra$u[x], y, v, w)
+})
