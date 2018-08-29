@@ -40,6 +40,7 @@ double c_euclidean_to_radian(const Circle & circle,
   return val;
 }
 
+// [[Rcpp::export]]
 double c_initial_theta(const Rcpp::NumericVector & y,
                        const Rcpp::NumericVector & v,
                        const Rcpp::NumericVector & w){
@@ -56,6 +57,7 @@ double c_initial_theta(const Rcpp::NumericVector & y,
   return val;
 }
 
+// [[Rcpp::export]]
 Rcpp::NumericVector c_basic_interval(const Rcpp::NumericVector & endpoints,
                                      const double & theta){
   if(endpoints.length() != 2){
