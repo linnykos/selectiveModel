@@ -27,7 +27,7 @@ test_that(".remove_nullspace_gaussian works", {
 test_that(".remove_nullspace_polyhedra works", {
   set.seed(10)
   y <- c(rep(0, 10), rep(1, 10)) +rnorm(20)
-  fit <- binseginf::binSeg_fixedSteps(y, 1)
+  fit <- binseginf::bsfs(y, 1)
   polyhedra <- binseginf::polyhedra(fit)
 
   segments <- .segments(20, binseginf::jumps(fit))
@@ -52,7 +52,7 @@ test_that(".remove_nullspace works", {
   n <- 10
   set.seed(10)
   y <- c(rep(0, n/2), rep(1, n/2)) + rnorm(n)
-  fit <- binseginf::binSeg_fixedSteps(y, 1)
+  fit <- binseginf::bsfs(y, 1)
   polyhedra <- binseginf::polyhedra(fit)
   gaussian <- .gaussian(rep(0, n), diag(n))
 
@@ -74,7 +74,7 @@ test_that(".remove_nullspace preserves the set of allowed vectors", {
   n <- 10
   set.seed(10)
   y <- rnorm(n)
-  fit <- binseginf::binSeg_fixedSteps(y, 1)
+  fit <- binseginf::bsfs(y, 1)
   polyhedra <- binseginf::polyhedra(fit)
   gaussian <- .gaussian(rep(0, n), diag(n))
 
@@ -106,7 +106,7 @@ test_that(".remove_nullspace has correct forward and backward translations", {
   n <- 10
   set.seed(10)
   y <- rnorm(n)
-  fit <- binseginf::binSeg_fixedSteps(y, 1)
+  fit <- binseginf::bsfs(y, 1)
   polyhedra <- binseginf::polyhedra(fit)
   gaussian <- .gaussian(rep(0, n), diag(n))
 
@@ -141,7 +141,7 @@ test_that(".whiten_polyhedra works", {
   n <- 10
   set.seed(10)
   y <- c(rep(0, n/2), rep(1, n/2)) + rnorm(n)
-  fit <- binseginf::binSeg_fixedSteps(y, 1)
+  fit <- binseginf::bsfs(y, 1)
   polyhedra <- binseginf::polyhedra(fit)
 
   sqrt_cov <- diag(n)
@@ -162,7 +162,7 @@ test_that(".whiten works", {
   n <- 10
   set.seed(10)
   y <- c(rep(0, n/2), rep(1, n/2)) + rnorm(n)
-  fit <- binseginf::binSeg_fixedSteps(y, 1)
+  fit <- binseginf::bsfs(y, 1)
   polyhedra <- binseginf::polyhedra(fit)
   gaussian <- .gaussian(rep(0, n), diag(n))
 
@@ -179,7 +179,7 @@ test_that(".whiten preserves the polyhedra", {
   n <- 10
   set.seed(10)
   y <- rnorm(n)
-  fit <- binseginf::binSeg_fixedSteps(y, 1)
+  fit <- binseginf::bsfs(y, 1)
   polyhedra <- binseginf::polyhedra(fit)
   cov_mat <- matrix(1, n, n)
   diag(cov_mat) <- 2
@@ -208,7 +208,7 @@ test_that(".remove_nullspace has correct forward and backward translations", {
   n <- 10
   set.seed(10)
   y <- rnorm(n)
-  fit <- binseginf::binSeg_fixedSteps(y, 1)
+  fit <- binseginf::bsfs(y, 1)
   polyhedra <- binseginf::polyhedra(fit)
   cov_mat <- matrix(1, n, n)
   diag(cov_mat) <- 2
@@ -246,7 +246,7 @@ test_that(".sampler_hit_run_line works", {
   set.seed(10)
   n <- 10
   y <- c(rep(0, n/2), rep(1, n/2)) + rnorm(n)
-  fit <- binseginf::binSeg_fixedSteps(y, 1)
+  fit <- binseginf::bsfs(y, 1)
   polyhedra <- binseginf::polyhedra(fit)
   gaussian <- .gaussian(rep(0, n), diag(n))
 
@@ -261,7 +261,7 @@ test_that(".sampler_hit_run_line gives the correct mean for no jumps", {
   set.seed(20)
   n <- 10
   y <- c(rep(0, n/2), rep(1, n/2)) + rnorm(n)
-  fit <- binseginf::binSeg_fixedSteps(y, 1)
+  fit <- binseginf::bsfs(y, 1)
   polyhedra <- binseginf::polyhedra(fit)
   gaussian <- .gaussian(rep(0, n), diag(n))
 
@@ -280,7 +280,7 @@ test_that(".sampler_hit_run_line gives points all in polyhedra", {
   set.seed(30)
   n <- 10
   y <- c(rep(0, n/2), rep(1, n/2)) + rnorm(n)
-  fit <- binseginf::binSeg_fixedSteps(y, 1)
+  fit <- binseginf::bsfs(y, 1)
   polyhedra <- binseginf::polyhedra(fit)
   gaussian <- .gaussian(rep(0, n), diag(n))
 

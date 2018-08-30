@@ -197,7 +197,7 @@ test_that(".sample_matrix_space gives the proper segments_full", {
   n <- 10
   set.seed(10)
   y <- rnorm(n)
-  fit <- binseginf::binSeg_fixedSteps(y, 1)
+  fit <- binseginf::bsfs(y, 1)
   polyhedra <- binseginf::polyhedra(fit)
   gaussian <- .gaussian(rep(0, n), diag(n))
 

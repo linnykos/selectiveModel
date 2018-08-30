@@ -5,7 +5,7 @@ context("Test hit and run, Radial")
 test_that(".hit_run_next_point_radial works", {
   set.seed(15)
   y <- rnorm(10)
-  obj <- binseginf::binSeg_fixedSteps(y, 2)
+  obj <- binseginf::bsfs(y, 2)
   poly <- binseginf::polyhedra(obj)
   segments <- .segments(length(y), jump_vec = binseginf::jumps(obj))
 
@@ -19,7 +19,7 @@ test_that(".hit_run_next_point_radial works", {
 test_that(".hit_run_next_point_radial gives a sample with the correct properties", {
   set.seed(10)
   y <- rnorm(10)
-  obj <- binseginf::binSeg_fixedSteps(y, 2)
+  obj <- binseginf::bsfs(y, 2)
   poly <- binseginf::polyhedra(obj)
   segments <- .segments(length(y), jump_vec = binseginf::jumps(obj))
 
@@ -37,7 +37,7 @@ test_that(".hit_run_next_point_radial gives a sample with the correct properties
 test_that(".sampler_hit_run_radial works", {
   set.seed(50)
   y <- rnorm(10)
-  obj <- binseginf::binSeg_fixedSteps(y, 2)
+  obj <- binseginf::bsfs(y, 2)
   poly <- binseginf::polyhedra(obj)
   segments <- .segments(length(y), jump_vec = binseginf::jumps(obj))
 
@@ -51,7 +51,7 @@ test_that(".sampler_hit_run_radial works", {
 test_that(".sampler_hit_run_radial preserves segment means", {
   set.seed(10)
   y <- rnorm(10)
-  obj <- binseginf::binSeg_fixedSteps(y, 2)
+  obj <- binseginf::bsfs(y, 2)
   poly <- binseginf::polyhedra(obj)
   segments <- .segments(length(y), jump_vec = binseginf::jumps(obj))
   seg_mean <- .segment_means(y, segments)
@@ -69,7 +69,7 @@ test_that(".sampler_hit_run_radial preserves segment means", {
 test_that(".sampler_hit_run_radial preserves l2norm", {
   set.seed(30)
   y <- rnorm(10)
-  obj <- binseginf::binSeg_fixedSteps(y, 2)
+  obj <- binseginf::bsfs(y, 2)
   poly <- binseginf::polyhedra(obj)
   segments <- .segments(length(y), jump_vec = binseginf::jumps(obj))
   norm1 <- .l2norm(y)
@@ -87,7 +87,7 @@ test_that(".sampler_hit_run_radial preserves l2norm", {
 test_that(".sampler_hit_run_radial are all in polyhedra", {
   set.seed(10)
   y <- rnorm(10)
-  obj <- binseginf::binSeg_fixedSteps(y, 2)
+  obj <- binseginf::bsfs(y, 2)
   poly <- binseginf::polyhedra(obj)
   segments <- .segments(length(y), jump_vec = binseginf::jumps(obj))
   seg_mean <- .segment_means(y, segments)

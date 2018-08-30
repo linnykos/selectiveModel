@@ -238,7 +238,7 @@ test_that("c_interval gives the correct answer", {
 test_that("c_form_interval works on one particular case", {
   set.seed(10)
   y <- rnorm(10)
-  obj <- binseginf::binSeg_fixedSteps(y, 2)
+  obj <- binseginf::bsfs(y, 2)
   poly <- binseginf::polyhedra(obj)
 
   v <- rnorm(10); w <- rnorm(10)
@@ -254,7 +254,7 @@ test_that("c_form_interval works on one particular case", {
 test_that("c_form_interval is correct", {
   set.seed(10)
   y <- rnorm(10)
-  obj <- binseginf::binSeg_fixedSteps(y, 2)
+  obj <- binseginf::bsfs(y, 2)
   poly <- binseginf::polyhedra(obj)
 
   v <- rnorm(10); w <- rnorm(10)

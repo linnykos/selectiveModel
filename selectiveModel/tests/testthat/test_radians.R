@@ -81,7 +81,7 @@ test_that(".radians_to_data preserves the l2 norm", {
 test_that(".try_polyhedra works", {
   set.seed(10)
   y <- rnorm(10)
-  obj <- binseginf::binSeg_fixedSteps(y, 2)
+  obj <- binseginf::bsfs(y, 2)
   poly <- binseginf::polyhedra(obj)
 
   y_mat <- matrix(rnorm(50), ncol = 5)
@@ -94,7 +94,7 @@ test_that(".try_polyhedra works", {
 test_that(".try_polyhedra corrects assess if y is in the polyhedra", {
   set.seed(10)
   y <- rnorm(5)
-  obj <- binseginf::binSeg_fixedSteps(y, 1)
+  obj <- binseginf::bsfs(y, 1)
   poly <- binseginf::polyhedra(obj)
 
   y_mat <- matrix(rnorm(500), ncol = 100)
@@ -105,7 +105,7 @@ test_that(".try_polyhedra corrects assess if y is in the polyhedra", {
   })
 
   bool_vec2 <- sapply(1:100, function(x){
-    obj2 <- binseginf::binSeg_fixedSteps(y_mat[,x], 1)
+    obj2 <- binseginf::bsfs(y_mat[,x], 1)
     all(all(binseginf::jumps(obj) == binseginf::jumps(obj2)),
         all(sign(binseginf::jump_cusum(obj)) == sign(binseginf::jump_cusum(obj2))))
   })
@@ -117,7 +117,7 @@ test_that(".try_polyhedra corrects assess if y is in the polyhedra", {
 test_that(".try_polyhedra works for a single vector", {
   set.seed(10)
   y <- rnorm(5)
-  obj <- binseginf::binSeg_fixedSteps(y, 1)
+  obj <- binseginf::bsfs(y, 1)
   poly <- binseginf::polyhedra(obj)
   y_new <- rnorm(5)
 
@@ -129,7 +129,7 @@ test_that(".try_polyhedra works for a single vector", {
 test_that(".try_polyhedra can FALSE when fixing l2 norm", {
   set.seed(10)
   y <- rnorm(10)
-  obj <- binseginf::binSeg_fixedSteps(y, 2)
+  obj <- binseginf::bsfs(y, 2)
   poly <- binseginf::polyhedra(obj)
 
   v <- rnorm(10); w <- rnorm(10)
@@ -150,7 +150,7 @@ test_that(".try_polyhedra can FALSE when fixing l2 norm", {
 test_that(".range_theta_polyhedra works", {
   set.seed(10)
   y <- rnorm(10)
-  obj <- binseginf::binSeg_fixedSteps(y, 2)
+  obj <- binseginf::bsfs(y, 2)
   poly <- binseginf::polyhedra(obj)
 
   v <- rnorm(10); w <- rnorm(10)

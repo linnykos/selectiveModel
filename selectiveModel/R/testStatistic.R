@@ -6,9 +6,9 @@
 #'
 #' @return \code{bsFs} object with one more jump
 #' @export
-next_jump.bsFs <- function(obj, y, ...){
+next_jump.bsfs <- function(obj, y, ...){
   num_steps <- obj$numSteps
-  binseginf::binSeg_fixedSteps(y, num_steps+1)
+  binseginf::bsfs(y, num_steps+1)
 }
 
 #' Compute distance of next jump
