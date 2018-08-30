@@ -14,7 +14,6 @@
   stopifnot(abs(.l2norm(v) - 1) < 1e-4,  abs(.l2norm(w) - 1) < 1e-4, abs(v%*%w) < 1e-4)
 
   interval_list <- lapply(1:nrow(polyhedra$gamma), function(x){
-    print(paste0("Row: ", x))
     .c_form_interval(polyhedra$gamma[x,], polyhedra$u[x], y, v, w)
   })
 

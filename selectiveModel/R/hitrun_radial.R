@@ -21,9 +21,6 @@
   prev_y <- y
 
   for(i in 1:num_col){
-    Sys.sleep(0.05)
-    print(paste0(i , " in ", num_col, ": ", round(prev_y[1],3)))
-
     next_y <- .hit_run_next_point_radial(prev_y, segments, polyhedra)
     if(i %in% seq_idx){
       y_mat[,which(seq_idx == i)] <- next_y
