@@ -6,13 +6,14 @@ func <- function(i){
   print(i)
   set.seed(i)
   y <- rnorm(6)
-  fit_method <- function(y){binSegInf::binSeg_fixedSteps(y, 1)}
+  fit_method <- function(x){binseginf::bsfs(x, numSteps = 1)}
+  test_func <- selectiveModel::segment_difference
+  num_samp <- 2000
+  cores <- NA
 
-  res <- selected_model_inference(y, fit_method,
-                                  test_func = selectiveModel::segment_difference,
-                                  verbose = F, cores = NA,
-                                  num_samp = 250, sigma = 1, ignore_jump = 1,
-                                  param = list(burn_in = 7500, lapse = 10, time_limit = 600))
+  res <- selected_model_inference(y, fit_method = fit_method, test_func = test_func,
+                                  num_samp = num_samp, ignore_jump = 1,
+                                  cores = cores, verbose = F, param = list(burn_in = 2000, lapse = 1))
   res$pval
 }
 

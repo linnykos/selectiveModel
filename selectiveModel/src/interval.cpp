@@ -25,8 +25,8 @@ double c_euclidean_to_radian(const Circle & circle,
   tmp = circle.center[1];
   double circle2 = Rcpp::as<double>(tmp);
 
-  if(fabs(pow(point1 - circle1, 2) + pow(point2 - circle2, 2)) -
-     pow(circle.radius, 2) > 1e-6) {
+  if(pow(point1 - circle1, 2) + pow(point2 - circle2, 2) -
+     pow(circle.radius, 2) > 1e-3) {
     throw std::runtime_error("point not on circle");
   }
   double val;
@@ -165,8 +165,16 @@ Rcpp::NumericMatrix c_partition_interval(const Rcpp::NumericVector & interval){
 // [[Rcpp::export]]
 Rcpp::NumericMatrix c_interval(const Rcpp::NumericVector & endpoints,
                                const double & initial_theta){
-  Rcpp::NumericVector interval = c_basic_interval(endpoints, initial_theta);
-  Rcpp::NumericMatrix mat = c_partition_interval(interval);
+  Rcpp::NumericMatrix mat;
+
+  if(is_true(any(is_na(endpoints)))){
+    mat = Rcpp::no_init(1,2);
+    mat(0,0) = -c_pi()/2;
+    mat(0,1) = c_pi()/2;
+  } else {
+    Rcpp::NumericVector interval = c_basic_interval(endpoints, initial_theta);
+    mat = c_partition_interval(interval);
+  }
 
   return mat;
 }
@@ -177,6 +185,7 @@ Rcpp::NumericMatrix c_form_interval(const Rcpp::NumericVector & a,
                                     const Rcpp::NumericVector & y,
                                     const Rcpp::NumericVector & v,
                                     const Rcpp::NumericVector & w){
+
   Plane plane = Plane(a, b);
   plane.c_intersect_basis(y, v, w);
 
