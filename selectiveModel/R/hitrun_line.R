@@ -18,7 +18,7 @@
   #flip the slack to accommodate our setting
   slack <- -new_polyhedra$gamma %*% start_z + new_polyhedra$u
 
-  z_sample <- sample_truncnorm_white(start_z, slack, t(directions),
+  z_sample <- .c_sample_truncnorm_white(start_z, slack, t(directions),
                                    alphas, burn_in, num_samp)
 
   apply(z_sample, 2, function(x){

@@ -4,7 +4,8 @@ Version: 0.0.0.9000
 Authors@R: person("First", "Last", email = "first.last@example.com", role = c("aut", "cre"))
 Description: What the package does (one paragraph).
 Depends:
-    R (>= 3.3.0)
+    R (>= 3.3.0),
+    Rcpp (>= 0.12.18)
 License: MIT +file LICENSE
 NeedsCompilation: yes
 Encoding: UTF-8
@@ -16,7 +17,7 @@ Imports:
     doMC,
     lpSolve,
     Matrix,
-    Rcpp (>= 0.12.17)
+    methods
 Suggests:
     testthat
 RoxygenNote: 6.0.1

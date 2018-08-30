@@ -57,9 +57,6 @@ selected_model_inference <- function(y, fit_method,
       samples <- .sampler_hit_run_radial(y, segments, polyhedra, num_samp = num_samp,
                                          burn_in = param$burn_in, lapse = param$lapse,
                                          verbose = verbose)
-    } else if(sample_method == "rejection") {
-      samples <- .sampler_rejection_radial(y, segments, polyhedra, num_samp = num_samp,
-                                           cores = cores, verbose = verbose)
     } else {
       stop("sample_method not appropriate")
     }

@@ -65,7 +65,7 @@ test_that(".segment_means returns the proper means", {
 test_that("selected_model_inference works", {
   set.seed(10)
   y <- c(rep(0, 10), rep(1, 10)) + 0.01*rnorm(20)
-  fit_method <- function(y){binseginf::binSeg_fixedSteps(y, 1)}
+  fit_method <- function(y){binseginf::bsfs(y, 1)}
   res <- selected_model_inference(y, fit_method, num_samp = 10, verbose = F,
                                   param = list(burn_in = 10))
 
@@ -81,7 +81,7 @@ test_that("selected_model_inference works", {
 test_that("selected_model_inference works for known sigma", {
   set.seed(10)
   y <- c(rep(0, 10), rep(1, 10)) + 0.01*rnorm(20)
-  fit_method <- function(y){binseginf::binSeg_fixedSteps(y, 1)}
+  fit_method <- function(y){binseginf::bsfs(y, 1)}
   res <- selected_model_inference(y, fit_method, sigma = 1, num_samp = 10, verbose = F,
                                   param = list(burn_in = 10))
 
@@ -95,7 +95,7 @@ test_that("selected_model_inference works for known sigma", {
 })
 
 test_that("selected_model_inference works reasonably relatively for hit run", {
-  fit_method <- function(y){binseginf::binSeg_fixedSteps(y, 1)}
+  fit_method <- function(y){binseginf::bsfs(y, 1)}
 
   set.seed(10)
   y1 <- c(rep(0, 10), rep(5, 10)) + 0.01*rnorm(20)
@@ -110,28 +110,10 @@ test_that("selected_model_inference works reasonably relatively for hit run", {
   expect_true(res1$pval > res2$pval)
 })
 
-test_that("selected_model_inference works reasonably relatively for rejection", {
-  fit_method <- function(y){binseginf::binSeg_fixedSteps(y, 1)}
-
-  set.seed(10)
-  y1 <- c(rep(0, 5), rep(5, 5)) + 0.01*rnorm(20)
-  res1 <- selected_model_inference(y1, fit_method, sample_method = "rejection",
-                                   num_samp = 15, verbose = F,
-                                   param = list(burn_in = 10))
-
-  set.seed(10)
-  y2 <- c(rep(0, 2), rep(1, 3), rep(5, 5)) + 0.01*rnorm(10)
-  res2 <- selected_model_inference(y2, fit_method, sample_method = "rejection",
-                                   num_samp = 15, verbose = F,
-                                   param = list(burn_in = 10))
-
-  expect_true(res1$pval > res2$pval)
-})
-
 test_that("selected_model_inference works for one problem case", {
   set.seed(77)
   y <- rnorm(20)
-  fit_method <- function(y){binseginf::binSeg_fixedSteps(y, 1)}
+  fit_method <- function(y){binseginf::bsfs(y, 1)}
 
   res <- selected_model_inference(y, fit_method, verbose = F, cores = NA,
                                   num_samp = 50,
@@ -143,7 +125,7 @@ test_that("selected_model_inference works for one problem case", {
 test_that("selected_model_inference works for one problem case", {
   set.seed(238)
   y <- rnorm(20)
-  fit_method <- function(y){binseginf::binSeg_fixedSteps(y, 1)}
+  fit_method <- function(y){binseginf::bsfs(y, 1)}
 
   res <- selected_model_inference(y, fit_method, verbose = F, cores = NA,
                                   num_samp = 50,

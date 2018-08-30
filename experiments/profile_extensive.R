@@ -5,7 +5,7 @@ for(n in n_vec){
   set.seed(10)
   k <- 2
   dat <- rnorm(n)
-  fit_method <- function(x){binSegInf::binSeg_fixedSteps(x, numSteps = k)}
+  fit_method <- function(x){binseginf::bsfs(x, numSteps = k)}
   test_func <- selectiveModel::segment_difference
   num_samp <- 2000
   cores <- NA
@@ -21,5 +21,5 @@ for(n in n_vec){
                                cores = cores, verbose = F, param = list(burn_in = 2000, lapse = 1))
     }
   })
-  htmlwidgets::saveWidget(p, paste0("../experiments/profile_n_", n, "_k_", k, ".html"))
+  htmlwidgets::saveWidget(p, paste0("../experiments/profile_n_", n, "_k_", k, "_cpp.html"))
 }

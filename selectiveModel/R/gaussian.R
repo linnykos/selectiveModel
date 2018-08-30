@@ -7,26 +7,6 @@
   structure(list(mean = mean, covariance = covariance), class = "gaussian")
 }
 
-#' Compute the density of a Gaussian transformed
-#'
-#' Shifts the mean of a Gaussian and rotations the density
-#'
-#' @param gaussian a \code{gaussian} object
-#' @param shift vector
-#' @param rotation square matrix
-#'
-#' @return a \code{gaussian} object
-#' @source \url{https://en.wikipedia.org/wiki/Covariance_matrix#Basic_properties}
-.transform_gaussian <- function(gaussian, shift, rotation){
-  stopifnot(length(gaussian$mean) == length(shift))
-  stopifnot(all(dim(gaussian$covariance) == dim(gaussian$rotation)))
-
-  mean <- as.numeric(rotation%*%(gaussian$mean - shift))
-  covariance <- rotation%*%gaussian$covariance%*%t(rotation)
-
-  .gaussian(mean, covariance)
-}
-
 #' Compute the conditional density of a Gaussian distribution
 #'
 #' If \code{val} is length \code{k} long, then this function returns the
@@ -51,85 +31,4 @@
     gaussian$covariance[1:len, (len+1):d, drop = F] %*% inv %*% t(gaussian$covariance[1:len, (len+1):d, drop = F])
 
   .gaussian(mean = as.numeric(mean), covariance = cov)
-}
-
-#' Sample from a truncated gaussian
-#'
-#' This only works for one-dimensional Gaussian distributions
-#'
-#' @param gaussian a \code{gaussian} object
-#' @param lower numeric
-#' @param upper numeric
-#'
-#' @return numeric
-#' @source \url{https://arxiv.org/pdf/0907.4010.pdf}
-.sampler_truncated_gaussian <- function(gaussian, lower, upper){
-  stopifnot(length(gaussian$mean) == 1, length(gaussian$covariance) == 1)
-
-  lower <- (lower - gaussian$mean)/sqrt(gaussian$covariance)
-  upper <- (upper - gaussian$mean)/sqrt(gaussian$covariance)
-
-  # one-sided fix
-  if(is.infinite(lower) | is.infinite(upper)){
-
-    if(is.infinite(lower) & is.infinite(upper)){
-      return(sqrt(gaussian$covariance)*stats::rnorm(1)+gaussian$mean)
-    }
-
-    if(is.infinite(upper)){
-      z <- .sampler_truncated_gaussian_onesided(lower)
-    } else {
-      z <- -1*.sampler_truncated_gaussian_onesided(-upper)
-    }
-  } else {
-    z <- .sampler_truncated_gaussian_twosided(lower, upper)
-  }
-
-  as.numeric(sqrt(gaussian$covariance)*z+gaussian$mean)
-}
-
-.sampler_truncated_gaussian_onesided <- function(lower, limit = 2){
-  if(lower < limit){
-    while(TRUE){
-      z <- stats::rnorm(1)
-      if(z >= lower) break()
-    }
-  } else {
-    astar <- (lower + sqrt(lower^2+4))/2
-    while(TRUE){
-      z <- stats::rexp(1, astar) + lower
-      thres <- exp(-(z - astar)^2/2)
-      u <- stats::runif(1)
-
-      if(u <= thres) break()
-    }
-  }
-
-  z
-}
-
-.sampler_truncated_gaussian_twosided <- function(lower, upper, limit = 2){
-  if(abs(lower) <= limit & abs(upper) <= limit){
-    while(TRUE){
-      z <- stats::rnorm(1)
-      if(z >= lower & z <= upper) break()
-    }
-  } else {
-    while(TRUE){
-      z <- stats::runif(1, lower, upper)
-
-      if(0 >= lower & 0 <= upper){
-        thres <- exp(-z^2/2)
-      } else if(upper < 0){
-        thres <- exp((upper^2 - z^2)/2)
-      } else {
-        thres <- exp((lower^2 - z^2)/2)
-      }
-
-      u <- stats::runif(1)
-      if(u <= thres) break()
-    }
-  }
-
-  z
 }

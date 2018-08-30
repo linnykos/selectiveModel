@@ -1,8 +1,7 @@
-#include <Rcpp.h>
-using namespace Rcpp;
+#include "radians.h"
 
 // [[Rcpp::export]]
-Rcpp::NumericVector unique_sort_native(const Rcpp::NumericVector & x) {
+Rcpp::NumericVector c_unique_sort_native(const Rcpp::NumericVector & x) {
   Rcpp::NumericVector res = Rcpp::clone(x);
   res.sort(false);
 
@@ -15,9 +14,9 @@ Rcpp::NumericVector unique_sort_native(const Rcpp::NumericVector & x) {
 }
 
 // [[Rcpp::export]]
-Rcpp::NumericVector construct_midpoints(const Rcpp::NumericVector & x) {
+Rcpp::NumericVector c_construct_midpoints(const Rcpp::NumericVector & x) {
   int n = x.size();
-  Rcpp::NumericVector res = no_init(2*n-1);
+  Rcpp::NumericVector res = Rcpp::no_init(2*n-1);
 
   for(int i = 0; i < n-1; i++){
     res[2*i] = x[i];
@@ -31,7 +30,7 @@ Rcpp::NumericVector construct_midpoints(const Rcpp::NumericVector & x) {
 
 // from https://stackoverflow.com/questions/23849354/equivalent-of-which-function-in-rcpp
 // [[Rcpp::export]]
-Rcpp::IntegerVector which_native(const Rcpp::LogicalVector & x) {
+Rcpp::IntegerVector c_which_native(const Rcpp::LogicalVector & x) {
   int nx = x.size();
   std::vector<int> y;
   y.reserve(nx);
@@ -40,11 +39,11 @@ Rcpp::IntegerVector which_native(const Rcpp::LogicalVector & x) {
     if (x[i]) y.push_back(i+1);
   }
 
-  return wrap(y);
+  return Rcpp::wrap(y);
 }
 
 // [[Rcpp::export]]
-Rcpp::IntegerMatrix consecutive_true(const Rcpp::LogicalVector & vec){
+Rcpp::IntegerMatrix c_consecutive_true(const Rcpp::LogicalVector & vec){
   int n = vec.size();
   Rcpp::LogicalVector vec2 = Rcpp::clone(vec);
 
@@ -53,7 +52,7 @@ Rcpp::IntegerMatrix consecutive_true(const Rcpp::LogicalVector & vec){
     vec2[i] = (vec[i] && (vec[i-1] || vec[i+1]));
   }
 
-  Rcpp::IntegerVector idx = which_native(vec2);
+  Rcpp::IntegerVector idx = c_which_native(vec2);
   Rcpp::IntegerVector idx_plus = idx + 1;
   Rcpp::IntegerVector idx_minus = idx - 1;
 
@@ -73,7 +72,7 @@ Rcpp::IntegerMatrix consecutive_true(const Rcpp::LogicalVector & vec){
 
 // from https://stackoverflow.com/questions/30175104/how-to-effectively-combine-a-list-of-numericvectors-into-one-large-numericvector
 // [[Rcpp::export]]
-Rcpp::NumericVector unlist_native(const Rcpp::List & list) {
+Rcpp::NumericVector c_unlist_native(const Rcpp::List & list) {
   int n = list.size();
 
   // Figure out the length of the output vector
@@ -82,7 +81,7 @@ Rcpp::NumericVector unlist_native(const Rcpp::List & list) {
     total_length += Rf_length(list[i]);
 
   // Allocate the vector
-  Rcpp::NumericVector output = no_init(total_length);
+  Rcpp::NumericVector output = Rcpp::no_init(total_length);
 
   // Loop and fill
   int index = 0;
@@ -99,14 +98,16 @@ Rcpp::NumericVector unlist_native(const Rcpp::List & list) {
 }
 
 // [[Rcpp::export]]
-Rcpp::LogicalVector theta_in_matrix(const double & x,
+Rcpp::LogicalVector c_theta_in_matrix(const double & x,
                                     const Rcpp::NumericMatrix & mat) {
   int nrow = mat.nrow();
-  Rcpp::LogicalVector result(1);
+  Rcpp::LogicalVector result = Rcpp::no_init(1);
   result[0] = FALSE;
 
+  Rcpp::NumericVector mat0; Rcpp::NumericVector mat1;
   for(int i = 0; i < nrow; i++){
-    if((double) mat(i,0) <= x && x <= (double) mat(i,1)) {
+    mat0 = mat(i,0); mat1 = mat(i,1);
+    if(Rcpp::as<double>(mat0) <= x && x <= Rcpp::as<double>(mat1)) {
       result[0] = TRUE;
       return result;
     }
@@ -116,16 +117,16 @@ Rcpp::LogicalVector theta_in_matrix(const double & x,
 }
 
 // [[Rcpp::export]]
-Rcpp::LogicalVector theta_in_all_matrix(const double & x,
+Rcpp::LogicalVector c_theta_in_all_matrix(const double & x,
                                         const Rcpp::List & list) {
 
   int n = list.size();
-  Rcpp::LogicalVector result(1);
+  Rcpp::LogicalVector result = Rcpp::no_init(1);
   result[0] = TRUE;
 
   for(int i = 0; i < n; i++){
-    Rcpp::NumericMatrix mat = as<Rcpp::NumericMatrix>(list[i]);
-    Rcpp::LogicalVector boolean = theta_in_matrix(x, mat);
+    Rcpp::NumericMatrix mat = Rcpp::as<Rcpp::NumericMatrix>(list[i]);
+    Rcpp::LogicalVector boolean = c_theta_in_matrix(x, mat);
     if(boolean[0] == FALSE) {
       result[0] = FALSE;
       return result;
@@ -136,24 +137,24 @@ Rcpp::LogicalVector theta_in_all_matrix(const double & x,
 }
 
 // [[Rcpp::export]]
-Rcpp::NumericMatrix intersect_intervals_simult(const Rcpp::List & list){
+Rcpp::NumericMatrix c_intersect_intervals(const Rcpp::List & list){
 
-  Rcpp::NumericVector vec = unlist_native(list);
-  vec = unique_sort_native(vec);
+  Rcpp::NumericVector vec = c_unlist_native(list);
+  vec = c_unique_sort_native(vec);
 
-  vec = construct_midpoints(vec);
+  vec = c_construct_midpoints(vec);
   int n = vec.size();
   Rcpp::LogicalVector boolean(n);
 
   for(int i = 0; i < n; i++){
-    Rcpp::LogicalVector tmp = theta_in_all_matrix(vec[i], list);
+    Rcpp::LogicalVector tmp = c_theta_in_all_matrix(vec[i], list);
 
     boolean[i] = tmp[0];
   }
 
-  Rcpp::IntegerMatrix idx = consecutive_true(boolean);
+  Rcpp::IntegerMatrix idx = c_consecutive_true(boolean);
   int nrow = idx.nrow();
-  Rcpp::NumericMatrix result(nrow, 2);
+  Rcpp::NumericMatrix result = Rcpp::no_init(nrow, 2);
 
   for(int i = 0; i < nrow; i++){
     result(i,0) = vec[idx(i,0)-1];

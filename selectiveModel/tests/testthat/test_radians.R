@@ -35,52 +35,6 @@ test_that(".radius is cyclical with period pi, as negatives", {
   expect_true(all(bool_vec))
 })
 
-################################
-
-## .initial_theta is correct
-
-test_that(".initial_theta works", {
-  set.seed(10)
-  y <- rnorm(10)
-  v <- rnorm(10); w <- rnorm(10)
-  v <- v/.l2norm(v)
-  w <- .projection(w, v); w <- w/.l2norm(w)
-
-  res <- .initial_theta(y, v, w)
-
-  expect_true(is.numeric(res))
-  expect_true(!is.matrix(res))
-  expect_true(length(res) == 1)
-  expect_true(res <= pi/2)
-  expect_true(res >= -pi/2)
-})
-
-test_that(".initial_theta gives a radius of 0", {
-  set.seed(10)
-  y <- rnorm(10)
-  v <- rnorm(10); w <- rnorm(10)
-  v <- v/.l2norm(v)
-  w <- .projection(w, v); w <- w/.l2norm(w)
-  theta <- .initial_theta(y, v, w)
-
-  radius <- .radius(theta, y, v, w)
-
-  expect_true(abs(radius) < 1e-6)
-})
-
-test_that(".initial_theta gives the proper theta", {
-  set.seed(10)
-  y <- rnorm(10)
-  v <- rnorm(10); w <- rnorm(10)
-  v <- v/.l2norm(v)
-  w <- .projection(w, v); w <- w/.l2norm(w)
-  theta <- .initial_theta(y, v, w)
-
-  res <- .radians_to_data(theta, y, v, w)
-
-  expect_true(sum(abs(y - res)) < 1e-6)
-})
-
 ###########################
 
 ## .radians_to_data is correct
@@ -127,7 +81,7 @@ test_that(".radians_to_data preserves the l2 norm", {
 test_that(".try_polyhedra works", {
   set.seed(10)
   y <- rnorm(10)
-  obj <- binseginf::binSeg_fixedSteps(y, 2)
+  obj <- binseginf::bsfs(y, 2)
   poly <- binseginf::polyhedra(obj)
 
   y_mat <- matrix(rnorm(50), ncol = 5)
@@ -140,7 +94,7 @@ test_that(".try_polyhedra works", {
 test_that(".try_polyhedra corrects assess if y is in the polyhedra", {
   set.seed(10)
   y <- rnorm(5)
-  obj <- binseginf::binSeg_fixedSteps(y, 1)
+  obj <- binseginf::bsfs(y, 1)
   poly <- binseginf::polyhedra(obj)
 
   y_mat <- matrix(rnorm(500), ncol = 100)
@@ -151,7 +105,7 @@ test_that(".try_polyhedra corrects assess if y is in the polyhedra", {
   })
 
   bool_vec2 <- sapply(1:100, function(x){
-    obj2 <- binseginf::binSeg_fixedSteps(y_mat[,x], 1)
+    obj2 <- binseginf::bsfs(y_mat[,x], 1)
     all(all(binseginf::jumps(obj) == binseginf::jumps(obj2)),
         all(sign(binseginf::jump_cusum(obj)) == sign(binseginf::jump_cusum(obj2))))
   })
@@ -163,7 +117,7 @@ test_that(".try_polyhedra corrects assess if y is in the polyhedra", {
 test_that(".try_polyhedra works for a single vector", {
   set.seed(10)
   y <- rnorm(5)
-  obj <- binseginf::binSeg_fixedSteps(y, 1)
+  obj <- binseginf::bsfs(y, 1)
   poly <- binseginf::polyhedra(obj)
   y_new <- rnorm(5)
 
@@ -175,7 +129,7 @@ test_that(".try_polyhedra works for a single vector", {
 test_that(".try_polyhedra can FALSE when fixing l2 norm", {
   set.seed(10)
   y <- rnorm(10)
-  obj <- binseginf::binSeg_fixedSteps(y, 2)
+  obj <- binseginf::bsfs(y, 2)
   poly <- binseginf::polyhedra(obj)
 
   v <- rnorm(10); w <- rnorm(10)
@@ -196,7 +150,7 @@ test_that(".try_polyhedra can FALSE when fixing l2 norm", {
 test_that(".range_theta_polyhedra works", {
   set.seed(10)
   y <- rnorm(10)
-  obj <- binseginf::binSeg_fixedSteps(y, 2)
+  obj <- binseginf::bsfs(y, 2)
   poly <- binseginf::polyhedra(obj)
 
   v <- rnorm(10); w <- rnorm(10)
@@ -207,121 +161,4 @@ test_that(".range_theta_polyhedra works", {
 
   expect_true(is.numeric(res))
   expect_true(is.matrix(res))
-})
-
-##########################
-
-## .euclidean_to_radian is correct
-
-test_that(".euclidean_to_radian works", {
-  circle <- .circle(center = c(1,1), radius = sqrt(2))
-  point <- c(1,1+sqrt(2))
-  res <- .euclidean_to_radian(circle, point)
-
-  expect_true(is.numeric(res))
-  expect_true(!is.matrix(res))
-  expect_true(length(res) == 1)
-  expect_true(res <= pi/2)
-  expect_true(res >= -pi/2)
-})
-
-test_that(".euclidean_to_radian works with the origin", {
-  circle <- .circle(center = c(1,1), radius = sqrt(2))
-  point <- c(0,0)
-  res <- .euclidean_to_radian(circle, point)
-
-  expect_true(abs(2*(sin(res)*1+ cos(res)*1)) < 1e-6)
-})
-
-test_that(".euclidean_to_radian returns the correct theta", {
-  trials <- 100
-  bool_vec <- sapply(1:trials, function(x){
-    center <- rnorm(2)
-    circle <- .circle(center = center, radius = sqrt(sum(center^2)))
-    rad <- runif(1, -2*pi, 2*pi)
-    point <- 2*(sin(rad)*center[1] + cos(rad)*center[2])*c(sin(rad), cos(rad))
-
-    res <- .euclidean_to_radian(circle, point)
-    point2 <- 2*(sin(res)*center[1] + cos(res)*center[2])*c(sin(res), cos(res))
-
-    ifelse(.l2norm(point - point2) < 1e-6, TRUE, FALSE)
-  })
-
-  expect_true(all(bool_vec))
-})
-
-test_that(".euclidean_to_radian works with .intersect_circle_line", {
-  set.seed(10)
-  plane <- .plane(rnorm(2), b = 0)
-  center <- rnorm(2)
-  circle <- .circle(center = center, radius = sqrt(sum(center^2)))
-  points <- .intersect_circle_line(plane, circle)
-
-  theta <- apply(points, 2, function(x){
-    .euclidean_to_radian(circle, x)
-  })
-
-  bool_vec <- apply(points, 2, function(x){ #check to be on plane.
-    abs(plane$a %*%x - plane$b) < 1e-16
-  })
-  expect_true(all(bool_vec))
-
-  bool_vec <- apply(points, 2, function(x){ #check to be on plane
-    abs(.l2norm(x - circle$center) - circle$radius) < 1e-6
-  })
-  expect_true(all(bool_vec))
-
-  expect_true(all(theta <= pi/2))
-  expect_true(all(theta >= -pi/2))
-  expect_true(is.numeric(theta))
-  expect_true(length(theta) == 2)
-})
-
-#######################
-
-## .partition_interval is correct
-
-test_that(".partition_interval works", {
-  res <- .partition_interval(c(pi/4, pi/3))
-
-  expect_true(is.matrix(res))
-  expect_true(is.numeric(res))
-  expect_true(ncol(res) == 2)
-})
-
-test_that(".partition_interval works when endpoints are different signs, no wrap-around", {
-  res <- .partition_interval(c(-pi/3, pi/4))
-
-  expect_true(all(dim(res) == c(2,2)))
-  expect_true(all(res[1,] == c(-pi/3, 0)))
-  expect_true(all(res[2,] == c(0, pi/4)))
-})
-
-test_that(".partition_interval works when endpoints are different signs, yes wrap-around", {
-  res <- .partition_interval(c(pi/3, 3*pi/4))
-
-  expect_true(all(dim(res) == c(2,2)))
-  expect_true(all(res[1,] == c(-pi/2, -pi/4)))
-  expect_true(all(res[2,] == c(pi/3, pi/2)))
-
-  res <- .partition_interval(c(-3*pi/4, -pi/3))
-
-  expect_true(all(dim(res) == c(2,2)))
-  expect_true(all(res[1,] == c(-pi/2, -pi/3)))
-  expect_true(all(res[2,] == c(pi/4, pi/2)))
-})
-
-test_that(".partition_interval works when endpoints are same signs, yes wrap-around", {
-  res <- .partition_interval(c(-7*pi/6, -pi/3))
-
-  expect_true(all(dim(res) == c(3,2)))
-  expect_true(sum(abs(res[1,] - c(-pi/2, -pi/3))) < 1e-6)
-  expect_true(sum(abs(res[2,] - c(-pi/6, 0))) < 1e-6)
-  expect_true(sum(abs(res[3,] - c(0, pi/2))) < 1e-6)
-
-  res <- .partition_interval(c(pi/3, 7*pi/6))
-  expect_true(all(dim(res) == c(3,2)))
-  expect_true(sum(abs(res[1,] - c(-pi/2, 0))) < 1e-6)
-  expect_true(sum(abs(res[2,] - c(0, pi/6))) < 1e-6)
-  expect_true(sum(abs(res[3,] - c(pi/3, pi/2))) < 1e-6)
 })
