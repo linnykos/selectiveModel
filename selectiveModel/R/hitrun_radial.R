@@ -19,9 +19,10 @@
   y_mat <- matrix(NA, nrow = length(y), ncol = num_samp)
   seq_idx <- burn_in + (1:num_samp)*lapse
   prev_y <- y
+  null_mat <- .compute_nullspace(segments)
 
   for(i in 1:num_col){
-    next_y <- .hit_run_next_point_radial(prev_y, segments, polyhedra)
+    next_y <- .hit_run_next_point_radial(prev_y, null_mat, polyhedra)
     if(i %in% seq_idx){
       y_mat[,which(seq_idx == i)] <- next_y
     }
@@ -42,10 +43,8 @@
 #' @param polyhedra \code{polyhedra} object
 #'
 #' @return vector
-.hit_run_next_point_radial <- function(y, segments, polyhedra){
-  stopifnot(ncol(segments) == length(y))
-
-  tmp <- .sample_matrix_space(segments, 2, null = T)
+.hit_run_next_point_radial <- function(y, null_mat, polyhedra){
+  tmp <- .sample_two_vectors(null_mat)
   v <- tmp[,1]; w <- tmp[,2]
   interval <- .range_theta_polyhedra(y, v, w, polyhedra)
 

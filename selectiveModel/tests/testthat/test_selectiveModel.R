@@ -67,7 +67,7 @@ test_that("selected_model_inference works", {
   y <- c(rep(0, 10), rep(1, 10)) + 0.01*rnorm(20)
   fit_method <- function(y){binseginf::bsfs(y, 1)}
   res <- selected_model_inference(y, fit_method, num_samp = 10, verbose = F,
-                                  param = list(burn_in = 10))
+                                  ignore_jump = 1, param = list(burn_in = 10))
 
   expect_true(length(res) == 3)
   expect_true(all(names(res) == c("pval", "test_stat", "null_stat")))
@@ -95,19 +95,24 @@ test_that("selected_model_inference works for known sigma", {
 })
 
 test_that("selected_model_inference works reasonably relatively for hit run", {
-  fit_method <- function(y){binseginf::bsfs(y, 1)}
+  fit_method <- function(x){binseginf::bsfs(x, numSteps = 1)}
+  test_func <- selectiveModel::segment_difference
+  num_samp <- 500
+  cores <- NA
 
   set.seed(10)
-  y1 <- c(rep(0, 10), rep(5, 10)) + 0.01*rnorm(20)
-  res1 <- selected_model_inference(y1, fit_method, num_samp = 50, verbose = F,
-                                   param = list(burn_in = 10))
+  y1 <- c(rep(0, 3), rep(5, 3)) + rnorm(6)
+  res1 <- selected_model_inference(y1, fit_method = fit_method, test_func = test_func,
+                                   num_samp = num_samp, ignore_jump = 1,
+                                   cores = cores, verbose = F, param = list(burn_in = 2000, lapse = 1))
+
 
   set.seed(10)
-  y2 <- c(rep(0, 5), rep(1, 5), rep(5, 10)) + 0.01*rnorm(20)
+  y2 <- rep(0, 6) + rnorm(6)
   res2 <- selected_model_inference(y2, fit_method, num_samp = 50, verbose = F,
                                    param = list(burn_in = 10))
 
-  expect_true(res1$pval > res2$pval)
+  expect_true(res1$pval < res2$pval)
 })
 
 test_that("selected_model_inference works for one problem case", {

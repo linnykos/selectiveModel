@@ -9,7 +9,8 @@ test_that(".hit_run_next_point_radial works", {
   poly <- binseginf::polyhedra(obj)
   segments <- .segments(length(y), jump_vec = binseginf::jumps(obj))
 
-  res <- .hit_run_next_point_radial(y, segments, poly)
+  null_mat <- .compute_nullspace(segments)
+  res <- .hit_run_next_point_radial(y, null_mat, poly)
 
   expect_true(is.numeric(res))
   expect_true(!is.matrix(res))
@@ -23,7 +24,8 @@ test_that(".hit_run_next_point_radial gives a sample with the correct properties
   poly <- binseginf::polyhedra(obj)
   segments <- .segments(length(y), jump_vec = binseginf::jumps(obj))
 
-  res <- .hit_run_next_point_radial(y, segments, poly)
+  null_mat <- .compute_nullspace(segments)
+  res <- .hit_run_next_point_radial(y, null_mat, poly)
 
   expect_true(sum(abs(.segment_means(y, segments) -
                         .segment_means(res, segments))) < 1e-6)

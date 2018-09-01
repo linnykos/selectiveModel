@@ -32,11 +32,11 @@
 #' @return quantile
 #' @export
 selected_model_inference <- function(y, fit_method,
-                                     test_func = next_jump_statistic,
+                                     test_func = segment_difference,
                                      num_samp = 100,
                                      sample_method = "hitrun",
                                      sigma = NA,
-                                     ignore_jump = NA,
+                                     ignore_jump = 1,
                                      param = list(burn_in = default_burn_in(),
                                                   lapse = default_lapse()),
                                      cores = 1, verbose = T, ...){

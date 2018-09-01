@@ -75,3 +75,22 @@
 
   sapply(1:ncol(vec_mat), function(x){vec_mat[,x]/.l2norm(vec_mat[,x])})
 }
+
+.compute_nullspace <- function(mat){
+  k <- Matrix::rankMatrix(mat)
+  n <- ncol(mat)
+
+  res <- matrix(stats::rnorm(n*(n-k)), ncol = n-k)
+  res <- apply(res, 2, .projection_matrix, mat = mat)
+  svd(t(res))$v
+}
+
+.sample_two_vectors <- function(mat){
+  num_vec <- 2
+  weights <- matrix(stats::rnorm(num_vec*ncol(mat)), nrow = ncol(mat))
+  vec_mat <- mat %*% weights
+
+  vec_mat[,2] <- .projection(vec_mat[,2], vec_mat[,1])
+
+  sapply(1:ncol(vec_mat), function(x){vec_mat[,x]/.l2norm(vec_mat[,x])})
+}
