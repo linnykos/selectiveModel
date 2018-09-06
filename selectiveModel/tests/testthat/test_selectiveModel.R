@@ -109,8 +109,9 @@ test_that("selected_model_inference works reasonably relatively for hit run", {
 
   set.seed(10)
   y2 <- rep(0, 6) + rnorm(6)
-  res2 <- selected_model_inference(y2, fit_method, num_samp = 50, verbose = F,
-                                   param = list(burn_in = 10))
+  res2 <- selected_model_inference(y2, fit_method = fit_method, test_func = test_func,
+                                   num_samp = num_samp, ignore_jump = 1,
+                                   cores = cores, verbose = F, param = list(burn_in = 2000, lapse = 1))
 
   expect_true(res1$pval < res2$pval)
 })
