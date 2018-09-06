@@ -18,6 +18,8 @@
   })
 
   interval <- .c_intersect_intervals(interval_list)
+
+  print(interval)
   stopifnot(all(interval[,1] < interval[,2]))
 
   interval
