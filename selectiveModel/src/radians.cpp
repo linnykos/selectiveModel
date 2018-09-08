@@ -59,6 +59,9 @@ Rcpp::IntegerMatrix c_consecutive_true(const Rcpp::LogicalVector & vec){
   Rcpp::IntegerVector start_position = setdiff(idx, idx_plus);
   Rcpp::IntegerVector end_position = setdiff(idx, idx_minus);
 
+  start_position.sort(false);
+  end_position.sort(false);
+
   Rcpp::Rcout << "start_position = " << start_position << std::endl;
   Rcpp::Rcout << "end_position = " << end_position << std::endl;
 
