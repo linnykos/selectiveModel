@@ -62,9 +62,6 @@ Rcpp::IntegerMatrix c_consecutive_true(const Rcpp::LogicalVector & vec){
   start_position.sort(false);
   end_position.sort(false);
 
-  Rcpp::Rcout << "start_position = " << start_position << std::endl;
-  Rcpp::Rcout << "end_position = " << end_position << std::endl;
-
   int n_idx = start_position.size();
   Rcpp::IntegerMatrix mat(n_idx, 2);
 
@@ -152,21 +149,15 @@ Rcpp::NumericMatrix c_intersect_intervals(const Rcpp::List & list){
   int n = vec.size();
   Rcpp::LogicalVector boolean(n);
 
-  Rcpp::Rcout << "vec = " << vec << std::endl;
-
   for(int i = 0; i < n; i++){
     Rcpp::LogicalVector tmp = c_theta_in_all_matrix(vec[i], list);
 
     boolean[i] = tmp[0];
   }
 
-  Rcpp::Rcout << "boolean = " << boolean << std::endl;
-
   Rcpp::IntegerMatrix idx = c_consecutive_true(boolean);
   int nrow = idx.nrow();
   Rcpp::NumericMatrix result = Rcpp::no_init(nrow, 2);
-
-  Rcpp::Rcout << "idx = " << idx << std::endl;
 
   for(int i = 0; i < nrow; i++){
     result(i,0) = vec[idx(i,0)-1];
