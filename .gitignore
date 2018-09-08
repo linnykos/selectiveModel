@@ -10,4 +10,13 @@
 nohup.out
 *.js
 *.css
+.tar.gz
 *.tar.gz
+.Rproj.user
+.Rhistory
+.RData
+.Ruserdata
+.o
+.so
+*.o
+*.so
