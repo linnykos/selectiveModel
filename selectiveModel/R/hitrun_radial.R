@@ -22,7 +22,6 @@
   null_mat <- .compute_nullspace(segments)
 
   for(i in 1:num_col){
-    print(paste0("i: ", i))
     next_y <- .hit_run_next_point_radial(prev_y, null_mat, polyhedra)
     if(i %in% seq_idx){
       y_mat[,which(seq_idx == i)] <- next_y
