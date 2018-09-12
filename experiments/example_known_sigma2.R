@@ -4,9 +4,9 @@ library(selectiveModel)
 set.seed(10)
 n <- 200
 k <- 4
-lev <- 4
+lev <- 0
 dat <- rnorm(n, c(rep(0, n/5), rep(lev, n/5), rep(0, n/5), rep(-lev, n/5), rep(0, n/5)))
-fit_method <- function(x){binseginf::bsfs(x, numSteps = k)}
+fit_method <- function(x){binseginf::fl(x, numSteps = k)}
 test_func <- selectiveModel::segment_difference
 num_samp <- 2000
 cores <- NA
@@ -16,6 +16,18 @@ set.seed(10)
 system.time(res <- selected_model_inference(dat, fit_method = fit_method, test_func = test_func,
                          num_samp = num_samp, ignore_jump = 1, sigma = 1,
                          cores = cores, verbose = F, param = list(burn_in = 2000, lapse = 1)))
+
+res$pval
+
+set.seed(10)
+# run selective model test for known sigma, testing the first jump (aka: jump with the smallest index)
+system.time(
+  for(i in 1:4){
+    res <- selected_model_inference(dat, fit_method = fit_method, test_func = test_func,
+                                    num_samp = num_samp, ignore_jump = i, sigma = 1,
+                                    cores = cores, verbose = F, param = list(burn_in = 2000, lapse = 1))
+  })
+
 
 res$pval
 
