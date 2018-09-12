@@ -6,7 +6,7 @@ n <- 200
 k <- 4
 lev <- 0
 dat <- rnorm(n, c(rep(0, n/5), rep(lev, n/5), rep(0, n/5), rep(-lev, n/5), rep(0, n/5)))
-fit_method <- function(x){binseginf::fl(x, numSteps = k)}
+fit_method <- function(x){binseginf::bsfs(x, numSteps = k)}
 test_func <- selectiveModel::segment_difference
 num_samp <- 2000
 cores <- NA
