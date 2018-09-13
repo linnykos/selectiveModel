@@ -22,7 +22,7 @@ for(x in 1:trials){
                            cores = cores, verbose = F, param = list(burn_in = 2000, lapse = 1))
   res_vec_known_0[x] <- res$pval
 }
-save.image("../experiment/experiment_variance_pvalue.RData")
+save.image("experiment_variance_pvalue.RData")
 
 res_vec_unknown_0 <- rep(NA, trials)
 for(x in 1:trials){
@@ -33,7 +33,7 @@ for(x in 1:trials){
                                   cores = cores, verbose = F, param = list(burn_in = 2000, lapse = 1))
   res_vec_unknown_0[x] <- res$pval
 }
-save.image("../experiment/experiment_variance_pvalue.RData")
+save.image("experiment_variance_pvalue.RData")
 
 
 #######################
@@ -59,7 +59,7 @@ for(x in 1:trials){
                                   cores = cores, verbose = F, param = list(burn_in = 2000, lapse = 1))
   res_vec_known_4[x] <- res$pval
 }
-save.image("../experiment/experiment_variance_pvalue.RData")
+save.image("experiment_variance_pvalue.RData")
 
 res_vec_unknown_4 <- rep(NA, trials)
 for(x in 1:trials){
@@ -71,4 +71,4 @@ for(x in 1:trials){
   res_vec_unknown_4[x] <- res$pval
 }
 
-save.image("../experiment/experiment_variance_pvalue.RData")
+save.image("experiment_variance_pvalue.RData")
