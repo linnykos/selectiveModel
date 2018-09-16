@@ -48,4 +48,4 @@ func <- function(x){
 }
 
 res_mat <- unlist(foreach::"%dopar%"(foreach::foreach(x = 1:trials), func(x)))
-save.image("experiment_variance_pvalue.RData")
+save.image("experiment_pvalue_stability.RData")
