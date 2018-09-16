@@ -31,7 +31,7 @@ func <- function(x){
   if(abs(jump_idx[1] - n/2) <= 2){
     set.seed(x*10)
     tmp <- selected_model_inference(dat, fit_method = fit_method, test_func = test_func,
-                                       num_samp = num_samp, ignore_jump = 1, sigma = 1,
+                                       num_samp = num_samp, ignore_jump = 1,
                                        cores = cores, verbose = F, param = list(burn_in = burn_in, lapse = 1))
     res[1] <- tmp$pval
   }
@@ -39,7 +39,7 @@ func <- function(x){
   if(abs(jump_idx[2] - (n/2+40)) <= 2){
     set.seed(x*10)
     tmp <- selected_model_inference(dat, fit_method = fit_method, test_func = test_func,
-                                       num_samp = num_samp, ignore_jump = 2, sigma = 1,
+                                       num_samp = num_samp, ignore_jump = 2,
                                        cores = cores, verbose = F, param = list(burn_in = burn_in, lapse = 1))
     res[2] <- tmp$pval
   }
@@ -48,4 +48,4 @@ func <- function(x){
 }
 
 res_mat <- unlist(foreach::"%dopar%"(foreach::foreach(x = 1:trials), func(x)))
-save.image("experiment_pvalue_stability.RData")
+save.image("experiment_pvalue_stability_unknown.RData")
