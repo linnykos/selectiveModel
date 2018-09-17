@@ -2,6 +2,7 @@ rm(list=ls())
 library(simulation)
 library(binseginf)
 
+trials <- 12000
 paramMat <- cbind(c(.25,.5,1,2,4), 200)
 colnames(paramMat) <- c("SnR", "n")
 middle_mutation <- function(lev, n){
@@ -27,14 +28,14 @@ criterion_fl <- criterion_closure(function(x){binseginf::fLasso_fixedSteps(x, 2)
 ########################
 
 bs_res <- simulation::simulation_generator(rule = rule, criterion = criterion_bs,
-                                           paramMat = paramMat, trials = 9000,
+                                           paramMat = paramMat, trials = trials,
                                            cores = 15, as_list = F,
                                            filepath = "experiment_jump_counter_tmp.RData",
                                            verbose = T)
 save.image("experiment_jump_counter.RData")
 
 fl_res <- simulation::simulation_generator(rule = rule, criterion = criterion_fl,
-                                           paramMat = paramMat, trials = 9000,
+                                           paramMat = paramMat, trials = trials,
                                            cores = 15, as_list = F,
                                            filepath = "experiment_jump_counter_tmp.RData",
                                            verbose = T)
