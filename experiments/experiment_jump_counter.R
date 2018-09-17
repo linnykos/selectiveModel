@@ -35,7 +35,7 @@ save.image("experiment_jump_counter.RData")
 
 fl_res <- simulation::simulation_generator(rule = rule, criterion = criterion_fl,
                                            paramMat = paramMat, trials = 9000,
-                                           cores = 15, as_list = T,
+                                           cores = 15, as_list = F,
                                            filepath = "experiment_jump_counter_tmp.RData",
                                            verbose = T)
 save.image("experiment_jump_counter.RData")
