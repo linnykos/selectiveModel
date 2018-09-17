@@ -38,7 +38,7 @@ criterion_closure <- function(fit_method){
         set.seed(10*y)
         tmp <- selected_model_inference(dat, fit_method = fit_method,
                                         test_func = test_func, num_samp = num_samp,
-                                        ignore_jump = i, sigma = 1, cores = cores,
+                                        ignore_jump = i, sigma = 1, cores = NA,
                                         verbose = F, param = list(burn_in = burn_in,
                                                                   lapse = 1))
         res[i+2] <- tmp$pval
