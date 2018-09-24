@@ -3,7 +3,7 @@ library(simulation)
 library(binseginf)
 
 trials <- 5000
-paramMat <- cbind(expand.grid(c(0,.25,.5,1,2,4), c(2:4)), 200)
+paramMat <- as.matrix(cbind(expand.grid(c(0,.25,.5,1,2,4), c(2:4)), 200))
 colnames(paramMat) <- c("SnR", "k", "n")
 middle_mutation <- function(lev, n){
   mn <- rep(0,n)
