@@ -57,6 +57,8 @@ legend("bottomright", c("2-step binary segementation",
   invisible()
 }
 
+.visualize_curve(bs_vector[[1]])
+
 .variance <- function(x){
   ind <- sapply(x, function(y){
     y <= 0.05/2
@@ -64,6 +66,9 @@ legend("bottomright", c("2-step binary segementation",
   ind <- as.numeric(ind)
   stats::var(ind)/length(x)
 }
+
+.variance(bs_vector[[1]])
+.variance(bs_vector[[1]][1:500])
 
 ####################################
 

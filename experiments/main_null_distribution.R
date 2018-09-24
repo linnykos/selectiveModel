@@ -3,7 +3,7 @@ library(simulation)
 library(binseginf)
 library(selectiveModel)
 
-paramMat <- cbind(0, 200, 1000)
+paramMat <- cbind(0, 200, 500)
 colnames(paramMat) <- c("SnR", "n", "trials")
 numSteps <- 4
 
