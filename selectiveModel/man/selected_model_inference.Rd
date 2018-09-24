@@ -5,9 +5,10 @@
 \title{Selected model inference}
 \usage{
 selected_model_inference(y, fit_method, test_func = segment_difference,
-  num_samp = 100, sample_method = "hitrun", sigma = NA, ignore_jump = 1,
-  param = list(burn_in = default_burn_in(), lapse = default_lapse()),
-  cores = 1, verbose = T, ...)
+  num_samp = 100, sample_method = "hitrun", sigma = NA,
+  ignore_jump = 1, direction = NA, param = list(burn_in =
+  default_burn_in(), lapse = default_lapse()), cores = 1, verbose = T,
+  ...)
 }
 \arguments{
 \item{y}{data of length n}
@@ -23,6 +24,8 @@ selected_model_inference(y, fit_method, test_func = segment_difference,
 \item{sigma}{postive number or \code{NA}.}
 
 \item{ignore_jump}{which jump to ignore}
+
+\item{direction}{either NA (two-sided test) or -1 or 1 (for a one-sided test)}
 
 \item{param}{additional parameters for \code{sample_method} passed in as a list}
 

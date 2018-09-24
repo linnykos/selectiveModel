@@ -140,3 +140,46 @@ test_that("selected_model_inference works for one problem case", {
   expect_true(length(res) == 3)
 })
 
+test_that("selected_model_inference works for one-sided p-values", {
+  set.seed(10)
+  y <- c(rnorm(10), rnorm(10)+10)
+  fit_method <- function(y){binseginf::bsfs(y, 1)}
+
+  res <- selected_model_inference(y, fit_method, verbose = F, cores = NA,
+                                  num_samp = 50, direction = 1,
+                                  param = list(burn_in = 10, time_limit = 600))
+
+  expect_true(length(res) == 3)
+})
+
+test_that("selected_model_inference gives one-sided p-values that are
+          smaller than or equal to two-sided p-values", {
+  trials <- 100
+
+  res <- sapply(1:trials, function(x){
+    set.seed(10*x)
+    y <- rnorm(10)
+    y <- y - mean(y)
+    fit_method <- function(y){binseginf::bsfs(y, 1)}
+    fit <- fit_method(y)
+
+    set.seed(10*x)
+    res1 <- selected_model_inference(y, fit_method, verbose = F, cores = NA,
+                                    num_samp = 50, direction = sign(fit$cp.sign),
+                                    sigma = 1, ignore_jump = 1,
+                                    param = list(burn_in = 200, time_limit = 600))
+
+    set.seed(10*x)
+    res2 <- selected_model_inference(y, fit_method, verbose = F, cores = NA,
+                                    num_samp = 50, direction = NA,
+                                    sigma = 1, ignore_jump = 1,
+                                    param = list(burn_in = 200, time_limit = 600))
+
+    res1$pval <= res2$pval
+  })
+
+  expect_true(all(res))
+})
+
+
+

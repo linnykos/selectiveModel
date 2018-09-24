@@ -6,7 +6,6 @@
 #' @param segments matrix created by \code{.segments}
 #' @param polyhedra \code{polyhedra} object
 #' @param num_samp number of desired samples from null distribution
-#' @param cores umber of cores
 #' @param burn_in positive integer of the first few samples to throw out per core
 #' @param lapse positive integer, where we sample \code{num_samp*burn_in}
 #' samples from the null distribution and return every \code{burn_in}th sample
@@ -39,7 +38,7 @@
 #' For unknown sigma
 #'
 #' @param y data
-#' @param segments matrix created by \code{.segments}
+#' @param null_mat matrix to represent the null space of \code{.segments}
 #' @param polyhedra \code{polyhedra} object
 #'
 #' @return vector

@@ -24,6 +24,7 @@
 #' @param sample_method either \code{hit_run} or \code{rejection}
 #' @param sigma postive number or \code{NA}.
 #' @param ignore_jump which jump to ignore
+#' @param direction either NA (two-sided test) or -1 or 1 (for a one-sided test)
 #' @param param additional parameters for \code{sample_method} passed in as a list
 #' @param cores number of cores, only for rejection sampling
 #' @param verbose boolean
@@ -37,6 +38,7 @@ selected_model_inference <- function(y, fit_method,
                                      sample_method = "hitrun",
                                      sigma = NA,
                                      ignore_jump = 1,
+                                     direction = NA,
                                      param = list(burn_in = default_burn_in(),
                                                   lapse = default_lapse()),
                                      cores = 1, verbose = T, ...){
@@ -46,6 +48,10 @@ selected_model_inference <- function(y, fit_method,
   fit <- fit_method(y)
   polyhedra <- binseginf::polyhedra(fit)
   test_stat <- test_func(y, fit, jump = ignore_jump, ...)
+
+  if(!is.na(direction)){
+    if(sign(direction) * test_stat < 0) stop("Direction is probably in the wrong direction")
+  }
 
   #prepare sampler
   segments <- .segments(n, binseginf::jumps(fit), ignore_jump = ignore_jump)
@@ -76,7 +82,11 @@ selected_model_inference <- function(y, fit_method,
   })
 
   #compute the quantile
-  pval <- length(which(abs(null_stat) >= abs(test_stat)))/length(null_stat)
+  if(is.na(direction)){
+    pval <- length(which(abs(null_stat) >= abs(test_stat)))/length(null_stat)
+  } else {
+    pval <- length(which(sign(direction) * null_stat >= sign(direction) * test_stat))/length(null_stat)
+  }
 
   list(pval = pval, test_stat = test_stat, null_stat = null_stat)
 }
