@@ -2,7 +2,7 @@ rm(list=ls())
 library(simulation)
 library(binseginf)
 
-trials <- 12000
+trials <- 5000
 paramMat <- as.matrix(cbind(expand.grid(c(0,.25,.5,1,2,4), c(2:4)), 200))
 colnames(paramMat) <- c("SnR", "k", "n")
 middle_mutation <- function(lev, n){
@@ -15,15 +15,15 @@ rule <- function(vec){
   middle_mutation(lev = vec["SnR"], n = vec["n"]) + stats::rnorm(vec["n"])
 }
 
-criterion_closure <- function(method){
-  function(dat, vec, y){
-    fit <- method(dat, numSteps = vec["k"])
-    binseginf::jumps(fit)
-  }
+criterion_bs <- function(dat, vec, y){
+  fit <- binseginf::bsfs(dat, numSteps = vec["k"])
+  binseginf::jumps(fit)
 }
 
-criterion_bs <- criterion_closure(function(x){binseginf::bsfs(x, ...)})
-criterion_fl <- criterion_closure(function(x){binseginf::fLasso_fixedSteps(x, ...)})
+criterion_fl <- function(dat, vec, y){
+  fit <- binseginf::fLasso_fixedSteps(dat, numSteps = vec["k"])
+  binseginf::jumps(fit)
+}
 
 ########################
 
