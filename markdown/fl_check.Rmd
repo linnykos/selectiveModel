@@ -1,43 +1,21 @@
-rm(list=ls())
-load("../experiments/experiment_jump_counter.RData")
-true_jumps <- c(100,140)
+---
+title: "FL Jump analysis"
+output: html_document
+---
 
-bs_count <- sapply(bs_res, function(x){
-  x <- apply(x, 2, sort, decreasing = F)
-  sum(sapply(1:2, function(i){length(which(abs(x[i,] - true_jumps[i]) <= 2))}))
-})
-bs_count
+```{r setup, include=FALSE}
+knitr::opts_chunk$set(echo = TRUE)
+```
 
-fl_count <- sapply(fl_res, function(x){
-  x <- apply(x, 2, sort, decreasing = F)
-  sum(sapply(1:2, function(i){length(which(abs(x[i,] - true_jumps[i]) <= 2))}))
-})
-fl_count
+## Detection
 
-##############
+Same setup. We count the total number of jumps detected divided by 
+number of jumps estimated (across 5000 distinct data vectors
+of $n=200$ for the middle-jump case).
+The black line is binary segmentation, green line is fused lasso.
+The left is for 2-step algorithm, while the right is for 3-step algorithm.
 
-bs_trials <- sapply(bs_res, function(x){
-  x <- apply(x, 2, sort, decreasing = F)
-  seq_vec <- c(1:120)*100
-  count <- sapply(seq_vec, function(k){
-    sum(sapply(1:2, function(i){length(which(abs(x[i,1:k] - true_jumps[i]) <= 2))}))
-  })
-  seq_vec[which.min(abs(count - 2000))]
-})
-bs_trials # 24000, 6600, 2200, 1300, 1100
-
-fl_trials <- sapply(fl_res, function(x){
-  x <- apply(x, 2, sort, decreasing = F)
-  seq_vec <- c(1:120)*100
-  count <- sapply(seq_vec, function(k){
-    sum(sapply(1:2, function(i){length(which(abs(x[i,1:k] - true_jumps[i]) <= 2))}))
-  })
-  seq_vec[which.min(abs(count - 2000))]
-})
-fl_trials # 13000, 6100, 2900, 1800, 1300
-
-###################################
-
+```{r, echo = F}
 rm(list=ls())
 load("../experiments/experiment_jump_counter_2.RData")
 true_jumps <- c(100,140)
@@ -65,6 +43,7 @@ true_jumps <- c(100,140)
   list(bs_line = bs_line, fl_line = fl_line)
 }
 
+
 par(mfrow = c(1,2))
 tmp <- .grab_lines(bs_res, fl_res, paramMat, k = 2)
 plot(NA, xaxt = "n", xlab='delta', ylab = "cond. powers", xlim = c(1,6),
@@ -79,7 +58,15 @@ plot(NA, xaxt = "n", xlab='delta', ylab = "cond. powers", xlim = c(1,6),
 axis(1, at=1:6, labels=paramMat[1:6,1])
 lines(tmp$bs_line, col = 1, lwd = 2)
 lines(tmp$fl_line, col = 3, lwd = 2)
+```
 
+## Number of jumps detected in the correct vincity
+
+For delta = 2 or delta = 4, we also count the number of jumps in the correct
+vincity.
+
+This is for running the algorithms for 2 steps.
+```{r, echo = F}
 # next a detection numbers
 .grab_mat <- function(bs_res, fl_res, paramMat, k = 2, SnR = 2){
   idx <- intersect(which(paramMat[,"k"] == k), which(paramMat[,"SnR"] == SnR))
@@ -103,15 +90,25 @@ lines(tmp$fl_line, col = 3, lwd = 2)
 
 .grab_mat(bs_res, fl_res, paramMat, k = 2, SnR = 2)
 .grab_mat(bs_res, fl_res, paramMat, k = 2, SnR = 4)
-######
+```
+
+This is for running the algorithms for 3 steps.
+```{r, echo = F}
 .grab_mat(bs_res, fl_res, paramMat, k = 3, SnR = 2)
 .grab_mat(bs_res, fl_res, paramMat, k = 3, SnR = 4)
-######
+```
+
+This is for running the algorithms for 4 steps.
+```{r, echo = F}
 .grab_mat(bs_res, fl_res, paramMat, k = 4, SnR = 2)
 .grab_mat(bs_res, fl_res, paramMat, k = 4, SnR = 4)
+```
 
-###############
-# last the same example
+## Simulation check
+Finally, we demonstrate the same estimation setup to make sure I get
+the same results as Justin.
+
+```{r, echo = F}
 
 load("../experiments/experiment_fl_check.RData")
 middle_mutation <- function(lev, n){
@@ -131,3 +128,5 @@ for(seed in 1:6){
   plot(y, pch=16, col='grey50', main = paste0("seed=",seed))
   abline(v=res[[seed]][,1], col = (res[[seed]][,2]==+1)+1)
 }
+```
+
