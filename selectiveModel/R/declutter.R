@@ -1,4 +1,27 @@
-.declutter <- function(jump_vec, sign_vec, how_close = 3,
+#' Declutter of jumps
+#'
+#' Takes in a jump vector \code{jump_vec} as well as a vector of signs
+#' \code{sign_vec} (of equal length). Then, based on \code{how_close},
+#' \code{declutter} finds clusters of jumps as well as returns the
+#' signs of each cluster's members.
+#'
+#' Also, \code{desired_jumps} is an input that informs the output on
+#' which jump cluster "contained" the desired jump locations. This is passed in
+#' as a vector. This is stated in the output \code{target_bool}
+#'
+#' @param jump_vec vector of positive integers
+#' @param sign_vec vector containing \code{c(-1,1)} (possibly repeating) of
+#' same length as \code{jump_vec}
+#' @param how_close positive integer
+#' @param desired_jumps vector of positive integers
+#'
+#' @return A list containing \code{jump_vec} (the vector of median jumps),
+#' \code{sign_mat}, a matrix counting the signs within each cluster, and
+#' \code{target_bool}, a boolean vector stating which clusters "contained"
+#' \code{desired_jumps}
+#'
+#' @export
+declutter <- function(jump_vec, sign_vec, how_close = 3,
                        desired_jumps = NA){
   stopifnot(length(jump_vec) == length(sign_vec), all(sign_vec %in% c(-1,1)))
 
