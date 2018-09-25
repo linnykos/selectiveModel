@@ -110,6 +110,60 @@ test_that(".declutter forms the jump centers correctly", {
 
     all(res$jump_vec == res2)
   })
+
+  expect_true(all(bool_vec))
 })
+
+test_that(".declutter groups the signs correctly", {
+  trials <- 100
+  dis <- 5
+
+  bool_vec <- sapply(1:trials, function(x){
+    set.seed(10*x)
+    jump_vec <- sort(sample(1:100, 15))
+    sign_vec <- sample(c(-1,1), length(jump_vec), replace = T)
+
+    res <- .declutter(jump_vec, sign_vec, how_close = dis)
+
+    jump_center <- res$jump_vec
+    jump_list <- vector("list", length(jump_center))
+
+    jump_tmp <- jump_vec
+    len <- length(jump_center)
+    # initialize
+    for(y in length(jump_tmp):1) {
+      idx <- which(abs(jump_tmp[y] - jump_center) <= dis)
+      if(length(idx) >= 1){
+        jump_list[[idx]] <- sort(c(jump_list[[idx]], jump_tmp[y]))
+        jump_tmp <- jump_tmp[-y]
+      }
+    }
+    # fill in
+    while(length(jump_tmp) > 0){
+      for(y in length(jump_tmp):1){
+        idx <- which(sapply(1:len, function(z){
+          any(abs(jump_tmp[y] - jump_list[[z]]) <= dis)
+        }))
+        if(length(idx) >= 1){
+          jump_list[[idx]] <- sort(c(jump_list[[idx]], jump_tmp[y]))
+          jump_tmp <- jump_tmp[-y]
+        }
+      }
+    }
+
+    res2 <- sapply(jump_list, function(x){
+      idx <- which(jump_vec %in% x)
+      tmp <- sign_vec[idx]
+      c(length(which(tmp == -1)), length(which(tmp == 1)))
+    })
+
+    all(res$sign_mat == res2)
+  })
+
+  expect_true(all(bool_vec))
+})
+
+#######################
+
 
 
