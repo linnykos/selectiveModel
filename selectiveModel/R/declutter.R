@@ -58,7 +58,7 @@
   }
 
   # add the falses back in
-  idx <- 1:length(jump_vec)
+  idx <- 1:length(vec)
   if(nrow(mat) >= 1){
     for(i in idx){
       if(length(intersect(which(i >= mat[,1]), which(i <= mat[,2]))) == 0){
