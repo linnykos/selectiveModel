@@ -12,7 +12,7 @@ bs_trials <- sapply(bs_res, function(x){
   vec <- cumsum(vec)
   which.min(abs(vec - target_trials))
 })
-bs_trials # 7600, 4400, 1900, 800, 500, 40
+bs_trials # 7600, 4400, 1900, 800, 500, 400
 
 fl_trials <- sapply(fl_res, function(x){
   vec <- sapply(1:ncol(x), function(i){

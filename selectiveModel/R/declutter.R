@@ -38,7 +38,6 @@ declutter <- function(jump_vec, sign_vec, how_close = 3,
     segments <- matrix(c(1,1), nrow = 1)
   }
 
-
   # locate desired jumps if there are any
   jump_list <- lapply(1:nrow(segments), function(x){
     jump_vec[segments[x,1]:segments[x,2]]
