@@ -26,11 +26,13 @@
 #' @param ignore_jump which jump to ignore
 #' @param direction either NA (two-sided test) or -1 or 1 (for a one-sided test)
 #' @param param additional parameters for \code{sample_method} passed in as a list
+#' @param return_samples boolean on whether or not the null samples are returned. If
+#' \code{TRUE}, an additional element of the result will be returned
 #' @param cores number of cores, only for rejection sampling
 #' @param verbose boolean
 #' @param ... optional inputs for \code{test_func}
 #'
-#' @return quantile
+#' @return a list
 #' @export
 selected_model_inference <- function(y, fit_method,
                                      test_func = segment_difference,
@@ -41,6 +43,7 @@ selected_model_inference <- function(y, fit_method,
                                      direction = NA,
                                      param = list(burn_in = default_burn_in(),
                                                   lapse = default_lapse()),
+                                     return_samples = F,
                                      cores = 1, verbose = T, ...){
 
   #fit the model, fit polyhedra, and compute test statistic on the observed model
@@ -88,7 +91,12 @@ selected_model_inference <- function(y, fit_method,
     pval <- length(which(sign(direction) * null_stat >= sign(direction) * test_stat))/length(null_stat)
   }
 
-  list(pval = pval, test_stat = test_stat, null_stat = null_stat)
+  if(return_samples){
+    list(pval = pval, test_stat = test_stat, null_stat = null_stat,
+         null_samples = samples)
+  } else {
+    list(pval = pval, test_stat = test_stat, null_stat = null_stat)
+  }
 }
 
 #' Compute the matrix of segments

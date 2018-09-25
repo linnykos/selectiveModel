@@ -7,8 +7,8 @@
 selected_model_inference(y, fit_method, test_func = segment_difference,
   num_samp = 100, sample_method = "hitrun", sigma = NA,
   ignore_jump = 1, direction = NA, param = list(burn_in =
-  default_burn_in(), lapse = default_lapse()), cores = 1, verbose = T,
-  ...)
+  default_burn_in(), lapse = default_lapse()), return_samples = F,
+  cores = 1, verbose = T, ...)
 }
 \arguments{
 \item{y}{data of length n}
@@ -29,6 +29,9 @@ selected_model_inference(y, fit_method, test_func = segment_difference,
 
 \item{param}{additional parameters for \code{sample_method} passed in as a list}
 
+\item{return_samples}{boolean on whether or not the null samples are returned. If
+\code{TRUE}, an additional element of the result will be returned}
+
 \item{cores}{number of cores, only for rejection sampling}
 
 \item{verbose}{boolean}
@@ -36,7 +39,7 @@ selected_model_inference(y, fit_method, test_func = segment_difference,
 \item{...}{optional inputs for \code{test_func}}
 }
 \value{
-quantile
+a list
 }
 \description{
 Fits a changepoint model using \code{fit_method} to \code{y}. The returned

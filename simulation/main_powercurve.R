@@ -32,13 +32,15 @@ rule <- function(vec){
 
 criterion_closure <- function(fit_method){
   function(dat, vec, y){
+    dat <- rule(paramMat[4,])
     fit <- fit_method(dat)
     sign_mat <- binseginf::jump_sign(fit)
     cluster_list <- selectiveModel::declutter(jump_vec = sign_mat[,1], sign_vec = sign_mat[,2],
                                               how_close = 2,
                                               desired_jumps = true_jumps)
+    cluster_list
 
-    res <- c(rep(NA, numSteps), rep(NA, numSteps))
+    res <- rep(NA, 3*numSteps)
     len <- length(cluster_list$jump_vec)
     res[1:len] <- cluster_list$jump_vec
     names(res) <- c(paste0("Jump ", 1:numSteps), paste0("Direction ", 1:numSteps),

@@ -33,7 +33,7 @@ declutter <- function(jump_vec, sign_vec, how_close = 3,
   if(length(jump_vec) > 1){
     diff_vec <- diff(jump_vec)
     bool_vec <- (diff_vec <= how_close)
-    segments <- .consecutive_boolean(bool_vec)
+    segments <- selectiveModel:::.consecutive_boolean(bool_vec)
   } else {
     segments <- matrix(c(1,1), nrow = 1)
   }
@@ -74,7 +74,7 @@ declutter <- function(jump_vec, sign_vec, how_close = 3,
   idx <- sort(which(vec))
   mat <- matrix(NA, ncol = 2, nrow = 0)
 
-  if(length(idx) > 1){
+  if(length(idx) >= 1){
     idx_plus <- idx+1
     idx_minus <- idx-1
 

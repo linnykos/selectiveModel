@@ -221,6 +221,17 @@ test_that("declutter determines the desired_locations correctly", {
   expect_true(all(bool_vec))
 })
 
+######################
+
+## .consecutive_boolean is correct
+
+test_that(".consecutive_boolean works on an example case", {
+  res <- .consecutive_boolean(c(T, F, F))
+
+  expect_true(nrow(res) == 3)
+  expect_true(ncol(res) == 2)
+  expect_true(all(res[,1] <= res[,2]))
+})
 
 #######################
 
