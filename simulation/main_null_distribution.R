@@ -6,9 +6,9 @@ library(selectiveModel)
 paramMat <- cbind(0, 200)
 colnames(paramMat) <- c("SnR", "n")
 
-paramMat_bs <- cbind(paramMat, 3800)
+paramMat_bs <- cbind(paramMat, 7600)
 colnames(paramMat_bs)[3] <- "trials"
-paramMat_fl <- cbind(paramMat, 2300)
+paramMat_fl <- cbind(paramMat, 4600)
 colnames(paramMat_fl)[3] <- "trials"
 
 numSteps <- 4
@@ -21,7 +21,7 @@ middle_mutation <- function(lev, n){
 true_jumps <- c(100, 140)
 test_func <- selectiveModel::segment_difference
 num_samp <- 4000
-burn_in <- 1000
+burn_in <- 4000
 
 rule <- function(vec){
   middle_mutation(lev = vec["SnR"], n = vec["n"]) + stats::rnorm(vec["n"])
