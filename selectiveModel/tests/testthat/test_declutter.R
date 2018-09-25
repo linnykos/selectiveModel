@@ -74,6 +74,7 @@ test_that(".declutter forms the jump centers correctly", {
   dis <- 5
 
   bool_vec <- sapply(1:trials, function(x){
+    print(x)
     set.seed(10*x)
     jump_vec <- sort(sample(1:100, 15))
     sign_vec <- sample(c(-1,1), length(jump_vec), replace = T)
