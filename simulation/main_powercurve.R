@@ -73,6 +73,7 @@ criterion_closure <- function(fit_method){
       }
     }
 
+    print(res)
     res
   }
 }
