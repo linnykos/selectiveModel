@@ -25,7 +25,7 @@
 
   # collect jumps and signs
   jump_median <- sapply(jump_list, function(x){
-    floor(median(x))
+    floor(stats::median(x))
   })
 
   sign_mat <- sapply(1:nrow(segments), function(x){
