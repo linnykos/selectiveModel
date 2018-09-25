@@ -61,7 +61,7 @@ declutter <- function(jump_vec, sign_vec, how_close = 3,
   })
 
   colnames(sign_mat) <- as.character(jump_median)
-  rownames(sign_mat) <- c("sign:-1", "sign:1")
+  rownames(sign_mat) <- c("sign:-1", "sign:+1")
 
   list(jump_vec = jump_median,
        sign_mat = sign_mat,

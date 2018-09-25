@@ -18,7 +18,7 @@ middle_mutation <- function(lev, n){
 }
 true_jumps <- c(100, 140)
 test_func_closure <- function(contrast){
-  function(y, fit = NA, ignore_jump = NA){
+  function(y, fit = NA, jump = NA){
     as.numeric(contrast %*% y)
   }
 }
@@ -41,7 +41,8 @@ criterion_closure <- function(fit_method){
     res <- c(rep(NA, numSteps), rep(NA, numSteps))
     len <- length(cluster_list$jump_vec)
     res[1:len] <- cluster_list$jump_vec
-    names(res) <- c(paste0("Jump ", 1:numSteps), paste0("Pvalue ", 1:numSteps))
+    names(res) <- c(paste0("Jump ", 1:numSteps), paste0("Direction ", 1:numSteps),
+                    paste0("Pvalue ", 1:numSteps))
 
     for(i in 1:len){
       if(cluster_list$target_bool[i]){
@@ -50,7 +51,7 @@ criterion_closure <- function(fit_method){
         test_func <- test_func_closure(contrast)
         if(cluster_list$sign_mat["sign:-1",i] == 0){
           direction <- 1
-        } else if(cluster_list$sign_mat["sign:1",i] == 0){
+        } else if(cluster_list$sign_mat["sign:+1",i] == 0){
           direction <- -1
         } else {
           direction <- NA
@@ -62,7 +63,8 @@ criterion_closure <- function(fit_method){
                                         ignore_jump = i, sigma = 1, cores = NA,
                                         verbose = F, param = list(burn_in = burn_in,
                                                                   lapse = 1))
-        res[i+numSteps] <- tmp$pval
+        res[i+numSteps] <- direction
+        res[i+2*numSteps] <- tmp$pval
       }
     }
 
@@ -76,18 +78,20 @@ fit_method_fl <- function(x){binseginf::fLasso_fixedSteps(x, numSteps = numSteps
 criterion_bs <- criterion_closure(fit_method_bs)
 criterion_fl <- criterion_closure(fit_method_fl)
 
+# criterion_bs(rule(paramMat[4,]), paramMat[4,], 1)
+
 ###########################
 
 bs_res <- simulation::simulation_generator(rule = rule, criterion = criterion_bs,
                                            paramMat = paramMat_bs, trials = paramMat_bs[,"trials"],
                                            cores = 15, as_list = F,
-                                           filepath = "main_powercurve_tmp.RData",
+                                           filepath = "main_powercurve_knownsigma_tmp.RData",
                                            verbose = T)
 save.image("main_powercurve_knownsigma.RData")
 
 fl_res <- simulation::simulation_generator(rule = rule, criterion = criterion_fl,
                                            paramMat = paramMat_fl, trials = paramMat_fl[,"trials"],
                                            cores = 15, as_list = F,
-                                           filepath = "main_powercurve_tmp.RData",
+                                           filepath = "main_powercurve_knownsigma_tmp.RData",
                                            verbose = T)
 save.image("main_powercurve_knownsigma.RData")
