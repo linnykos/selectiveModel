@@ -19,7 +19,7 @@ middle_mutation <- function(lev, n){
 true_jumps <- c(100, 140)
 test_func <- selectiveModel::segment_difference
 num_samp <- 4000
-burn_in <- 4000
+burn_in <- 1000
 
 rule <- function(vec){
   middle_mutation(lev = vec["SnR"], n = vec["n"]) + stats::rnorm(vec["n"])

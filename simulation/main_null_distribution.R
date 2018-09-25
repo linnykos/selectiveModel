@@ -3,8 +3,14 @@ library(simulation)
 library(binseginf)
 library(selectiveModel)
 
-paramMat <- cbind(0, 200, 500)
-colnames(paramMat) <- c("SnR", "n", "trials")
+paramMat <- cbind(0, 200)
+colnames(paramMat) <- c("SnR", "n")
+
+paramMat_bs <- cbind(paramMat, 3800)
+colnames(paramMat_bs)[3] <- "trials"
+paramMat_fl <- cbind(paramMat, 2300)
+colnames(paramMat_fl)[3] <- "trials"
+
 numSteps <- 4
 
 middle_mutation <- function(lev, n){
@@ -14,22 +20,11 @@ middle_mutation <- function(lev, n){
 }
 true_jumps <- c(100, 140)
 test_func <- selectiveModel::segment_difference
-num_samp <- 2000
-burn_in <- 2000
+num_samp <- 4000
+burn_in <- 1000
 
-rule_closure <- function(fit_method){
-  function(vec){
-    while(TRUE){
-      dat <- middle_mutation(lev = vec["SnR"], n = vec["n"]) + stats::rnorm(vec["n"])
-      fit <- fit_method(dat)
-      bool_vec <- sapply(true_jumps, function(true_jump){
-        any(which(abs(binseginf::jumps(fit) - true_jump) <= 2))
-      })
-      if(any(bool_vec)) break()
-    }
-
-    dat
-  }
+rule <- function(vec){
+  middle_mutation(lev = vec["SnR"], n = vec["n"]) + stats::rnorm(vec["n"])
 }
 
 criterion_closure <- function(fit_method){
@@ -59,23 +54,21 @@ criterion_closure <- function(fit_method){
 fit_method_bs <- function(x){binseginf::bsfs(x, numSteps = numSteps)}
 fit_method_fl <- function(x){binseginf::fLasso_fixedSteps(x, numSteps = numSteps)}
 
-rule_bs <- rule_closure(fit_method_bs)
-rule_fl <- rule_closure(fit_method_fl)
 criterion_bs <- criterion_closure(fit_method_bs)
 criterion_fl <- criterion_closure(fit_method_fl)
 
 ###########################
 
 bs_res <- simulation::simulation_generator(rule = rule_bs, criterion = criterion_bs,
-                                           paramMat = paramMat, trials = paramMat[,"trials"],
+                                           paramMat = paramMat_bs, trials = paramMat_bs[,"trials"],
                                            cores = 15, as_list = F,
-                                           filepath = "main_powercurve_null_tmp.RData",
+                                           filepath = "main_null_distribution_tmp.RData",
                                            verbose = T)
-save.image("main_powercurve_null.RData")
+save.image("main_null_distribution.RData")
 
 fl_res <- simulation::simulation_generator(rule = rule_fl, criterion = criterion_fl,
-                                           paramMat = paramMat, trials = paramMat[,"trials"],
+                                           paramMat = paramMat_fl, trials = paramMat_fl[,"trials"],
                                            cores = 15, as_list = F,
-                                           filepath = "main_powercurve_null_tmp.RData",
+                                           filepath = "main_null_distribution_tmp.RData",
                                            verbose = T)
-save.image("main_powercurve_null.RData")
+save.image("main_null_distribution.RData")
