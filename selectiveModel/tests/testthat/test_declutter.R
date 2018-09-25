@@ -264,7 +264,7 @@ test_that("contrast_from_cluster is actually right mean minus left mean for many
     location <- sample(1:length(cluster_list$jump_vec), 1)
     contrast <- contrast_from_cluster(cluster_list, n, location)
 
-    median_jumps <- c(0, cluster_list$jump_vec, n-1)
+    median_jumps <- c(0, cluster_list$jump_vec, n)
 
     y <- rnorm(n)
     res <- as.numeric(contrast %*% y)
