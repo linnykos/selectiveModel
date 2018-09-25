@@ -24,7 +24,7 @@ test_that(".declutter works with all singletons", {
   expect_true(all(names(res) == c("jump_vec", "sign_mat", "target_bool")))
 })
 
-context(".declutter works with one big block", {
+test_that(".declutter works with one big block", {
   set.seed(10)
   jump_vec <- 1:10
   sign_vec <- sample(c(-1,1), length(jump_vec), replace = T)
@@ -47,7 +47,7 @@ test_that(".declutter gets smaller if how_close increases", {
     res1 <- .declutter(jump_vec, sign_vec, how_close = 1)
     res2 <- .declutter(jump_vec, sign_vec, how_close = 10)
 
-    length(res1$jump_vec) <= length(res2$jump_vec)
+    length(res1$jump_vec) >= length(res2$jump_vec)
   })
 
   expect_true(all(bool_vec))
