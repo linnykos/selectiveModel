@@ -1,5 +1,7 @@
 context("Test declutter")
 
+## declutter is correct
+
 test_that("declutter works", {
   jump_vec <- c(40,41,42,50,52,60,63,80,120,121,122)
   sign_vec <- rep(1,length(jump_vec))
@@ -28,6 +30,17 @@ test_that("declutter works with one big block", {
   set.seed(10)
   jump_vec <- 1:10
   sign_vec <- sample(c(-1,1), length(jump_vec), replace = T)
+
+  res <- declutter(jump_vec, sign_vec)
+
+  expect_true(is.list(res))
+  expect_true(length(res) == 3)
+  expect_true(all(names(res) == c("jump_vec", "sign_mat", "target_bool")))
+})
+
+test_that("declutter works for one jump", {
+  jump_vec <- 5
+  sign_vec <- 1
 
   res <- declutter(jump_vec, sign_vec)
 
@@ -165,5 +178,6 @@ test_that("declutter groups the signs correctly", {
 
 #######################
 
+## contrast_from_cluster is correct
 
 

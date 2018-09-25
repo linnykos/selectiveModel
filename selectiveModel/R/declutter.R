@@ -30,9 +30,14 @@ declutter <- function(jump_vec, sign_vec, how_close = 3,
   jump_vec <- jump_vec[idx]; sign_vec <- sign_vec[idx]
 
   # cluster
-  diff_vec <- diff(jump_vec)
-  bool_vec <- (diff_vec <= how_close)
-  segments <- .consecutive_boolean(bool_vec)
+  if(length(jump_vec) > 1){
+    diff_vec <- diff(jump_vec)
+    bool_vec <- (diff_vec <= how_close)
+    segments <- .consecutive_boolean(bool_vec)
+  } else {
+    segments <- matrix(c(1,1), nrow = 1)
+  }
+
 
   # locate desired jumps if there are any
   jump_list <- lapply(1:nrow(segments), function(x){
@@ -100,7 +105,7 @@ declutter <- function(jump_vec, sign_vec, how_close = 3,
 
 ####
 
-.contrast_from_cluster <- function(cluster_list, n, location){
+contrast_from_cluster <- function(cluster_list, n, location){
   stopifnot(location <= length(cluster_list))
   stopifnot(n > 0, n %% 1 == 0, location > 0, location %% 1 == 0)
   stopifnot(all(sort(cluster_list$jump_vec) == cluster_list$jump_vec))
