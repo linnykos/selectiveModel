@@ -181,5 +181,73 @@ test_that("selected_model_inference gives one-sided p-values that are
   expect_true(all(res))
 })
 
+test_that("selected_model_inference still perserves mean when decluttering",{
+  set.seed(10)
+  middle_mutation <- function(lev, n){
+    mn <- rep(0,n)
+    mn[seq(from=n/2+1, to=n/2+round(.2*n))] <- lev
+    mn
+  }
+  true_jumps <- c(10, 14)
+
+  test_func_closure <- function(contrast){
+    function(y, fit = NA, jump = NA){
+      as.numeric(contrast %*% y)
+    }
+  }
+  declutter_func <- function(x){selectiveModel::declutter(x, sign_vec = rep(1, length(x)),
+                                                          how_close = 2)$jump_vec}
+  num_samp <- 100
+  burn_in <- 10
+  numSteps <- 4
+
+  n <- 20
+  dat <- middle_mutation(lev = 2, n = n) + stats::rnorm(n)
+  fit_method <- function(x){binseginf::bsfs(x, numSteps = numSteps)}
+
+  fit <- fit_method(dat)
+  sign_mat <- binseginf::jump_sign(fit)
+  cluster_list <- selectiveModel::declutter(jump_vec = sign_mat[,1], sign_vec = sign_mat[,2],
+                                            how_close = 2,
+                                            desired_jumps = true_jumps)
+
+  i <- 2
+  set.seed(10)
+  contrast <- contrast_from_cluster(cluster_list, n, i)
+  test_func <- test_func_closure(contrast)
+  if(cluster_list$sign_mat["sign:-1",i] == 0){
+    direction <- 1
+  } else if(cluster_list$sign_mat["sign:+1",i] == 0){
+    direction <- -1
+  } else {
+    direction <- NA
+  }
+
+  tmp <- selectiveModel::selected_model_inference(dat, fit_method = fit_method,
+                                                  test_func = test_func,
+                                                  declutter_func = declutter_func,
+                                                  num_samp = num_samp,
+                                                  direction = direction,
+                                                  ignore_jump = i, sigma = 1,
+                                                  verbose = F, param = list(burn_in = burn_in,
+                                                                            lapse = 1),
+                                                  return_samples = T)
+
+  null_samples <- tmp$null_samples
+  intended_jumps <- c(0,cluster_list$jump_vec[-i],n)
+  null_means <- apply(null_samples, 2, function(x){
+    sapply(1:(length(intended_jumps)-1), function(k){
+      mean(x[(intended_jumps[k]+1):intended_jumps[k+1]])
+    })
+  })
+
+  target_means <- sapply(1:(length(intended_jumps)-1), function(k){
+    mean(dat[(intended_jumps[k]+1):intended_jumps[k+1]])
+  })
+
+  expect_true(all(sapply(1:length(target_means), function(x){
+    sum(abs(null_means[i,] - target_means[i])) < 1e-6
+  })))
+})
 
 

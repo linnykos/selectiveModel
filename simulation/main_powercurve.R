@@ -40,7 +40,6 @@ criterion_closure <- function(fit_method){
     cluster_list <- selectiveModel::declutter(jump_vec = sign_mat[,1], sign_vec = sign_mat[,2],
                                               how_close = 2,
                                               desired_jumps = true_jumps)
-    cluster_list
 
     res <- rep(NA, 3*numSteps)
     len <- length(cluster_list$jump_vec)
