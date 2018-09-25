@@ -105,8 +105,16 @@ declutter <- function(jump_vec, sign_vec, how_close = 3,
 
 ####
 
+#' Construct the contrast vector from \code{declutter}
+#'
+#' @param cluster_list The output from \code{declutter} function
+#' @param n Positive integer, for length of contrast
+#' @param location positive index, corresponding to the jump location in \code{cluster_list$jump_vec}
+#'
+#' @return vector of length \code{n}
+#' @export
 contrast_from_cluster <- function(cluster_list, n, location){
-  stopifnot(location <= length(cluster_list))
+  stopifnot(location <= length(cluster_list$jump_vec))
   stopifnot(n > 0, n %% 1 == 0, location > 0, location %% 1 == 0)
   stopifnot(all(sort(cluster_list$jump_vec) == cluster_list$jump_vec))
 
