@@ -17,11 +17,14 @@ middle_mutation <- function(lev, n){
   mn
 }
 true_jumps <- c(100, 140)
+
 test_func_closure <- function(contrast){
   function(y, fit = NA, jump = NA){
     as.numeric(contrast %*% y)
   }
 }
+declutter_func <- function(x){selectiveModel::declutter(x, sign_vec = rep(1, length(x)),
+                                                        how_close = 2)$jump_vec}
 num_samp <- 4000
 burn_in <- 1000
 numSteps <- 4
@@ -32,7 +35,6 @@ rule <- function(vec){
 
 criterion_closure <- function(fit_method){
   function(dat, vec, y){
-    dat <- rule(paramMat[4,])
     fit <- fit_method(dat)
     sign_mat <- binseginf::jump_sign(fit)
     cluster_list <- selectiveModel::declutter(jump_vec = sign_mat[,1], sign_vec = sign_mat[,2],
@@ -60,9 +62,11 @@ criterion_closure <- function(fit_method){
         }
 
         tmp <- selectiveModel::selected_model_inference(dat, fit_method = fit_method,
-                                        test_func = test_func, num_samp = num_samp,
+                                        test_func = test_func,
+                                        declutter_func = declutter_func,
+                                        num_samp = num_samp,
                                         direction = direction,
-                                        ignore_jump = i, sigma = 1, cores = NA,
+                                        ignore_jump = i, sigma = 1,
                                         verbose = F, param = list(burn_in = burn_in,
                                                                   lapse = 1))
         res[i+numSteps] <- direction
@@ -80,7 +84,7 @@ fit_method_fl <- function(x){binseginf::fLasso_fixedSteps(x, numSteps = numSteps
 criterion_bs <- criterion_closure(fit_method_bs)
 criterion_fl <- criterion_closure(fit_method_fl)
 
-# criterion_bs(rule(paramMat[4,]), paramMat[4,], 1)
+# set.seed(1); criterion_fl(rule(paramMat[4,]), paramMat[4,], 1)
 
 ###########################
 

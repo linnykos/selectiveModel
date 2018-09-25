@@ -20,15 +20,14 @@
 #' @param y data of length n
 #' @param fit_method function to fit changepoint model
 #' @param test_func function to apply to each \code{y} and fitted model
+#' @param declutter_func function to apply to the vector of fitted jumps
 #' @param num_samp number of desired samples from null distribution
-#' @param sample_method either \code{hit_run} or \code{rejection}
 #' @param sigma postive number or \code{NA}.
 #' @param ignore_jump which jump to ignore
 #' @param direction either NA (two-sided test) or -1 or 1 (for a one-sided test)
 #' @param param additional parameters for \code{sample_method} passed in as a list
 #' @param return_samples boolean on whether or not the null samples are returned. If
 #' \code{TRUE}, an additional element of the result will be returned
-#' @param cores number of cores, only for rejection sampling
 #' @param verbose boolean
 #' @param ... optional inputs for \code{test_func}
 #'
@@ -36,15 +35,14 @@
 #' @export
 selected_model_inference <- function(y, fit_method,
                                      test_func = segment_difference,
+                                     declutter_func = function(x){x},
                                      num_samp = 100,
-                                     sample_method = "hitrun",
                                      sigma = NA,
                                      ignore_jump = 1,
                                      direction = NA,
                                      param = list(burn_in = default_burn_in(),
                                                   lapse = default_lapse()),
-                                     return_samples = F,
-                                     cores = 1, verbose = T, ...){
+                                     return_samples = F, verbose = T, ...){
 
   #fit the model, fit polyhedra, and compute test statistic on the observed model
   n <- length(y)
@@ -57,7 +55,7 @@ selected_model_inference <- function(y, fit_method,
   }
 
   #prepare sampler
-  segments <- .segments(n, binseginf::jumps(fit), ignore_jump = ignore_jump)
+  segments <- .segments(n, declutter_func(binseginf::jumps(fit)), ignore_jump = ignore_jump)
   param <- .fill_in_arguments(param)
 
   #pass to sampler
