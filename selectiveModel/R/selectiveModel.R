@@ -60,21 +60,13 @@ selected_model_inference <- function(y, fit_method,
 
   #pass to sampler
   if(is.na(sigma)) {
-    if(sample_method == "hitrun") {
-      samples <- .sampler_hit_run_radial(y, segments, polyhedra, num_samp = num_samp,
-                                         burn_in = param$burn_in, lapse = param$lapse,
-                                         verbose = verbose)
-    } else {
-      stop("sample_method not appropriate")
-    }
+    samples <- .sampler_hit_run_radial(y, segments, polyhedra, num_samp = num_samp,
+                                       burn_in = param$burn_in, lapse = param$lapse,
+                                       verbose = verbose)
   } else {
-    if(sample_method == "hitrun") {
-      gaussian <- .gaussian(rep(0, n), sigma^2*diag(n))
-      samples <- .sampler_hit_run_line(y, gaussian, segments, polyhedra, num_samp = num_samp,
-                                       burn_in = param$burn_in)
-    } else {
-      stop("sample_method not appropriate")
-    }
+    gaussian <- .gaussian(rep(0, n), sigma^2*diag(n))
+    samples <- .sampler_hit_run_line(y, gaussian, segments, polyhedra, num_samp = num_samp,
+                                     burn_in = param$burn_in)
   }
 
   #for each sample, run the test function

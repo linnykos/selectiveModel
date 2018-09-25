@@ -5,10 +5,10 @@
 \title{Selected model inference}
 \usage{
 selected_model_inference(y, fit_method, test_func = segment_difference,
-  num_samp = 100, sample_method = "hitrun", sigma = NA,
+  declutter_func = function(x) {     x }, num_samp = 100, sigma = NA,
   ignore_jump = 1, direction = NA, param = list(burn_in =
   default_burn_in(), lapse = default_lapse()), return_samples = F,
-  cores = 1, verbose = T, ...)
+  verbose = T, ...)
 }
 \arguments{
 \item{y}{data of length n}
@@ -17,9 +17,9 @@ selected_model_inference(y, fit_method, test_func = segment_difference,
 
 \item{test_func}{function to apply to each \code{y} and fitted model}
 
-\item{num_samp}{number of desired samples from null distribution}
+\item{declutter_func}{function to apply to the vector of fitted jumps}
 
-\item{sample_method}{either \code{hit_run} or \code{rejection}}
+\item{num_samp}{number of desired samples from null distribution}
 
 \item{sigma}{postive number or \code{NA}.}
 
@@ -31,8 +31,6 @@ selected_model_inference(y, fit_method, test_func = segment_difference,
 
 \item{return_samples}{boolean on whether or not the null samples are returned. If
 \code{TRUE}, an additional element of the result will be returned}
-
-\item{cores}{number of cores, only for rejection sampling}
 
 \item{verbose}{boolean}
 
