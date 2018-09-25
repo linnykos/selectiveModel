@@ -59,14 +59,14 @@ criterion_fl <- criterion_closure(fit_method_fl)
 
 ###########################
 
-bs_res <- simulation::simulation_generator(rule = rule_bs, criterion = criterion_bs,
+bs_res <- simulation::simulation_generator(rule = rule, criterion = criterion_bs,
                                            paramMat = paramMat_bs, trials = paramMat_bs[,"trials"],
                                            cores = 15, as_list = F,
                                            filepath = "main_null_distribution_tmp.RData",
                                            verbose = T)
 save.image("main_null_distribution.RData")
 
-fl_res <- simulation::simulation_generator(rule = rule_fl, criterion = criterion_fl,
+fl_res <- simulation::simulation_generator(rule = rule, criterion = criterion_fl,
                                            paramMat = paramMat_fl, trials = paramMat_fl[,"trials"],
                                            cores = 15, as_list = F,
                                            filepath = "main_null_distribution_tmp.RData",
