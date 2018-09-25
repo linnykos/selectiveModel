@@ -39,4 +39,4 @@ fl_res <- simulation::simulation_generator(rule = rule, criterion = criterion_fl
                                            cores = 15, as_list = F,
                                            filepath = "experiment_jump_counter_tmp.RData",
                                            verbose = T)
-save.image("experiment_jump_counter_2.RData")
+save.image("preamble_jump_counter.RData")
