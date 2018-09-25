@@ -118,7 +118,7 @@ contrast_from_cluster <- function(cluster_list, n, location){
   stopifnot(n > 0, n %% 1 == 0, location > 0, location %% 1 == 0)
   stopifnot(all(sort(cluster_list$jump_vec) == cluster_list$jump_vec))
 
-  jump_vec <- c(0, cluster_list$jump_vec, n-1)
+  jump_vec <- c(0, cluster_list$jump_vec, n)
   contrast_vec <- rep(0, n)
 
   contrast_vec[(jump_vec[location]+1):jump_vec[location+1]] <- -1/(jump_vec[location+1] - (jump_vec[location]+1) + 1)

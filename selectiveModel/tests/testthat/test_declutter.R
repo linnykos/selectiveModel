@@ -211,6 +211,46 @@ test_that("contrast_from_cluster is actually right mean minus left mean", {
   expect_true(abs(res - res2) <= 1e-6)
 })
 
+test_that("contrast_from_cluster works when 1 is the first jump", {
+  set.seed(10)
+  n <- 100
+  jump_vec <- c(1, 10,11,12)
+  sign_vec <- sample(c(-1,1), length(jump_vec), replace = T)
+
+  cluster_list <- declutter(jump_vec, sign_vec)
+  location <- 1
+  contrast <- contrast_from_cluster(cluster_list, n, location)
+
+  median_jumps <- c(0, cluster_list$jump_vec, n-1)
+
+  y <- rnorm(n)
+  res <- as.numeric(contrast %*% y)
+  res2 <- mean(y[(median_jumps[location+1]+1):median_jumps[location+2]]) -
+    mean(y[(median_jumps[location]+1):median_jumps[location+1]])
+
+  expect_true(abs(res - res2) <= 1e-6)
+})
+
+test_that("contrast_from_cluster works when n-1 is the last jump", {
+  set.seed(10)
+  n <- 100
+  jump_vec <- c(10, 11, 12, n-1)
+  sign_vec <- sample(c(-1,1), length(jump_vec), replace = T)
+
+  cluster_list <- declutter(jump_vec, sign_vec)
+  location <- length(cluster_list$jump_vec)
+  contrast <- contrast_from_cluster(cluster_list, n, location)
+
+  median_jumps <- c(0, cluster_list$jump_vec, n)
+
+  y <- rnorm(n)
+  res <- as.numeric(contrast %*% y)
+  res2 <- mean(y[(median_jumps[location+1]+1):median_jumps[location+2]]) -
+    mean(y[(median_jumps[location]+1):median_jumps[location+1]])
+
+  expect_true(abs(res - res2) <= 1e-6)
+})
+
 test_that("contrast_from_cluster is actually right mean minus left mean for many cases", {
   trials <- 100
   n <- 100
