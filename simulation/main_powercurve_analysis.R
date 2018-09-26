@@ -1,12 +1,15 @@
 rm(list=ls())
-load("../simulation/main_powercurve_knownsigma_tmp.RData")
+load("../simulation/main_powercurve_knownsigma.RData")
 
+# weird thing, remove:
+tmp <- fl_res[[3]]; tmp <- tmp[-243]
+fl_res[[3]] <- do.call(cbind, tmp)
 sapply(res, dim)
 
 # compute power
 idx <- which(sapply(bs_res, length) > 1)
 bs_vector <- lapply(bs_res[idx], function(x){
-  x <- as.vector(x[3:4,])
+  x <- as.vector(x[9:12,])
   x <- x[!is.na(x)]
 })
 
@@ -25,7 +28,7 @@ lines(paramMat_bs[,1], bs_power_vector)
 # compute power
 idx <- which(sapply(fl_res, length) > 1)
 fl_vector <- lapply(fl_res[idx], function(x){
-  x <- as.vector(x[3:4,])
+  x <- as.vector(x[9:12,])
   x <- x[!is.na(x)]
 })
 
@@ -72,8 +75,8 @@ legend("bottomright", c("2-step binary segementation",
 
 ####################################
 
-i <- 1
-vec <- as.numeric(res[[i]][9:12,])
+i <- 5
+vec <- as.numeric(bs_res[[i]][9:12,])
 vec <- vec[!is.na(vec)]
 plot(sort(vec), seq(0, 1, length.out = length(vec)), asp = T)
 lines(c(0,1), c(0,1), col = "red")
@@ -87,4 +90,5 @@ bool <- as.numeric(vec <= 0.05/2)
   }))
 }
 
+mean(bool)
 .bootstrap_power(vec)

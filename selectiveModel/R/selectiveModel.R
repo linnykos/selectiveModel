@@ -21,6 +21,7 @@
 #' @param fit_method function to fit changepoint model
 #' @param test_func function to apply to each \code{y} and fitted model
 #' @param declutter_func function to apply to the vector of fitted jumps
+#' @param null_mean null mean vector
 #' @param num_samp number of desired samples from null distribution
 #' @param sigma postive number or \code{NA}.
 #' @param ignore_jump which jump to ignore
@@ -36,6 +37,7 @@
 selected_model_inference <- function(y, fit_method,
                                      test_func = segment_difference,
                                      declutter_func = function(x){x},
+                                     null_mean = rep(0, length(y)),
                                      num_samp = 100,
                                      sigma = NA,
                                      ignore_jump = 1,
@@ -64,7 +66,7 @@ selected_model_inference <- function(y, fit_method,
                                        burn_in = param$burn_in, lapse = param$lapse,
                                        verbose = verbose)
   } else {
-    gaussian <- .gaussian(rep(0, n), sigma^2*diag(n))
+    gaussian <- .gaussian(null_mean, sigma^2*diag(n))
     samples <- .sampler_hit_run_line(y, gaussian, segments, polyhedra, num_samp = num_samp,
                                      burn_in = param$burn_in)
   }

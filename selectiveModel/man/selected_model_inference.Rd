@@ -5,10 +5,10 @@
 \title{Selected model inference}
 \usage{
 selected_model_inference(y, fit_method, test_func = segment_difference,
-  declutter_func = function(x) {     x }, num_samp = 100, sigma = NA,
-  ignore_jump = 1, direction = NA, param = list(burn_in =
-  default_burn_in(), lapse = default_lapse()), return_samples = F,
-  verbose = T, ...)
+  declutter_func = function(x) {     x }, null_mean = rep(0,
+  length(y)), num_samp = 100, sigma = NA, ignore_jump = 1,
+  direction = NA, param = list(burn_in = default_burn_in(), lapse =
+  default_lapse()), return_samples = F, verbose = T, ...)
 }
 \arguments{
 \item{y}{data of length n}
@@ -18,6 +18,8 @@ selected_model_inference(y, fit_method, test_func = segment_difference,
 \item{test_func}{function to apply to each \code{y} and fitted model}
 
 \item{declutter_func}{function to apply to the vector of fitted jumps}
+
+\item{null_mean}{null mean vector}
 
 \item{num_samp}{number of desired samples from null distribution}
 

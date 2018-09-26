@@ -251,3 +251,116 @@ test_that("selected_model_inference still perserves mean when decluttering",{
 })
 
 
+test_that("selected_model_inference gives one-sided p-values that are
+          smaller than or equal to two-sided p-values", {
+            trials <- 100
+
+            res <- sapply(1:trials, function(x){
+              set.seed(10*x)
+              y <- rnorm(10)
+              y <- y - mean(y)
+              fit_method <- function(y){binseginf::bsfs(y, 1)}
+              fit <- fit_method(y)
+
+              set.seed(10*x)
+              res1 <- selected_model_inference(y, fit_method, verbose = F, cores = NA,
+                                               num_samp = 50, direction = sign(fit$cp.sign),
+                                               sigma = 1, ignore_jump = 1,
+                                               param = list(burn_in = 200, time_limit = 600))
+
+              set.seed(10*x)
+              res2 <- selected_model_inference(y, fit_method, verbose = F, cores = NA,
+                                               num_samp = 50, direction = NA,
+                                               sigma = 1, ignore_jump = 1,
+                                               param = list(burn_in = 200, time_limit = 600))
+
+              res1$pval <= res2$pval
+            })
+
+            expect_true(all(res))
+            })
+
+test_that("selected_model_inference works for null means not equal to 0, known sigma",{
+  set.seed(10)
+  y <- c(rep(0, 10), rep(1, 10)) + rnorm(20)
+  fit_method <- function(y){binseginf::bsfs(y, 3)}
+  fit <- fit_method(y)
+  sign_mat <- binseginf::jump_sign(fit)
+
+  cluster_list <- selectiveModel::declutter(jump_vec = sign_mat[,1], sign_vec = sign_mat[,2],
+                                            how_close = 2)
+
+  contrast <- contrast_from_cluster(cluster_list, 20, 2)
+
+  val <- contrast %*% c(rep(0, 10), rep(1, 10))
+  null_mean <- rep(0, 20)
+  null_mean[which(contrast > 0)] <- val
+
+  stopifnot(abs(as.numeric(contrast %*% null_mean) - val) <= 1e-6)
+
+  res <- selected_model_inference(y, fit_method, sigma = 1, num_samp = 10,
+                                  verbose = F, null_mean = null_mean,
+                                  param = list(burn_in = 10))
+
+  expect_true(length(res) == 3)
+  expect_true(all(names(res) == c("pval", "test_stat", "null_stat")))
+  expect_true(is.numeric(res$pval))
+  expect_true(!is.matrix(res$pval))
+  expect_true(length(res$pval) == 1)
+  expect_true(res$pval >= 0)
+  expect_true(res$pval <= 1)
+})
+
+test_that("selected_model_inference works for null means not equal to 0 gives lower pvalue",{
+  set.seed(10)
+  y <- c(rep(0, 10), rep(1, 10)) + rnorm(20)
+  fit_method <- function(y){binseginf::bsfs(y, 3)}
+  fit <- fit_method(y)
+  sign_mat <- binseginf::jump_sign(fit)
+
+  cluster_list <- selectiveModel::declutter(jump_vec = sign_mat[,1], sign_vec = sign_mat[,2],
+                                            how_close = 2)
+
+  contrast <- contrast_from_cluster(cluster_list, 20, 2)
+
+  val <- contrast %*% c(rep(0, 10), rep(1, 10))
+  null_mean <- rep(0, 20)
+  null_mean[which(contrast > 0)] <- val
+
+  stopifnot(abs(as.numeric(contrast %*% null_mean) - val) <= 1e-6)
+
+  declutter_func <- function(x){selectiveModel::declutter(x, sign_vec = rep(1, length(x)),
+                                                          how_close = 2)$jump_vec}
+  test_func_closure <- function(contrast){
+    function(y, fit = NA, jump = NA){
+      as.numeric(contrast %*% y)
+    }
+  }
+
+  test_func <- test_func_closure(contrast)
+
+  res <- selectiveModel::selected_model_inference(y, fit_method = fit_method,
+                                                  test_func = test_func,
+                                                  declutter_func = declutter_func,
+                                                  null_mean = null_mean,
+                                                  num_samp = 1000,
+                                                  ignore_jump = 2, sigma = 1,
+                                                  verbose = F, param = list(burn_in = 10,
+                                                                            lapse = 1))
+
+  res2 <- selectiveModel::selected_model_inference(y, fit_method = fit_method,
+                                                  test_func = test_func,
+                                                  declutter_func = declutter_func,
+                                                  null_mean = rep(0, 20),
+                                                  num_samp = 1000,
+                                                  ignore_jump = 2, sigma = 1,
+                                                  verbose = F, param = list(burn_in = 10,
+                                                                            lapse = 1))
+
+  expect_true(res$pval >= res2$pval)
+})
+
+
+
+
+

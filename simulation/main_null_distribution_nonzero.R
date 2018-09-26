@@ -3,12 +3,12 @@ library(simulation)
 library(binseginf)
 library(selectiveModel)
 
-paramMat <- cbind(c(.25,.5,1,2,4), 200)
+paramMat <- cbind(4, 200)
 colnames(paramMat) <- c("SnR", "n")
 
-paramMat_bs <- cbind(paramMat, c(4400, 1900, 800, 500, 400))
+paramMat_bs <- cbind(paramMat, 7600)
 colnames(paramMat_bs)[3] <- "trials"
-paramMat_fl <- cbind(paramMat, c(2500, 1250, 650, 450, 350))
+paramMat_fl <- cbind(paramMat, 4600)
 colnames(paramMat_fl)[3] <- "trials"
 
 middle_mutation <- function(lev, n){
@@ -26,7 +26,7 @@ test_func_closure <- function(contrast){
 declutter_func <- function(x){selectiveModel::declutter(x, sign_vec = rep(1, length(x)),
                                                         how_close = 2)$jump_vec}
 num_samp <- 4000
-burn_in <- 1000
+burn_in <- 4000
 numSteps <- 4
 
 rule <- function(vec){
@@ -51,6 +51,14 @@ criterion_closure <- function(fit_method){
       if(cluster_list$target_bool[i]){
         set.seed(10*y)
         contrast <- contrast_from_cluster(cluster_list, vec["n"], i)
+
+        # form the null_mean
+        val <- contrast %*% middle_mutation(lev = vec["SnR"], n = vec["n"])
+        null_mean <- rep(0, vec["n"])
+        null_mean[which(contrast > 0)] <- val
+
+        stopifnot(abs(as.numeric(contrast %*% null_mean) - val) <= 1e-6)
+
         test_func <- test_func_closure(contrast)
         if(cluster_list$sign_mat["sign:-1",i] == 0){
           direction <- 1
@@ -61,13 +69,14 @@ criterion_closure <- function(fit_method){
         }
 
         tmp <- selectiveModel::selected_model_inference(dat, fit_method = fit_method,
-                                        test_func = test_func,
-                                        declutter_func = declutter_func,
-                                        num_samp = num_samp,
-                                        direction = direction,
-                                        ignore_jump = i, sigma = 1,
-                                        verbose = F, param = list(burn_in = burn_in,
-                                                                  lapse = 1))
+                                                        test_func = test_func,
+                                                        declutter_func = declutter_func,
+                                                        null_mean = null_mean,
+                                                        num_samp = num_samp,
+                                                        direction = direction,
+                                                        ignore_jump = i, sigma = 1,
+                                                        verbose = F, param = list(burn_in = burn_in,
+                                                                                  lapse = 1))
         res[i+numSteps] <- direction
         res[i+2*numSteps] <- tmp$pval
       }
@@ -82,20 +91,18 @@ fit_method_fl <- function(x){binseginf::fLasso_fixedSteps(x, numSteps = numSteps
 criterion_bs <- criterion_closure(fit_method_bs)
 criterion_fl <- criterion_closure(fit_method_fl)
 
-# set.seed(1); criterion_fl(rule(paramMat[4,]), paramMat[4,], 1)
-
 ###########################
 
 bs_res <- simulation::simulation_generator(rule = rule, criterion = criterion_bs,
                                            paramMat = paramMat_bs, trials = paramMat_bs[,"trials"],
                                            cores = 15, as_list = F,
-                                           filepath = "main_powercurve_knownsigma_tmp.RData",
+                                           filepath = "main_null_distribution_tmp.RData",
                                            verbose = T)
-save.image("main_powercurve_knownsigma.RData")
+save.image("main_null_distribution.RData")
 
 fl_res <- simulation::simulation_generator(rule = rule, criterion = criterion_fl,
                                            paramMat = paramMat_fl, trials = paramMat_fl[,"trials"],
                                            cores = 15, as_list = F,
-                                           filepath = "main_powercurve_knownsigma_tmp.RData",
+                                           filepath = "main_null_distribution_tmp.RData",
                                            verbose = T)
-save.image("main_powercurve_knownsigma.RData")
+save.image("main_null_distribution.RData")
