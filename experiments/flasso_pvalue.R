@@ -17,7 +17,7 @@ fit_method <- function(x){binseginf::fLasso_fixedSteps(x, numSteps = numSteps)}
 
 
 set.seed(10)
-counter <- 6
+counter <- 103
 while(TRUE){
   print(counter)
   set.seed(10 * counter)
@@ -31,7 +31,7 @@ while(TRUE){
       contrast <- as.matrix(binseginf::contrast_vector(fit, i))
       sat_pval <- binseginf::pvalue(y, poly, contrast, alternative = "one.sided")
 
-      if(!is.nan(sat_pval) && sat_pval >= 0.05/2) {
+      if(!is.nan(sat_pval) && sat_pval >= 0.1) {
         fit <- fit_method(y)
         sign_mat <-  binseginf::jump_sign(fit)
         direction <- sign_mat[which(sign_mat[,1] == sort(sign_mat[,1], decreasing = F)[i]),2]
@@ -44,8 +44,10 @@ while(TRUE){
                                                         return_samples = T)
         sel_pval <- res$pval
 
-        if(sel_pval <= 0.05/2)
-        stop()
+        if(sel_pval <= 0.05/2) {
+          save.image("flasso_pvalue.RData")
+          stop()
+        }
       }
     }
   }
@@ -53,4 +55,4 @@ while(TRUE){
   counter <- counter + 1
 }
 
-save.image("flasso_pvalue.RData")
+
