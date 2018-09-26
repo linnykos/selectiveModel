@@ -25,8 +25,8 @@ test_func_closure <- function(contrast){
 }
 declutter_func <- function(x){selectiveModel::declutter(x, sign_vec = rep(1, length(x)),
                                                         how_close = 2)$jump_vec}
-num_samp <- 4000
-burn_in <- 4000
+num_samp <- 100
+burn_in <- 100
 numSteps <- 4
 
 rule <- function(vec){
@@ -98,13 +98,13 @@ criterion_fl <- criterion_closure(fit_method_fl)
 bs_res <- simulation::simulation_generator(rule = rule, criterion = criterion_bs,
                                            paramMat = paramMat_bs, trials = paramMat_bs[,"trials"],
                                            cores = 15, as_list = F,
-                                           filepath = "main_null_distribution_tmp.RData",
+                                           filepath = "main_null_distribution_nonzero_tmp.RData",
                                            verbose = T)
-save.image("main_null_distribution.RData")
+save.image("main_null_distribution_nonzero.RData")
 
 fl_res <- simulation::simulation_generator(rule = rule, criterion = criterion_fl,
                                            paramMat = paramMat_fl, trials = paramMat_fl[,"trials"],
                                            cores = 15, as_list = F,
-                                           filepath = "main_null_distribution_tmp.RData",
+                                           filepath = "main_null_distribution_nonzero_tmp.RData",
                                            verbose = T)
-save.image("main_null_distribution.RData")
+save.image("main_null_distribution_nonzero.RData")
