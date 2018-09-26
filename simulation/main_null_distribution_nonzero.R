@@ -91,6 +91,8 @@ fit_method_fl <- function(x){binseginf::fLasso_fixedSteps(x, numSteps = numSteps
 criterion_bs <- criterion_closure(fit_method_bs)
 criterion_fl <- criterion_closure(fit_method_fl)
 
+# criterion_bs(rule(paramMat[1,]), paramMat[1,], 1)
+
 ###########################
 
 bs_res <- simulation::simulation_generator(rule = rule, criterion = criterion_bs,
