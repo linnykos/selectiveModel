@@ -72,8 +72,19 @@ legend("bottomright", c("2-step binary segementation",
 
 ####################################
 
-i <- 3
+i <- 1
 vec <- as.numeric(res[[i]][9:12,])
 vec <- vec[!is.na(vec)]
 plot(sort(vec), seq(0, 1, length.out = length(vec)), asp = T)
 lines(c(0,1), c(0,1), col = "red")
+bool <- as.numeric(vec <= 0.05/2)
+
+.bootstrap_power <- function(vec, trials = 1000){
+  sd(sapply(1:trials, function(x){
+    set.seed(x)
+    vec2 <- sample(vec, length(vec), replace = T)
+    mean(as.numeric(vec2 <= 0.05/2))
+  }))
+}
+
+.bootstrap_power(vec)
