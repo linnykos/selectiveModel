@@ -1,5 +1,5 @@
 rm(list=ls())
-load("../experiments/main_powercurve_knownsigma.RData")
+load("../simulation/main_powercurve_knownsigma_tmp.RData")
 
 sapply(res, dim)
 
@@ -72,4 +72,8 @@ legend("bottomright", c("2-step binary segementation",
 
 ####################################
 
-
+i <- 3
+vec <- as.numeric(res[[i]][9:12,])
+vec <- vec[!is.na(vec)]
+plot(sort(vec), seq(0, 1, length.out = length(vec)), asp = T)
+lines(c(0,1), c(0,1), col = "red")

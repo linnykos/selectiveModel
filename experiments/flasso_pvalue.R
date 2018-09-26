@@ -55,7 +55,7 @@ while(TRUE){
                                                         return_samples = T)
         sel_pval <- res$pval
 
-        stopifnot(abs(contrast - res$test_stat) <= 1e-6)
+        stopifnot(abs(as.numeric(contrast %*% y) - res$test_stat) <= 1e-6)
 
         if(sel_pval <= 0.05/2) {
           save.image("flasso_pvalue.RData")
