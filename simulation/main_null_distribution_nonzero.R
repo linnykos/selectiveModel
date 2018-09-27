@@ -6,9 +6,9 @@ library(selectiveModel)
 paramMat <- cbind(4, 200)
 colnames(paramMat) <- c("SnR", "n")
 
-paramMat_bs <- cbind(paramMat, 7600)
+paramMat_bs <- cbind(paramMat, 200)
 colnames(paramMat_bs)[3] <- "trials"
-paramMat_fl <- cbind(paramMat, 4600)
+paramMat_fl <- cbind(paramMat, 200)
 colnames(paramMat_fl)[3] <- "trials"
 
 middle_mutation <- function(lev, n){
@@ -25,8 +25,8 @@ test_func_closure <- function(contrast){
 }
 declutter_func <- function(x){selectiveModel::declutter(x, sign_vec = rep(1, length(x)),
                                                         how_close = 2)$jump_vec}
-num_samp <- 100
-burn_in <- 100
+num_samp <- 4000
+burn_in <- 4000
 numSteps <- 4
 
 rule <- function(vec){
