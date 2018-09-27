@@ -3,12 +3,12 @@ library(simulation)
 library(binseginf)
 library(selectiveModel)
 
-paramMat <- cbind(4, 200)
+paramMat <- cbind(c(0,4), 200)
 colnames(paramMat) <- c("SnR", "n")
 
-paramMat_bs <- cbind(paramMat, 200)
+paramMat_bs <- cbind(paramMat, c(7600, 400))
 colnames(paramMat_bs)[3] <- "trials"
-paramMat_fl <- cbind(paramMat, 200)
+paramMat_fl <- cbind(paramMat, c(4600, 350))
 colnames(paramMat_fl)[3] <- "trials"
 
 middle_mutation <- function(lev, n){
@@ -25,7 +25,7 @@ test_func_closure <- function(contrast){
 }
 declutter_func <- function(x){selectiveModel::declutter(x, sign_vec = rep(1, length(x)),
                                                         how_close = 2)$jump_vec}
-num_samp <- 4000
+num_samp <- 6000
 burn_in <- 4000
 numSteps <- 4
 
@@ -81,7 +81,8 @@ criterion_closure <- function(fit_method){
         res[i+2*numSteps] <- tmp$pval
       }
     }
-    res
+
+    c(res, val)
   }
 }
 
@@ -95,12 +96,6 @@ criterion_fl <- criterion_closure(fit_method_fl)
 
 ###########################
 
-bs_res <- simulation::simulation_generator(rule = rule, criterion = criterion_bs,
-                                           paramMat = paramMat_bs, trials = paramMat_bs[,"trials"],
-                                           cores = 15, as_list = F,
-                                           filepath = "main_null_distribution_nonzero_tmp.RData",
-                                           verbose = T)
-save.image("main_null_distribution_nonzero.RData")
 
 fl_res <- simulation::simulation_generator(rule = rule, criterion = criterion_fl,
                                            paramMat = paramMat_fl, trials = paramMat_fl[,"trials"],
@@ -108,3 +103,11 @@ fl_res <- simulation::simulation_generator(rule = rule, criterion = criterion_fl
                                            filepath = "main_null_distribution_nonzero_tmp.RData",
                                            verbose = T)
 save.image("main_null_distribution_nonzero.RData")
+
+bs_res <- simulation::simulation_generator(rule = rule, criterion = criterion_bs,
+                                           paramMat = paramMat_bs, trials = paramMat_bs[,"trials"],
+                                           cores = 15, as_list = F,
+                                           filepath = "main_null_distribution_nonzero_tmp.RData",
+                                           verbose = T)
+save.image("main_null_distribution_nonzero.RData")
+
