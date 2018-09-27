@@ -3,12 +3,12 @@ library(simulation)
 library(binseginf)
 library(selectiveModel)
 
-paramMat <- cbind(c(0,4), 200)
+paramMat <- cbind(c(4,0), 200)
 colnames(paramMat) <- c("SnR", "n")
 
-paramMat_bs <- cbind(paramMat, c(7600, 400))
+paramMat_bs <- cbind(paramMat, c(400, 7600))
 colnames(paramMat_bs)[3] <- "trials"
-paramMat_fl <- cbind(paramMat, c(4600, 350))
+paramMat_fl <- cbind(paramMat, c(350, 4600))
 colnames(paramMat_fl)[3] <- "trials"
 
 middle_mutation <- function(lev, n){
@@ -41,11 +41,11 @@ criterion_closure <- function(fit_method){
                                               how_close = 2,
                                               desired_jumps = true_jumps)
 
-    res <- rep(NA, 3*numSteps)
+    res <- rep(NA, 4*numSteps)
     len <- length(cluster_list$jump_vec)
     res[1:len] <- cluster_list$jump_vec
     names(res) <- c(paste0("Jump ", 1:numSteps), paste0("Direction ", 1:numSteps),
-                    paste0("Pvalue ", 1:numSteps))
+                    paste0("Pvalue ", 1:numSteps), paste0("Null ", 1:numSteps))
 
     for(i in 1:len){
       if(cluster_list$target_bool[i]){
@@ -53,11 +53,9 @@ criterion_closure <- function(fit_method){
         contrast <- contrast_from_cluster(cluster_list, vec["n"], i)
 
         # form the null_mean
-        val <- contrast %*% middle_mutation(lev = vec["SnR"], n = vec["n"])
+        val <- vec["SnR"]*sign(contrast %*% middle_mutation(lev = vec["SnR"], n = vec["n"]))
         null_mean <- rep(0, vec["n"])
         null_mean[which(contrast > 0)] <- val
-
-        stopifnot(abs(as.numeric(contrast %*% null_mean) - val) <= 1e-6)
 
         test_func <- test_func_closure(contrast)
         if(cluster_list$sign_mat["sign:-1",i] == 0){
@@ -79,10 +77,11 @@ criterion_closure <- function(fit_method){
                                                                                   lapse = 1))
         res[i+numSteps] <- direction
         res[i+2*numSteps] <- tmp$pval
+        res[i+3*numSteps] <- val
       }
     }
 
-    c(res, val)
+    res
   }
 }
 
@@ -92,7 +91,7 @@ fit_method_fl <- function(x){binseginf::fLasso_fixedSteps(x, numSteps = numSteps
 criterion_bs <- criterion_closure(fit_method_bs)
 criterion_fl <- criterion_closure(fit_method_fl)
 
-# criterion_bs(rule(paramMat[1,]), paramMat[1,], 1)
+# set.seed(6); criterion_fl(rule(paramMat[2,]), paramMat[2,], 6)
 
 ###########################
 
