@@ -96,7 +96,6 @@ criterion_fl <- criterion_closure(fit_method_fl)
 
 ###########################
 
-
 fl_res <- simulation::simulation_generator(rule = rule, criterion = criterion_fl,
                                            paramMat = paramMat_fl, trials = paramMat_fl[,"trials"],
                                            cores = 15, as_list = F,
