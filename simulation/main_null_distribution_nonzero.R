@@ -18,9 +18,9 @@ contrast_vector <- function(obj, jump.idx, n, ...){
 paramMat <- cbind(4, 200)
 colnames(paramMat) <- c("SnR", "n")
 
-paramMat_bs <- cbind(paramMat, c(600))
+paramMat_bs <- cbind(paramMat, c(1200))
 colnames(paramMat_bs)[3] <- "trials"
-paramMat_fl <- cbind(paramMat, c(550))
+paramMat_fl <- cbind(paramMat, c(1200))
 colnames(paramMat_fl)[3] <- "trials"
 
 middle_mutation <- function(lev, n){
@@ -36,7 +36,7 @@ test_func_closure <- function(contrast){
   }
 }
 
-num_samp <- 4000
+num_samp <- 6000
 burn_in <- 4000
 numSteps <- 4
 
