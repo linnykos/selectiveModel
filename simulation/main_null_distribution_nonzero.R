@@ -3,6 +3,18 @@ library(simulation)
 library(binseginf)
 library(selectiveModel)
 
+contrast_vector <- function(obj, jump.idx, n, ...){
+  jump.vec <- jumps(obj, sorted = T)
+  jump <- jump.vec[jump.idx]
+
+  jump_mat <- jump_sign(obj)
+  jump_sign <- jump_mat[which(jump_mat[,"Jump"] == jump), "Sign"]
+
+  v <- binseginf:::.contrast_vector_segment(obj, jump, n)
+  v * jump_sign
+}
+
+
 paramMat <- cbind(4, 200)
 colnames(paramMat) <- c("SnR", "n")
 
@@ -41,11 +53,12 @@ criterion_closure <- function(fit_method){
     len <- length(jump_vec)
     names(res) <- c(paste0("Jump ", 1:numSteps),
                     paste0("Pvalue ", 1:numSteps))
+    res[1:len] <- jump_vec
 
     if(all(true_jumps %in% jump_vec)){
       idx <- which(true_jumps %in% true_jumps)
-      for(i in 1:idx){
-        contrast <- binseginf::contrast_vector(fit, i)
+      for(i in 1:length(idx)){
+        contrast <- contrast_vector(fit, i, vec["n"])
         val <- contrast %*% middle_mutation(lev = vec["SnR"], n = vec["n"])
 
         null_mean <- rep(0, vec["n"])
@@ -74,7 +87,7 @@ fit_method_fl <- function(x){binseginf::fLasso_fixedSteps(x, numSteps = numSteps
 criterion_bs <- criterion_closure(fit_method_bs)
 criterion_fl <- criterion_closure(fit_method_fl)
 
-# set.seed(6); criterion_fl(rule(paramMat[1,]), paramMat[1,], 6)
+# set.seed(1); criterion_bs(rule(paramMat[1,]), paramMat[1,], 1)
 
 ###########################
 
