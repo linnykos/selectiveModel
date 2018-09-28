@@ -3,15 +3,13 @@ library(simulation)
 library(binseginf)
 library(selectiveModel)
 
-paramMat <- cbind(0, 200)
+paramMat <- cbind(c(0,4), 200)
 colnames(paramMat) <- c("SnR", "n")
 
-paramMat_bs <- cbind(paramMat, 7600)
+paramMat_bs <- cbind(paramMat, c(7600, 400))
 colnames(paramMat_bs)[3] <- "trials"
-paramMat_fl <- cbind(paramMat, 4600)
+paramMat_fl <- cbind(paramMat, c(4600, 350))
 colnames(paramMat_fl)[3] <- "trials"
-
-numSteps <- 4
 
 middle_mutation <- function(lev, n){
   mn <- rep(0,n)
@@ -19,9 +17,17 @@ middle_mutation <- function(lev, n){
   mn
 }
 true_jumps <- c(100, 140)
-test_func <- selectiveModel::segment_difference
+
+test_func_closure <- function(contrast){
+  function(y, fit = NA, jump = NA){
+    as.numeric(contrast %*% y)
+  }
+}
+declutter_func <- function(x){selectiveModel::declutter(x, sign_vec = rep(1, length(x)),
+                                                        how_close = 2)$jump_vec}
 num_samp <- 4000
 burn_in <- 4000
+numSteps <- 4
 
 rule <- function(vec){
   middle_mutation(lev = vec["SnR"], n = vec["n"]) + stats::rnorm(vec["n"])
@@ -30,20 +36,48 @@ rule <- function(vec){
 criterion_closure <- function(fit_method){
   function(dat, vec, y){
     fit <- fit_method(dat)
-    jump_vec <- sort(binseginf::jumps(fit))
+    sign_mat <- binseginf::jump_sign(fit)
+    cluster_list <- selectiveModel::declutter(jump_vec = sign_mat[,1], sign_vec = sign_mat[,2],
+                                              how_close = 2,
+                                              desired_jumps = true_jumps)
 
-    res <- c(jump_vec, rep(NA, numSteps))
-    names(res) <- c(paste0("Jump ", 1:numSteps), paste0("Pvalue ", 1:numSteps))
+    res <- rep(NA, 4*numSteps)
+    len <- length(cluster_list$jump_vec)
+    res[1:len] <- cluster_list$jump_vec
+    names(res) <- c(paste0("Jump ", 1:numSteps), paste0("Direction ", 1:numSteps),
+                    paste0("Pvalue ", 1:numSteps), paste0("Null ", 1:numSteps))
 
-    for(i in 1:numSteps){
-      if(any(abs(jump_vec[i] - true_jumps) <= 2)){
+    for(i in 1:len){
+      if(cluster_list$target_bool[i]){
         set.seed(10*y)
-        tmp <- selected_model_inference(dat, fit_method = fit_method,
-                                        test_func = test_func, num_samp = num_samp,
-                                        ignore_jump = i, sigma = 1, cores = NA,
-                                        verbose = F, param = list(burn_in = burn_in,
-                                                                  lapse = 1))
-        res[i+numSteps] <- tmp$pval
+        contrast <- contrast_from_cluster(cluster_list, vec["n"], i)
+
+        # form the null_mean
+        val <- vec["SnR"]*sign(contrast %*% middle_mutation(lev = vec["SnR"], n = vec["n"]))
+        null_mean <- rep(0, vec["n"])
+        null_mean[which(contrast > 0)] <- val
+
+        test_func <- test_func_closure(contrast)
+        if(cluster_list$sign_mat["sign:-1",i] == 0){
+          direction <- 1
+        } else if(cluster_list$sign_mat["sign:+1",i] == 0){
+          direction <- -1
+        } else {
+          direction <- NA
+        }
+
+        tmp <- selectiveModel::selected_model_inference(dat, fit_method = fit_method,
+                                                        test_func = test_func,
+                                                        declutter_func = declutter_func,
+                                                        null_mean = null_mean,
+                                                        num_samp = num_samp,
+                                                        direction = direction,
+                                                        ignore_jump = i, sigma = 1,
+                                                        verbose = F, param = list(burn_in = burn_in,
+                                                                                  lapse = 1))
+        res[i+numSteps] <- direction
+        res[i+2*numSteps] <- tmp$pval
+        res[i+3*numSteps] <- val
       }
     }
 
@@ -56,6 +90,8 @@ fit_method_fl <- function(x){binseginf::fLasso_fixedSteps(x, numSteps = numSteps
 
 criterion_bs <- criterion_closure(fit_method_bs)
 criterion_fl <- criterion_closure(fit_method_fl)
+
+# set.seed(6); criterion_fl(rule(paramMat[2,]), paramMat[2,], 6)
 
 ###########################
 
@@ -72,3 +108,5 @@ fl_res <- simulation::simulation_generator(rule = rule, criterion = criterion_fl
                                            filepath = "main_null_distribution_tmp.RData",
                                            verbose = T)
 save.image("main_null_distribution.RData")
+
+
