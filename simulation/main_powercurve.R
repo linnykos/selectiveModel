@@ -65,7 +65,7 @@ criterion_closure <- function(fit_method){
                                         declutter_func = declutter_func,
                                         num_samp = num_samp,
                                         direction = direction,
-                                        ignore_jump = i, sigma = 1,
+                                        ignore_jump = i,
                                         verbose = F, param = list(burn_in = burn_in,
                                                                   lapse = 1))
         res[i+numSteps] <- direction

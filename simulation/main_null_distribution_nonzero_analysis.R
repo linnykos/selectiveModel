@@ -1,6 +1,5 @@
 rm(list=ls())
 load("../simulation/main_null_distribution_nonzero.RData")
-load("../simulation/main_null_distribution_nonzero_tmp.RData")
 
 .plot_qq <- function(res, ...){
   pvalue_vec <- as.numeric(res[5:8,])
