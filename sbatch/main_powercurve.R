@@ -8,6 +8,7 @@ library(data.tree, lib.loc = "/home/kevinl1/Rpackages/3.5")
 library(hash, lib.loc = "/home/kevinl1/Rpackages/3.5")
 library(lpSolve, lib.loc = "/home/kevinl1/Rpackages/3.5")
 library(R.utils, lib.loc = "/home/kevinl1/Rpackages/3.5")
+library(R.oo, lib.loc = "/home/kevinl1/Rpackages/3.5")
 
 args <- commandArgs(trailingOnly=TRUE)
 #arguments:
