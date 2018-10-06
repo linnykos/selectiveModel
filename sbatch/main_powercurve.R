@@ -18,9 +18,10 @@ colnames(paramMat) <- c("Type", "SnR", "method", "sigma", "ksteps", "decluttered
 paramMat[,"SnR"] <- c(0, 0.25, 0.5, 1, 2, 4)[paramMat[,"SnR"]]
 paramMat[,"sigma"] <- c(1,NA)[paramMat[,"sigma"]]
 args <- paramMat[1,]
-
+print(paramMat)
 
 ######
+
 num_samp <- 4000
 burn_in <- 4000
 n <- 200
@@ -66,7 +67,7 @@ criterion_closure <- function(fit_method){
   function(dat, vec, y){
     fit <- fit_method(dat)
     sign_mat <- binseginf::jump_sign(fit)
-    if(vec["decluttered" == 0]){
+    if(vec["decluttered"] == 0){
       tmp <- unlist(lapply(true_jumps, function(x){x + c(-2:2)}))
       cluster_list <- selectiveModel::declutter(jump_vec = sign_mat[,1], sign_vec = sign_mat[,2],
                                                 how_close = 0,
@@ -109,6 +110,7 @@ criterion_closure <- function(fit_method){
         res[i+2*vec["ksteps"]] <- tmp$pval
       }
     }
+
     res
   }
 }
@@ -120,6 +122,7 @@ if(args["method"] == 1){
 }
 
 criterion <- criterion_closure(fit_method)
+## set.seed(1); criterion(rule(paramMat[1,]), paramMat[1,], 1)
 
 ###########################
 
