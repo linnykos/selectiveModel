@@ -65,6 +65,7 @@ rule <- function(vec){
 
 criterion_closure <- function(fit_method){
   function(dat, vec, y){
+    print(y)
     fit <- fit_method(dat)
     sign_mat <- binseginf::jump_sign(fit)
     if(vec["decluttered"] == 0){
