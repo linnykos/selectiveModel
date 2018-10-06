@@ -13,7 +13,7 @@ args <- commandArgs(trailingOnly=TRUE)
 ## - 6th: decluttered (0 = no, 1 = yes)
 ## - 7th: trials
 
-paramMat <- matrix(args, ncols = length(args))
+paramMat <- matrix(args, ncol = length(args))
 colnames(paramMat) <- c("Type", "SnR", "method", "sigma", "ksteps", "decluttered", "trials")
 paramMat[,"SnR"] <- c(0, 0.25, 0.5, 1, 2, 4)[paramMat[,"SnR"]]
 paramMat[,"sigma"] <- c(1,NA)[paramMat[,"sigma"]]
