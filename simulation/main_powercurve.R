@@ -89,13 +89,13 @@ criterion_fl <- criterion_closure(fit_method_fl)
 bs_res <- simulation::simulation_generator(rule = rule, criterion = criterion_bs,
                                            paramMat = paramMat_bs, trials = paramMat_bs[,"trials"],
                                            cores = 15, as_list = F,
-                                           filepath = "main_powercurve_knownsigma_tmp.RData",
+                                           filepath = "main_powercurve_unknownsigma_tmp.RData",
                                            verbose = T)
-save.image("main_powercurve_knownsigma.RData")
+save.image("main_powercurve_unknownsigma.RData")
 
 fl_res <- simulation::simulation_generator(rule = rule, criterion = criterion_fl,
                                            paramMat = paramMat_fl, trials = paramMat_fl[,"trials"],
                                            cores = 15, as_list = F,
-                                           filepath = "main_powercurve_knownsigma_tmp.RData",
+                                           filepath = "main_powercurve_unknownsigma_tmp.RData",
                                            verbose = T)
-save.image("main_powercurve_knownsigma.RData")
+save.image("main_powercurve_unknownsigma.RData")
