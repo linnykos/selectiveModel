@@ -1,5 +1,37 @@
 rm(list=ls())
+load("../simulation/main_powercurve_unknownsigma.RData")
 load("../simulation/main_powercurve_knownsigma.RData")
+
+# compute power
+.bootstrap_power <- function(vec, trials = 1000){
+  sd(sapply(1:trials, function(x){
+    set.seed(x)
+    vec2 <- sample(vec, length(vec), replace = T)
+    mean(as.numeric(vec2 <= 0.05/2))
+  }))
+}
+
+.compute_power <- function(res1){
+  if(is.list(res1)){
+    idx <- sapply(res1, length)
+    res1 <- res1[-which(idx != max(idx))]
+    res1 <- do.call(cbind, res1)
+  }
+
+  vec <- as.vector(res1[9:12,])
+  vec <- vec[!is.na(vec)]
+  plot(sort(vec), seq(0, 1, length.out = length(vec)), asp = T)
+  lines(c(0,1), c(0,1), col = "red")
+
+  power <- length(which(vec <= 0.05/2))/length(vec)
+  std <- .bootstrap_power(vec)
+
+  c(power, std)
+}
+
+.compute_power(bs_res[[1]])
+
+#################
 
 # weird thing, remove:
 tmp <- fl_res[[3]]; tmp <- tmp[-243]
@@ -82,13 +114,7 @@ plot(sort(vec), seq(0, 1, length.out = length(vec)), asp = T)
 lines(c(0,1), c(0,1), col = "red")
 bool <- as.numeric(vec <= 0.05/2)
 
-.bootstrap_power <- function(vec, trials = 1000){
-  sd(sapply(1:trials, function(x){
-    set.seed(x)
-    vec2 <- sample(vec, length(vec), replace = T)
-    mean(as.numeric(vec2 <= 0.05/2))
-  }))
-}
+
 
 mean(bool)
 .bootstrap_power(vec)
