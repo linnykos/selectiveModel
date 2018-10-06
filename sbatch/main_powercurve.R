@@ -2,6 +2,8 @@ rm(list=ls())
 library(simulation, lib.loc = "/home/kevinl1/Rpackages/3.5")
 library(binseginf, lib.loc = "/home/kevinl1/Rpackages/3.5")
 library(selectiveModel, lib.loc = "/home/kevinl1/Rpackages/3.5")
+library(foreach, lib.loc = "/home/kevinl1/Rpackages/3.5")
+library(doMC, lib.loc = "/home/kevinl1/Rpackages/3.5")
 
 args <- commandArgs(trailingOnly=TRUE)
 #arguments:
