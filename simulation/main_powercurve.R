@@ -7,9 +7,9 @@ paramMat <- cbind(c(.25,.5,1,2,4), 200)
 colnames(paramMat) <- c("SnR", "n")
 
 paramMat_bs <- cbind(paramMat, c(4400, 1900, 800, 500, 400))
-colnames(paramMat_bs)[3] <- "trials"
+colnames(paramMat_bs)[ncol(paramMat_bs)] <- "trials"
 paramMat_fl <- cbind(paramMat, c(2500, 1250, 650, 450, 350))
-colnames(paramMat_fl)[3] <- "trials"
+colnames(paramMat_fl)[ncol(paramMat_fl)] <- "trials"
 
 middle_mutation <- function(lev, n){
   mn <- rep(0,n)
