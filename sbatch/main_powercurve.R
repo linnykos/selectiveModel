@@ -4,6 +4,10 @@ library(binseginf, lib.loc = "/home/kevinl1/Rpackages/3.5")
 library(selectiveModel, lib.loc = "/home/kevinl1/Rpackages/3.5")
 library(foreach, lib.loc = "/home/kevinl1/Rpackages/3.5")
 library(doMC, lib.loc = "/home/kevinl1/Rpackages/3.5")
+library(data.tree, lib.loc = "/home/kevinl1/Rpackages/3.5")
+library(hash, lib.loc = "/home/kevinl1/Rpackages/3.5")
+library(lpSolve, lib.loc = "/home/kevinl1/Rpackages/3.5")
+library(R.utils, lib.loc = "/home/kevinl1/Rpackages/3.5")
 
 args <- commandArgs(trailingOnly=TRUE)
 #arguments:
