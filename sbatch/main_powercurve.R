@@ -126,6 +126,8 @@ if(args["method"] == 1){
 
 criterion <- criterion_closure(fit_method)
 ## set.seed(1); criterion(rule(paramMat[1,]), paramMat[1,], 1)
+set.seed(1)
+test_vec <- criterion(rule(paramMat[1,]), paramMat[1,], 1)
 
 ###########################
 
