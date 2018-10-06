@@ -87,7 +87,7 @@ criterion_closure <- function(fit_method){
     for(i in 1:len){
       if(cluster_list$target_bool[i]){
         set.seed(10*y)
-        contrast <- contrast_from_cluster(cluster_list, n, i)
+        contrast <- selectiveModel:::contrast_from_cluster(cluster_list, n, i)
         test_func <- test_func_closure(contrast)
         if(cluster_list$sign_mat["sign:-1",i] == 0){
           direction <- 1
