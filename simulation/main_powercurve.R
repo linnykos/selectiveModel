@@ -7,7 +7,7 @@ paramMat <- as.matrix(expand.grid(1, c(0,.25,.5,1,2,4), c(1,2), c(1, NA), 1, 0))
 colnames(paramMat) <- c("Type", "SnR", "method", "sigma", "ksteps", "decluttered")
 
 paramMat <- cbind(paramMat, rep(c(c(10000, 10000, 4000, 1700, 1100, 1000), #bs
-                              c(10000, 10000, 10000, 5200, 2400, 1500)), each = 2)) #fl
+                              c(10000, 10000, 10000, 5200, 2400, 1500)), times = 2)) #fl
 colnames(paramMat)[ncol(paramMat)] <- "trials"
 
 ##############
@@ -45,63 +45,61 @@ rule <- function(vec){
   middle_mutation(lev = vec["SnR"], n = n) + stats::rnorm(n)
 }
 
-criterion <- function(){
-  function(dat, vec, y){
-    if(vec["method"] == 1){
-      fit_method <- function(x){binseginf::bsfs(x, numSteps = vec["ksteps"])}
-    } else {
-      fit_method <- function(x){binseginf::fLasso_fixedSteps(x, numSteps = args["ksteps"])}
-    }
-    fit <- fit_method(dat)
-
-    sign_mat <- binseginf::jump_sign(fit)
-    if(vec["decluttered"] == 0){
-      tmp <- unlist(lapply(true_jumps, function(x){x + c(-2:2)}))
-      cluster_list <- selectiveModel::declutter(jump_vec = sign_mat[,1], sign_vec = sign_mat[,2],
-                                                how_close = 0,
-                                                desired_jumps = tmp)
-    } else {
-      cluster_list <- selectiveModel::declutter(jump_vec = sign_mat[,1], sign_vec = sign_mat[,2],
-                                                how_close = 2,
-                                                desired_jumps = true_jumps)
-    }
-
-    res <- rep(NA, 3*vec["ksteps"])
-    len <- length(cluster_list$jump_vec)
-    res[1:len] <- cluster_list$jump_vec
-    names(res) <- c(paste0("Jump ", 1:vec["ksteps"]), paste0("Direction ", 1:vec["ksteps"]),
-                    paste0("Pvalue ", 1:vec["ksteps"]))
-
-    for(i in 1:len){
-      if(cluster_list$target_bool[i]){
-        set.seed(10*y)
-        contrast <- selectiveModel:::contrast_from_cluster(cluster_list, n, i)
-        test_func <- test_func_closure(contrast)
-        if(cluster_list$sign_mat["sign:-1",i] == 0){
-          direction <- 1
-        } else if(cluster_list$sign_mat["sign:+1",i] == 0){
-          direction <- -1
-        } else {
-          direction <- NA
-        }
-
-        tmp <- selectiveModel::selected_model_inference(dat, fit_method = fit_method,
-                                        test_func = test_func,
-                                        declutter_func = declutter_func,
-                                        num_samp = num_samp,
-                                        direction = direction,
-                                        ignore_jump = i, sigma = vec["sigma"],
-                                        verbose = F, param = list(burn_in = burn_in,
-                                                                  lapse = 1))
-        res[i+vec["ksteps"]] <- direction
-        res[i+2*vec["ksteps"]] <- tmp$pval
-      }
-    }
-    res
+criterion <- function(dat, vec, y){
+  if(vec["method"] == 1){
+    fit_method <- function(x){binseginf::bsfs(x, numSteps = vec["ksteps"])}
+  } else {
+    fit_method <- function(x){binseginf::fLasso_fixedSteps(x, numSteps = args["ksteps"])}
   }
+  fit <- fit_method(dat)
+
+  sign_mat <- binseginf::jump_sign(fit)
+  if(vec["decluttered"] == 0){
+    tmp <- unlist(lapply(true_jumps, function(x){x + c(-2:2)}))
+    cluster_list <- selectiveModel::declutter(jump_vec = sign_mat[,1], sign_vec = sign_mat[,2],
+                                              how_close = 0,
+                                              desired_jumps = tmp)
+  } else {
+    cluster_list <- selectiveModel::declutter(jump_vec = sign_mat[,1], sign_vec = sign_mat[,2],
+                                              how_close = 2,
+                                              desired_jumps = true_jumps)
+  }
+
+  res <- rep(NA, 3*vec["ksteps"])
+  len <- length(cluster_list$jump_vec)
+  res[1:len] <- cluster_list$jump_vec
+  names(res) <- c(paste0("Jump ", 1:vec["ksteps"]), paste0("Direction ", 1:vec["ksteps"]),
+                  paste0("Pvalue ", 1:vec["ksteps"]))
+
+  for(i in 1:len){
+    if(cluster_list$target_bool[i]){
+      set.seed(10*y)
+      contrast <- selectiveModel:::contrast_from_cluster(cluster_list, n, i)
+      test_func <- test_func_closure(contrast)
+      if(cluster_list$sign_mat["sign:-1",i] == 0){
+        direction <- 1
+      } else if(cluster_list$sign_mat["sign:+1",i] == 0){
+        direction <- -1
+      } else {
+        direction <- NA
+      }
+
+      tmp <- selectiveModel::selected_model_inference(dat, fit_method = fit_method,
+                                      test_func = test_func,
+                                      declutter_func = declutter_func,
+                                      num_samp = num_samp,
+                                      direction = direction,
+                                      ignore_jump = i, sigma = vec["sigma"],
+                                      verbose = F, param = list(burn_in = burn_in,
+                                                                lapse = 1))
+      res[i+vec["ksteps"]] <- direction
+      res[i+2*vec["ksteps"]] <- tmp$pval
+    }
+  }
+  res
 }
 
-# set.seed(1); criterion_(rule(paramMat[1,]), paramMat[1,], 1)
+# set.seed(1); criterion(rule(paramMat[6,]), paramMat[6,], 1)
 
 ###########################
 
