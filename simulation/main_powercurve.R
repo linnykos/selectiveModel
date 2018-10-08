@@ -3,10 +3,11 @@ library(simulation)
 library(binseginf)
 library(selectiveModel)
 
-paramMat <- as.matrix(expand.grid(1, c(.25,.5,1,2,4), c(1,2), c(1, NA), 1, 0))
+paramMat <- as.matrix(expand.grid(1, c(0,.25,.5,1,2,4), c(1,2), c(1, NA), 1, 0))
 colnames(paramMat) <- c("Type", "SnR", "method", "sigma", "ksteps", "decluttered")
 
-paramMat <- cbind(paramMat, c(4400, 1900, 800, 500, 400))
+paramMat <- cbind(paramMat, rep(c(c(10000, 10000, 4000, 1700, 1100, 1000), #bs
+                              c(10000, 10000, 10000, 5200, 2400, 1500)), each = 2)) #fl
 colnames(paramMat)[ncol(paramMat)] <- "trials"
 
 ##############
