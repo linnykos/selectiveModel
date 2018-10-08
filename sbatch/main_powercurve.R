@@ -31,7 +31,7 @@ print(paramMat)
 ######
 
 num_samp <- 4000
-burn_in <- 4000
+burn_in <- 1000
 n <- 200
 
 edge_mutation <- function(lev, n=200){
