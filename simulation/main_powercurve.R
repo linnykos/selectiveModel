@@ -3,7 +3,7 @@ library(simulation)
 library(binseginf)
 library(selectiveModel)
 
-paramMat <- as.matrix(expand.grid(1, c(0,.25,.5,1,2,4), c(1,2), c(1, NA), 1, 0))
+paramMat <- as.matrix(expand.grid(1, c(0,.25,.5,1,2,4), c(2), c(1, NA), 1, 0))
 colnames(paramMat) <- c("Type", "SnR", "method", "sigma", "ksteps", "decluttered")
 
 paramMat <- cbind(paramMat, rep(c(c(10000, 10000, 4000, 1700, 1100, 1000), #bs
@@ -49,7 +49,7 @@ criterion <- function(dat, vec, y){
   if(vec["method"] == 1){
     fit_method <- function(x){binseginf::bsfs(x, numSteps = vec["ksteps"])}
   } else {
-    fit_method <- function(x){binseginf::fLasso_fixedSteps(x, numSteps = args["ksteps"])}
+    fit_method <- function(x){binseginf::fLasso_fixedSteps(x, numSteps = vec["ksteps"])}
   }
   fit <- fit_method(dat)
 
@@ -100,12 +100,13 @@ criterion <- function(dat, vec, y){
 }
 
 # set.seed(1); criterion(rule(paramMat[6,]), paramMat[6,], 1)
+# set.seed(1); criterion(rule(paramMat[12,]), paramMat[12,], 1)
 
 ###########################
 
 res <- simulation::simulation_generator(rule = rule, criterion = criterion,
                                            paramMat = paramMat, trials = paramMat[,"trials"],
                                            cores = 15, as_list = F,
-                                           filepath = "main_powercurve_onejump_tmp.RData",
+                                           filepath = "main_powercurve_onejump_fl_tmp.RData",
                                            verbose = T)
-save.image("main_powercurve_onejump.RData")
+save.image("main_powercurve_onejump_fl.RData")
