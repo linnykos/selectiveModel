@@ -82,7 +82,7 @@ criterion_closure <- function(fit_method){
                                                 desired_jumps = true_jumps)
     }
 
-    res <- rep(NA, 3*vec["ksteps"])
+    res <- rep(NA, 3*vec["ksteps"]+1)
     len <- length(cluster_list$jump_vec)
     res[1:len] <- cluster_list$jump_vec
     names(res) <- c(paste0("Jump ", 1:vec["ksteps"]), paste0("Direction ", 1:vec["ksteps"]),
@@ -115,6 +115,7 @@ criterion_closure <- function(fit_method){
       }
     }
 
+    res[length(res)] <- sum(dat)
     res
   }
 }
