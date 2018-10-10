@@ -14,24 +14,37 @@ args <- commandArgs(trailingOnly=TRUE)
 ## - 4th: sigma (either 1 or 2 or 1 or NA)
 ## - 5th: ksteps (2 to 4)
 ## - 6th: decluttered (0 = no, 1 = yes)
-## - 7th: seed
+## - 7th: array index
 
 paramMat <- matrix(as.numeric(args), ncol = length(args))
-colnames(paramMat) <- c("Type", "SnR", "method", "sigma", "ksteps", "decluttered", "seed")
+colnames(paramMat) <- c("Type", "SnR", "method", "sigma", "ksteps", "decluttered", "array")
 paramMat[,"SnR"] <- c(0, 0.25, 0.5, 1, 2, 4)[paramMat[,"SnR"]]
 paramMat[,"sigma"] <- c(1,NA)[paramMat[,"sigma"]]
 args <- paramMat[1,]
 print(paramMat)
+paramMat_save <- paramMat
 
 #######
 
 # determine the seed
-load("../simulation/preamble_jump_counter.RData")
-if(args["method"] == 1) jump_res <- bs_res else jump_res <- fl_res
-idx <- intersect(which(paramMat[,"SnR"] == args["SnR"]), which(paramMat[,"k"] == args["ksteps"]))
+load("../sbatch/preamble_jump.RData")
+tab <- table(c(which(paramMat[,"Type"] == args["Type"]), which(paramMat[,"SnR"] == args["SnR"]),
+               which(paramMat[,"method"] == args["method"]), which(paramMat[,"ksteps"] == args["ksteps"])))
+idx <- as.numeric(names(tab)[which(tab == 4)])
+stopifnot(length(idx) == 1)
+jump_mat <- res[[idx]]
+
+if(args["Type"] == 1) true_jumps <- c(100, 140) else true_jumps <- 160
+indices <- which(apply(jump_mat, 2, function(x){any(sapply(true_jumps, function(y){abs(x-y) <= 2}))}))
+stopifnot(args["array"]+1 <= length(indices))
+seed_vec <- c(indices[args["array"]] : (indices[args["array"]+1]-1))
+stopifnot(length(seed_vec) >= 1)
+
+## zz = sapply(res[1:12], function(k){ if(!is.matrix(k)) k <- matrix(k, nrow = 1); length(which(apply(k, 2, function(x){abs(x-160) <= 2})))})
+## zz = sapply(res[13:48], function(k){ if(!is.matrix(k)) k <- matrix(k, nrow = 1); length(which(apply(k, 2, function(x){any(sapply(c(100,140), function(y){abs(x-y) <= 2}))})))})
 
 ######
-
+paramMat <- paramMat_save
 num_samp <- 4000
 burn_in <- 1000
 n <- 200
@@ -47,7 +60,6 @@ middle_mutation <- function(lev, n){
   mn[seq(from=n/2+1, to=n/2+round(.2*n))] <- lev
   mn
 }
-true_jumps <- c(100, 140)
 
 test_func_closure <- function(contrast){
   function(y, fit = NA, jump = NA){
@@ -141,7 +153,9 @@ criterion <- criterion_closure(fit_method)
 folder_name <- paste0("/home/kevinl1/selectivemodel/sbatch/results/", paste0(args[1:6], collapse = "-"))
 dir.create(folder_name, showWarnings = FALSE)
 
-set.seed(args["seed"])
-res <- criterion(rule(paramMat[1,]), paramMat[1,], args["seed"])
+res <- lapply(seed_vec, function(seed){
+  set.seed(seed)
+  criterion(rule(paramMat[1,]), paramMat[1,], seed)
+})
 
-save.image(paste0(folder_name, "/", args["seed"], ".RData"))
+save.image(paste0(folder_name, "/", args["array"], ".RData"))
