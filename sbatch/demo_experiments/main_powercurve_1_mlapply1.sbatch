@@ -2,7 +2,7 @@
 #SBATCH -N 1
 #SBATCH --ntasks-per-node=1
 #SBATCH -t 8:00:00
-#SBATCH --mem 40000
+#SBATCH --mem 4000
 #SBATCH --job-name=main_powercurve
 #SBATCH --output=slurm_%a.out
 
