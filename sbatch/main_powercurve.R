@@ -28,17 +28,23 @@ paramMat_save <- paramMat
 
 # determine the seed
 load("/home/kevinl1/selectivemodel/sbatch/preamble_jump.RData")
+print(paramMat)
 tab <- table(c(which(paramMat[,"Type"] == args["Type"]), which(paramMat[,"SnR"] == args["SnR"]),
                which(paramMat[,"method"] == args["method"]), which(paramMat[,"ksteps"] == args["ksteps"])))
 idx <- as.numeric(names(tab)[which(tab == 4)])
+print(paste0("idx: ", idx))
 stopifnot(length(idx) == 1)
 jump_mat <- res[[idx]]
+print(dim(jump_mat))
 
-if(args["Type"] == 1) true_jumps <- c(100, 140) else true_jumps <- 160
+if(args["Type"] == 2) true_jumps <- c(100, 140) else true_jumps <- 160
 indices <- which(apply(jump_mat, 2, function(x){any(sapply(true_jumps, function(y){abs(x-y) <= 2}))}))
 stopifnot(args["array"]+1 <= length(indices))
 seed_vec <- c(indices[args["array"]] : (indices[args["array"]+1]-1))
 stopifnot(length(seed_vec) >= 1)
+
+print(paste0("Start from ", min(seed_vec), " to ", max(seed_vec)))
+
 
 ## zz = sapply(res[1:12], function(k){ if(!is.matrix(k)) k <- matrix(k, nrow = 1); length(which(apply(k, 2, function(x){abs(x-160) <= 2})))})
 ## zz = sapply(res[13:48], function(k){ if(!is.matrix(k)) k <- matrix(k, nrow = 1); length(which(apply(k, 2, function(x){any(sapply(c(100,140), function(y){abs(x-y) <= 2}))})))})

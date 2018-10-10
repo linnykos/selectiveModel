@@ -2,7 +2,7 @@
 #SBATCH --job-name=main_powercurve
 #SBATCH --output=/home/kevinl1/selectivemodel/sbatch/logs/slurm.%A.%a.%j.out
 #SBATCH --error=/home/kevinl1/selectivemodel/sbatch/logs/slurm.%A.%a.%j.out
-#SBATCH --time=00:08:00
+#SBATCH --time=00:10:00
 #SBATCH --partition=RM
 #SBATCH --nodes=1
 #SBATCH --ntasks=1
