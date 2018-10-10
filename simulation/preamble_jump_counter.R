@@ -4,7 +4,8 @@ library(binseginf)
 
 trials <- 10000
 n <- 200
-paramMat <- as.matrix(expand.grid(c(1,2), c(0,.25,.5,1,2,4), c(1,2), c(1:4)))
+paramMat <- rbind(as.matrix(expand.grid(1, c(0,.25,.5,1,2,4), c(1,2), 1)),
+                  as.matrix(expand.grid(2, c(0,.25,.5,1,2,4), c(1,2), c(2:4))))
 colnames(paramMat) <- c("Type", "SnR", "method", "ksteps")
 
 middle_mutation <- function(lev, n){
