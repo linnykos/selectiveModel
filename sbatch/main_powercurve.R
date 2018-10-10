@@ -28,14 +28,11 @@ paramMat_save <- paramMat
 
 # determine the seed
 load("/home/kevinl1/selectivemodel/sbatch/preamble_jump.RData")
-print(paramMat)
 tab <- table(c(which(paramMat[,"Type"] == args["Type"]), which(paramMat[,"SnR"] == args["SnR"]),
                which(paramMat[,"method"] == args["method"]), which(paramMat[,"ksteps"] == args["ksteps"])))
 idx <- as.numeric(names(tab)[which(tab == 4)])
-print(paste0("idx: ", idx))
 stopifnot(length(idx) == 1)
 jump_mat <- res[[idx]]
-print(dim(jump_mat))
 
 if(args["Type"] == 2) true_jumps <- c(100, 140) else true_jumps <- 160
 indices <- which(apply(jump_mat, 2, function(x){any(sapply(true_jumps, function(y){abs(x-y) <= 2}))}))
