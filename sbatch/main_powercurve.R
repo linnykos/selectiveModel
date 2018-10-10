@@ -137,7 +137,12 @@ test_vec <- criterion(rule(paramMat[1,]), paramMat[1,], 1)
 
 ###########################
 
-res <- simulation::simulation_generator(rule = rule, criterion = criterion,
-                                           paramMat = paramMat, trials = paramMat[,"trials"],
-                                           cores = 28, as_list = F, verbose = T)
+res <- lapply(1:paramMat[1,"trials"], function(y){
+  set.seed(y); criterion(rule(paramMat[1,]), paramMat[1,], y)
+})
+
+if(length(unique(sapply(res, length))) == 1){
+  res <- do.call(cbind, res)
+}
+
 save.image(paste0("/home/kevinl1/selectivemodel/sbatch/results/main_powercurve", paste0(args, collapse = "-"), ".RData"))

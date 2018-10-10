@@ -19,8 +19,7 @@ args <- commandArgs(trailingOnly=TRUE)
 ## - 4th: sigma (either 1 or 2 or 1 or NA)
 ## - 5th: ksteps (2 to 4)
 ## - 6th: decluttered (0 = no, 1 = yes)
-## - 7th: trials
-## - 8th: tmp
+## - 7th: seed
 
 paramMat <- matrix(as.numeric(args), ncol = length(args))
 colnames(paramMat) <- c("Type", "SnR", "method", "sigma", "ksteps", "decluttered", "trials", "tmp")

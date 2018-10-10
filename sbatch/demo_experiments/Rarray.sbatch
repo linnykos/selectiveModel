@@ -1,22 +1,11 @@
 #!/bin/bash
 
 #SBATCH --job-name=RarrayJob
-#SBATCH --output=RarrayJob_%A_%a.out
-#SBATCH --error=RarrayJob_%A_%a.err
-#SBATCH --array=1-4
+#SBATCH --output=/home/kevinl1/selectivemodel/sbatch/logs/slurm.%A.%a.%j.out
+#SBATCH --error=/home/kevinl1/selectivemodel/sbatch/logs/slurm.%A.%a.%j.out
 #SBATCH --time=00:05:00
-#SBATCH --partition=RM-small
+#SBATCH --partition=RM
 #SBATCH --nodes=1
-#SBATCH --ntasks=28
+#SBATCH --ntasks=1
 
-export HOSTNAME=`cat /etc/hostname`
-
-cd $SLURM_SUBMIT_DIR
-mkdir -p dir-${SLURM_ARRAY_TASK_ID}
-cd       dir-${SLURM_ARRAY_TASK_ID}
-
-
-echo "My Hostname:            " $HOSTNAME             >  ${SLURM_ARRAY_TASK_ID}.log
-echo "My SLURM_ARRAY_TASK_ID: " $SLURM_ARRAY_TASK_ID  >> ${SLURM_ARRAY_TASK_ID}.log
-
-Rscript --vanilla nodename.R >> ${SLURM_ARRAY_TASK_ID}.log
+/opt/packages/R/3.5.1-mkl/lib64/R/bin/Rscript --vanilla nodename.R $arg1 ${SLURM_ARRAY_TASK_ID}
