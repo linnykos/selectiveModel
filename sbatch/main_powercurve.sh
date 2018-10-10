@@ -17,3 +17,4 @@ module load R/3.5.1-mkl
 # sbatch --export arg1=2,arg2=6,arg3=1,arg4=2,arg5=2,arg6=0,arg7=550 -o /home/kevinl1/selectivemodel/sbatch/logs/slurm.%N.%j.out -e /home/kevinl1/selectivemodel/sbatch/logs/slurm.%N.%j.out /home/kevinl1/selectivemodel/sbatch/main_powercurve.cmd
 
 sbatch --export arg1=2,arg2=6,arg3=1,arg4=2,arg5=2,arg6=0 --array=1-5%5 /home/kevinl1/selectivemodel/sbatch/main_powercurve.sbatch
+sbatch --export arg1=2,arg2=1,arg3=1,arg4=2,arg5=2,arg6=0 --array=1-5%5 /home/kevinl1/selectivemodel/sbatch/main_powercurve.sbatch
