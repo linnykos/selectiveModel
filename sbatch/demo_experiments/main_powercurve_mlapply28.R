@@ -20,6 +20,7 @@ args <- commandArgs(trailingOnly=TRUE)
 ## - 5th: ksteps (2 to 4)
 ## - 6th: decluttered (0 = no, 1 = yes)
 ## - 7th: trials
+## - 8th: tmp
 
 paramMat <- matrix(as.numeric(args), ncol = length(args))
 colnames(paramMat) <- c("Type", "SnR", "method", "sigma", "ksteps", "decluttered", "trials")
@@ -137,7 +138,13 @@ criterion <- criterion_closure(fit_method)
 
 print("MLAPPLY 28 VERSION")
 
+start <- proc.time()
+
 res <- simulation::simulation_generator(rule = rule, criterion = criterion,
                                            paramMat = paramMat, trials = paramMat[,"trials"],
                                            cores = 28, as_list = F, verbose = T)
+
+end <- proc.time()
+print(end-start)
+
 save.image(paste0("/home/kevinl1/selectivemodel/sbatch/results/TMP28_main_powercurve", paste0(args, collapse = "-"), ".RData"))

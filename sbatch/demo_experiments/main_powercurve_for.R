@@ -20,6 +20,7 @@ args <- commandArgs(trailingOnly=TRUE)
 ## - 5th: ksteps (2 to 4)
 ## - 6th: decluttered (0 = no, 1 = yes)
 ## - 7th: trials
+## - 8th: tmp
 
 paramMat <- matrix(as.numeric(args), ncol = length(args))
 colnames(paramMat) <- c("Type", "SnR", "method", "sigma", "ksteps", "decluttered", "trials")
@@ -139,6 +140,8 @@ print("FOR VERSION")
 
 stopifnot(nrow(paramMat) == 1)
 
+start <- proc.time()
+
 res <- lapply(1:paramMat[1,"trials"], function(y){
   set.seed(y); criterion(rule(paramMat[1,]), paramMat[1,], y)
 })
@@ -146,5 +149,8 @@ res <- lapply(1:paramMat[1,"trials"], function(y){
 if(length(unique(sapply(res, length))) == 1){
   res <- do.call(cbind, res)
 }
+
+end <- proc.time()
+print(end-start)
 
 save.image(paste0("/home/kevinl1/selectivemodel/sbatch/results/TMPFOR_main_powercurve", paste0(args, collapse = "-"), ".RData"))

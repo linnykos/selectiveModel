@@ -6,4 +6,4 @@
 #SBATCH --job-name=main_powercurve
 #SBATCH --output=slurm_%a.out
 
-/opt/packages/R/3.5.1-mkl/lib64/R/bin/Rscript --vanilla /home/kevinl1/selectivemodel/sbatch/demo_experiments/main_powercurve_for.R $arg1 $arg2 $arg3 $arg4 $arg5 $arg6 $arg7
+/opt/packages/R/3.5.1-mkl/lib64/R/bin/Rscript --vanilla /home/kevinl1/selectivemodel/sbatch/demo_experiments/main_powercurve_for.R $arg1 $arg2 $arg3 $arg4 $arg5 $arg6 $arg7 $arg8
