@@ -27,7 +27,7 @@ paramMat_save <- paramMat
 #######
 
 # determine the seed
-load("../sbatch/preamble_jump.RData")
+load("/home/kevinl1/selectivemodel/sbatch/preamble_jump.RData")
 tab <- table(c(which(paramMat[,"Type"] == args["Type"]), which(paramMat[,"SnR"] == args["SnR"]),
                which(paramMat[,"method"] == args["method"]), which(paramMat[,"ksteps"] == args["ksteps"])))
 idx <- as.numeric(names(tab)[which(tab == 4)])
