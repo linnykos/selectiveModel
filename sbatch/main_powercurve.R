@@ -2,14 +2,9 @@ rm(list=ls())
 library(simulation, lib.loc = "/home/kevinl1/Rpackages/3.5")
 library(binseginf, lib.loc = "/home/kevinl1/Rpackages/3.5")
 library(selectiveModel, lib.loc = "/home/kevinl1/Rpackages/3.5")
-library(foreach, lib.loc = "/home/kevinl1/Rpackages/3.5")
-library(doMC, lib.loc = "/home/kevinl1/Rpackages/3.5")
 library(data.tree, lib.loc = "/home/kevinl1/Rpackages/3.5")
 library(hash, lib.loc = "/home/kevinl1/Rpackages/3.5")
 library(lpSolve, lib.loc = "/home/kevinl1/Rpackages/3.5")
-library(R.methodsS3, lib.loc = "/home/kevinl1/Rpackages/3.5")
-library(R.oo, lib.loc = "/home/kevinl1/Rpackages/3.5")
-library(R.utils, lib.loc = "/home/kevinl1/Rpackages/3.5")
 
 args <- commandArgs(trailingOnly=TRUE)
 #arguments:
@@ -19,10 +14,10 @@ args <- commandArgs(trailingOnly=TRUE)
 ## - 4th: sigma (either 1 or 2 or 1 or NA)
 ## - 5th: ksteps (2 to 4)
 ## - 6th: decluttered (0 = no, 1 = yes)
-## - 7th: trials
+## - 7th: seed
 
 paramMat <- matrix(as.numeric(args), ncol = length(args))
-colnames(paramMat) <- c("Type", "SnR", "method", "sigma", "ksteps", "decluttered", "trials")
+colnames(paramMat) <- c("Type", "SnR", "method", "sigma", "ksteps", "decluttered", "seed")
 paramMat[,"SnR"] <- c(0, 0.25, 0.5, 1, 2, 4)[paramMat[,"SnR"]]
 paramMat[,"sigma"] <- c(1,NA)[paramMat[,"sigma"]]
 args <- paramMat[1,]
@@ -132,17 +127,13 @@ if(args["method"] == 1){
 
 criterion <- criterion_closure(fit_method)
 ## set.seed(1); criterion(rule(paramMat[1,]), paramMat[1,], 1)
-set.seed(1)
-test_vec <- criterion(rule(paramMat[1,]), paramMat[1,], 1)
 
 ###########################
 
-res <- lapply(1:paramMat[1,"trials"], function(y){
-  set.seed(y); criterion(rule(paramMat[1,]), paramMat[1,], y)
-})
+folder_name <- paste0("/home/kevinl1/selectivemodel/sbatch/results/", paste0(args[1:6], collapse = "-"))
+dir.create(folder_name, showWarnings = FALSE)
 
-if(length(unique(sapply(res, length))) == 1){
-  res <- do.call(cbind, res)
-}
+set.seed(args["seed"])
+res <- criterion(rule(paramMat[1,]), paramMat[1,], args["seed"])
 
-save.image(paste0("/home/kevinl1/selectivemodel/sbatch/results/main_powercurve", paste0(args, collapse = "-"), ".RData"))
+save.image(paste0(folder_name, "/", args["seed"], ".RData"))
