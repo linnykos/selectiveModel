@@ -9,16 +9,9 @@ module load R/3.5.1-mkl
 ## - 6th: decluttered (0 = no, 1 = yes)
 ## - array: index of hypothesis test
 
-sbatch --export arg1=2,arg2=1,arg3=1,arg4=2,arg5=2,arg6=0 --array=1-500%5 /home/kevinl1/selectivemodel/sbatch/main_powercurve.sbatch
-sbatch --export arg1=2,arg2=2,arg3=1,arg4=2,arg5=2,arg6=0 --array=1-500%5 /home/kevinl1/selectivemodel/sbatch/main_powercurve.sbatch
-sbatch --export arg1=2,arg2=3,arg3=1,arg4=2,arg5=2,arg6=0 --array=1-500%5 /home/kevinl1/selectivemodel/sbatch/main_powercurve.sbatch
-sbatch --export arg1=2,arg2=4,arg3=1,arg4=2,arg5=2,arg6=0 --array=1-500%5 /home/kevinl1/selectivemodel/sbatch/main_powercurve.sbatch
-sbatch --export arg1=2,arg2=5,arg3=1,arg4=2,arg5=2,arg6=0 --array=1-500%5 /home/kevinl1/selectivemodel/sbatch/main_powercurve.sbatch
-sbatch --export arg1=2,arg2=6,arg3=1,arg4=2,arg5=2,arg6=0 --array=1-500%5 /home/kevinl1/selectivemodel/sbatch/main_powercurve.sbatch
-
-sbatch --export arg1=2,arg2=1,arg3=2,arg4=2,arg5=2,arg6=0 --array=1-500%5 /home/kevinl1/selectivemodel/sbatch/main_powercurve.sbatch
-sbatch --export arg1=2,arg2=2,arg3=2,arg4=2,arg5=2,arg6=0 --array=1-500%5 /home/kevinl1/selectivemodel/sbatch/main_powercurve.sbatch
-sbatch --export arg1=2,arg2=3,arg3=2,arg4=2,arg5=2,arg6=0 --array=1-500%5 /home/kevinl1/selectivemodel/sbatch/main_powercurve.sbatch
-sbatch --export arg1=2,arg2=4,arg3=2,arg4=2,arg5=2,arg6=0 --array=1-500%5 /home/kevinl1/selectivemodel/sbatch/main_powercurve.sbatch
-sbatch --export arg1=2,arg2=5,arg3=2,arg4=2,arg5=2,arg6=0 --array=1-500%5 /home/kevinl1/selectivemodel/sbatch/main_powercurve.sbatch
-sbatch --export arg1=2,arg2=6,arg3=2,arg4=2,arg5=2,arg6=0 --array=1-500%5 /home/kevinl1/selectivemodel/sbatch/main_powercurve.sbatch
+sbatch --export arg1=2,arg2=1,arg3=1,arg4=2,arg5=2,arg6=0 --array=1-500%10 /home/kevinl1/selectivemodel/sbatch/main_powercurve.sbatch
+sbatch --export arg1=2,arg2=2,arg3=1,arg4=2,arg5=2,arg6=0 --array=1-500%10 /home/kevinl1/selectivemodel/sbatch/main_powercurve.sbatch
+sbatch --export arg1=2,arg2=3,arg3=1,arg4=2,arg5=2,arg6=0 --array=1-500%10 /home/kevinl1/selectivemodel/sbatch/main_powercurve.sbatch
+sbatch --export arg1=2,arg2=4,arg3=1,arg4=2,arg5=2,arg6=0 --array=1-500%10 /home/kevinl1/selectivemodel/sbatch/main_powercurve.sbatch
+sbatch --export arg1=2,arg2=5,arg3=1,arg4=2,arg5=2,arg6=0 --array=1-500%10 /home/kevinl1/selectivemodel/sbatch/main_powercurve.sbatch
+sbatch --export arg1=2,arg2=6,arg3=1,arg4=2,arg5=2,arg6=0 --array=1-500%10 /home/kevinl1/selectivemodel/sbatch/main_powercurve.sbatch
