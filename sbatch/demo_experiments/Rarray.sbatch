@@ -1,5 +1,4 @@
 #!/bin/bash
-
 #SBATCH --job-name=RarrayJob
 #SBATCH --output=/home/kevinl1/selectivemodel/sbatch/logs/slurm.%A.%a.%j.out
 #SBATCH --error=/home/kevinl1/selectivemodel/sbatch/logs/slurm.%A.%a.%j.out
