@@ -23,6 +23,13 @@ paramMat[,"sigma"] <- c(1,NA)[paramMat[,"sigma"]]
 args <- paramMat[1,]
 print(paramMat)
 
+#######
+
+# determine the seed
+load("../simulation/preamble_jump_counter.RData")
+if(args["method"] == 1) jump_res <- bs_res else jump_res <- fl_res
+idx <- intersect(which(paramMat[,"SnR"] == args["SnR"]), which(paramMat[,"k"] == args["ksteps"]))
+
 ######
 
 num_samp <- 4000
