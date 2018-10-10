@@ -86,7 +86,7 @@ criterion_closure <- function(fit_method){
     len <- length(cluster_list$jump_vec)
     res[1:len] <- cluster_list$jump_vec
     names(res) <- c(paste0("Jump ", 1:vec["ksteps"]), paste0("Direction ", 1:vec["ksteps"]),
-                    paste0("Pvalue ", 1:vec["ksteps"]))
+                    paste0("Pvalue ", 1:vec["ksteps"]), "Fingerprint")
 
     for(i in 1:len){
       if(cluster_list$target_bool[i]){
