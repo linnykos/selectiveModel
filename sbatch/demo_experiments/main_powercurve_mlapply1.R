@@ -23,7 +23,7 @@ args <- commandArgs(trailingOnly=TRUE)
 ## - 8th: tmp
 
 paramMat <- matrix(as.numeric(args), ncol = length(args))
-colnames(paramMat) <- c("Type", "SnR", "method", "sigma", "ksteps", "decluttered", "trials")
+colnames(paramMat) <- c("Type", "SnR", "method", "sigma", "ksteps", "decluttered", "trials", "tmp")
 paramMat[,"SnR"] <- c(0, 0.25, 0.5, 1, 2, 4)[paramMat[,"SnR"]]
 paramMat[,"sigma"] <- c(1,NA)[paramMat[,"sigma"]]
 args <- paramMat[1,]
