@@ -104,11 +104,11 @@ criterion_closure <- function(fit_method){
                                                 desired_jumps = true_jumps)
     }
 
-    res <- rep(NA, 3*vec["ksteps"]+1)
+    res <- rep(NA, 3*vec["ksteps"]+2)
     len <- length(cluster_list$jump_vec)
     res[1:len] <- cluster_list$jump_vec
     names(res) <- c(paste0("Jump ", 1:vec["ksteps"]), paste0("Direction ", 1:vec["ksteps"]),
-                    paste0("Pvalue ", 1:vec["ksteps"]), "Fingerprint")
+                    paste0("Pvalue ", 1:vec["ksteps"]), "Fingerprint", "Seed")
 
     for(i in 1:len){
       if(cluster_list$target_bool[i]){
@@ -137,7 +137,8 @@ criterion_closure <- function(fit_method){
       }
     }
 
-    res[length(res)] <- sum(dat)
+    res[3*vec["ksteps"]+1] <- sum(dat)
+    res[3*vec["ksteps"]+2] <- y
     res
   }
 }
