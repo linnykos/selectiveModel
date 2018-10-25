@@ -75,7 +75,7 @@ if(args["decluttered"] == 0){
                                                           how_close = 0)$jump_vec}
 } else {
   declutter_func <- function(x){selectiveModel::declutter(x, sign_vec = rep(1, length(x)),
-                                                          how_close = 2)$jump_vec}
+                                                          how_close = 5)$jump_vec}
 }
 
 #########
@@ -100,7 +100,7 @@ criterion_closure <- function(fit_method){
                                                 desired_jumps = tmp)
     } else {
       cluster_list <- selectiveModel::declutter(jump_vec = sign_mat[,1], sign_vec = sign_mat[,2],
-                                                how_close = 2,
+                                                how_close = 5,
                                                 desired_jumps = true_jumps)
     }
 
