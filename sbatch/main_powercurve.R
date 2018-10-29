@@ -35,7 +35,11 @@ stopifnot(length(idx) == 1)
 jump_mat <- res[[idx]]
 
 if(args["Type"] == 2) true_jumps <- c(100, 140) else true_jumps <- 160
-indices <- which(apply(jump_mat, 2, function(x){any(sapply(true_jumps, function(y){abs(x-y) <= 2}))}))
+if(!is.matrix(jump_mat)){
+  indices <- which(sapply(jump_mat, function(x){any(sapply(true_jumps, function(y){abs(x-y) <= 2}))}))
+} else {
+  indices <- which(apply(jump_mat, 2, function(x){any(sapply(true_jumps, function(y){abs(x-y) <= 2}))}))
+}
 stopifnot(args["array"]+1 <= length(indices))
 seed_vec <- c(indices[args["array"]] : (indices[args["array"]+1]-1))
 stopifnot(length(seed_vec) >= 1)
