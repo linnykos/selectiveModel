@@ -1,6 +1,6 @@
 rm(list=ls())
 
-intended_param <- as.matrix(expand.grid(2, c(0,.25,.5,1,2,4), 2, NA, 3, 1))
+intended_param <- as.matrix(expand.grid(1, c(0,.25,.5,1,2,4), c(1,2), c(1,NA), 1, 0))
 colnames(intended_param) <- c("Type", "SnR", "method", "sigma", "ksteps", "decluttered")
 
 arg_mat <- apply(intended_param, 1, function(x){paste(x, collapse = "-")})
